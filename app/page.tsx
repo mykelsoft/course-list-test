@@ -1,65 +1,266 @@
-import Image from "next/image";
+// app/page.tsx
+'use client';
 
-export default function Home() {
+import { ActionType, useCoursesTable } from '@/hooks/useCoursesTable';
+import { Archive, Filter, InfoIcon, Plus, SearchIcon } from 'lucide-react';
+import React, { useMemo } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+
+import { APPS } from '@/types/courses';
+import CustomButton from '@/components/custom-ui/custom-button';
+import CustomDeleteDialog from '@/components/custom-ui/custom-delete-dialog';
+import { CustomTable } from '@/components/custom-ui/custom-table/custom-table';
+import { Glowing } from '@/components/custom-ui/styling/glowing';
+import { Input } from '@/components/ui/input';
+import PageInfoBanner from '@/components/PageInfoBanner';
+import { TablePagination } from '@/components/custom-ui/custom-table/table-pagination';
+import { cn } from '@/lib/utils';
+// Assuming you migrate columns to a local component folder
+import { getCourseListColumns } from '@/components/course-list/course-list-columns';
+
+export default function CoursesPage() {
+  // We pass an empty array initially; the hook will fetch mock data on mount
+  const {
+    state,
+    dispatch,
+    handleDeleteCourse,
+    handleDuplicateCourse,
+    handleArchiveCourse,
+    handleBulkArchive,
+    onBulkArchiveConfirm,
+    setSorting,
+    setPagination,
+    setGlobalFilter,
+    setRowSelection,
+    setColumnFilters,
+    selectedCount,
+    handlers
+  } = useCoursesTable([]); 
+
+  const {
+    courses,
+    isLoading,
+    sorting,
+    pagination,
+    rowSelection,
+    globalFilter,
+    columnFilters,
+    deleteDialogOpen,
+    duplicateDialogOpen,
+    archiveDialogOpen,
+    bulkArchiveDialogOpen,
+    selectedCourse,
+    isProcessing,
+  } = state;
+
+  const columns = useMemo(
+    () =>
+      getCourseListColumns({
+        handleEdit: (course) => {
+           console.log('Edit course clicked:', course.id);
+        },
+        handleDelete: (course) => {
+          dispatch({ type: ActionType.OPEN_DELETE_DIALOG, payload: course });
+        },
+        handleDuplicate: (course) => {
+          dispatch({ type: ActionType.OPEN_DUPLICATE_DIALOG, payload: course });
+        },
+        handleArchive: handlers.handleOpenArchiveDialog,
+        // We aren't testing assignment logic in this assessment, so these are no-ops or removed
+        handleAssign: undefined,
+        handleShowJobRoles: undefined,
+        showPrice: false, // Default to free view
+      }),
+    [dispatch, handlers.handleOpenArchiveDialog]
+  );
+
+  const table = useReactTable({
+    data: courses,
+    columns,
+    state: { sorting, pagination, globalFilter, rowSelection, columnFilters },
+    onSortingChange: setSorting,
+    onPaginationChange: setPagination,
+    onGlobalFilterChange: setGlobalFilter,
+    onRowSelectionChange: setRowSelection,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    enableRowSelection: true,
+  });
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <>
+      {/* Top Controls: Search & Add */}
+      <div className='bg-white py-4 px-6'>
+        <div className='flex items-center gap-4'>
+          <CustomButton
+            title='Filters'
+            onClick={() => console.log('Filters Clicked')}
+            leadingIcon={<Filter size={18} />}
+            app={APPS.TRAINING}
+            variant='outline'
+            buttonClass='font-semibold'
+          />
+
+          <div className='flex-1 min-w-0'>
+            <div
+              className={cn('relative flex-1 rounded-md border border-[var(--table-border)]', Glowing(APPS.TRAINING).inputBox)}
+            >
+              <div className='absolute left-3 top-1/2 -translate-y-1/2 text-[var(--gray-700)]'>
+                <SearchIcon size={16} />
+              </div>
+              <Input
+                placeholder='Search Courses'
+                value={globalFilter}
+                onChange={(event) => setGlobalFilter(event.target.value)}
+                className='bg-[var(--content-background)] placeholder:text-gray-400 placeholder:text-sm border-none h-[37px] text-sm pl-9 shadow-none ring-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0'
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className='p-6 md:p-10'>
+        <PageInfoBanner
+          title='Free Courses List'
+          subtitle='List of free courses available on the platform.'
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+
+        {/* Middle Controls: Results Count & Bulk Actions */}
+        <div className='flex justify-between items-center py-0.5 mb-3'>
+          <div className='flex items-center text-sm text-[var(--gray-700)]'>
+            <div className='flex items-center gap-2.5'>
+              <span>Show</span>
+              <Select
+                value={String(pagination.pageSize)}
+                onValueChange={(val) => table.setPageSize(Number(val))}
+              >
+                <SelectTrigger className='h-8 w-[70px] bg-white p-2 border-[var(--gray-300)]'>
+                  <SelectValue placeholder={pagination.pageSize} />
+                </SelectTrigger>
+                <SelectContent>
+                  {[10, 20, 30, 50].map((size) => (
+                    <SelectItem
+                      key={size}
+                      value={String(size)}
+                    >
+                      {size}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <span>of {table.getFilteredRowModel().rows.length} results</span>
+            </div>
+
+            <div className='h-9 w-px bg-[var(--gray-300)] mx-6' />
+
+            <button
+              onClick={handleBulkArchive}
+              disabled={selectedCount === 0}
+              className={cn(
+                'flex items-center gap-2 transition-colors font-medium text-sm',
+                selectedCount > 0
+                  ? 'text-var(--gray-700) hover:text-[#CF9800] cursor-pointer'
+                  : 'text-gray-400 cursor-not-allowed',
+              )}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              <Archive size={18} />
+              <span>Archive</span>
+            </button>
+          </div>
+
+          <CustomButton
+            title='Add Free Course'
+            onClick={() => console.log('Add Course Clicked')}
+            leadingIcon={<Plus size={18} />}
+            app={APPS.TRAINING}
+            buttonClass='font-semibold'
+          />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+
+        <CustomTable
+          table={table}
+          isLoading={isLoading}
+          noResultsMessage='No free courses found.'
+          skeletonRows={pagination.pageSize}
+          headerRowClassName='hover:bg-[var(--gray-200)]/80 bg-[var(--gray-200)] border-b border-[var(--gray-300)]'
+          headerCellClassName='text-[var(--gray-800)] font-semibold text-sm px-4 py-3 h-12'
+          bodyRowClassName='hover:bg-gray-50 transition-colors'
+          bodyCellClassName='px-4 py-3 text-sm text-gray-600'
+          tableClassName='custom-table'
+        />
+
+        {table.getPageCount() > 1 && (
+          <TablePagination
+            table={table}
+            app={APPS.TRAINING}
+          />
+        )}
+      </div>
+
+      {/* Dialogs */}
+      <CustomDeleteDialog
+        isOpen={deleteDialogOpen}
+        setIsOpen={() => dispatch({ type: ActionType.CLOSE_DELETE_DIALOG })}
+        onDelete={handleDeleteCourse}
+        title='Delete Course'
+        message={`Are you sure you want to delete "${selectedCourse?.name}"?`}
+        description='This action cannot be undone.'
+        isLoading={isProcessing}
+        onDeleteTitle='Delete'
+        app={APPS.TRAINING}
+        confirmButtonVariant='destructive'
+      />
+
+      <CustomDeleteDialog
+        isOpen={duplicateDialogOpen}
+        setIsOpen={() => dispatch({ type: ActionType.CLOSE_DIALOGS })}
+        onDelete={handleDuplicateCourse}
+        title='Duplicate Course'
+        message='Are you sure you want to duplicate this course?'
+        description='This will create an exact copy of the course.'
+        isLoading={isProcessing}
+        onDeleteTitle='Confirm'
+        cancelButtonText='Cancel'
+        app={APPS.TRAINING}
+        confirmButtonVariant='default'
+        icon={<InfoIcon className='text-[#FFA600] h-5 w-5' />}
+      />
+
+      <CustomDeleteDialog
+        isOpen={archiveDialogOpen}
+        setIsOpen={() => dispatch({ type: ActionType.CLOSE_DIALOGS })}
+        onDelete={handleArchiveCourse}
+        title='Archive Course?'
+        message={`Are you sure you want to archive "${selectedCourse?.name}"?`}
+        description='This course will be moved to the archive.'
+        isLoading={isProcessing}
+        onDeleteTitle='Archive'
+        app={APPS.TRAINING}
+        confirmButtonVariant='default'
+      />
+
+      <CustomDeleteDialog
+        isOpen={bulkArchiveDialogOpen}
+        setIsOpen={() => dispatch({ type: ActionType.CLOSE_DIALOGS })}
+        onDelete={onBulkArchiveConfirm}
+        title='Archive Selected Courses?'
+        message={`Are you sure you want to archive ${selectedCount} course(s)?`}
+        description='These courses will be moved to the archive.'
+        isLoading={isProcessing}
+        onDeleteTitle='Archive All'
+        app={APPS.TRAINING}
+        confirmButtonVariant='default'
+      />
+    </>
   );
 }
