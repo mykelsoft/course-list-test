@@ -4,7 +4,7 @@ import type { CourseWithDetails } from '@/types/courses';
 
 const LONG_COMPANY_STRING = "ISO Safety, ASHR Construction, Mond Corp., Safety Culture";
 
-export const MOCK_COURSES: CourseWithDetails[] = [
+const BASE_MOCK_COURSES: CourseWithDetails[] = [
   {
     id: 151,
     name: "Project Management Workshop",
@@ -135,4 +135,76 @@ export const MOCK_COURSES: CourseWithDetails[] = [
     enrollmentValidityDays: 180,
     completionValidityDays: 365,
   }
+];
+
+const ADDITIONAL_COURSE_NAMES = [
+  'Workplace Health and Safety Basics',
+  'Manual Handling Awareness',
+  'Emergency Response Planning',
+  'Fire Warden Training',
+  'Hazard Identification Workshop',
+  'Incident Reporting Fundamentals',
+  'Risk Assessment Essentials',
+  'Construction Site Induction',
+  'Electrical Safety Awareness',
+  'Confined Space Awareness',
+  'Working at Heights Basics',
+  'PPE Selection and Use',
+  'Chemical Handling Awareness',
+  'Safety Leadership for Supervisors',
+  'Mental Health First Response',
+  'Fatigue Management Training',
+  'Ergonomics for Office Teams',
+  'Noise Exposure Awareness',
+  'Traffic Management Basics',
+  'Forklift Safety Refresher',
+  'Machine Guarding Essentials',
+  'Lockout Tagout Awareness',
+  'Environmental Compliance Basics',
+  'Quality Control Fundamentals',
+  'Document Control Essentials',
+  'Workplace Bullying Prevention',
+  'Diversity and Inclusion Awareness',
+  'Privacy and Data Protection',
+  'Cybersecurity Awareness',
+  'First Aid Refresher',
+  'Site Supervisor Essentials',
+  'Contractor Safety Management',
+  'Toolbox Talk Facilitation',
+  'Return to Work Coordination',
+  'Drug and Alcohol Awareness',
+  'Asbestos Awareness',
+  'Silica Dust Awareness',
+  'Hot Work Permit Basics',
+  'Permit to Work Essentials',
+  'Ladder Safety Awareness',
+  'Vehicle Pre-start Checks',
+  'Warehouse Safety Basics',
+  'Food Safety Handling',
+  'Customer Complaint Handling',
+  'Professional Email Etiquette',
+  'Change Management Foundations',
+  'Performance Coaching Basics',
+  'Recruitment Interview Skills',
+  'Financial Literacy for Teams',
+  'Business Writing Essentials',
+];
+
+export const MOCK_COURSES: CourseWithDetails[] = [
+  ...BASE_MOCK_COURSES,
+  ...ADDITIONAL_COURSE_NAMES.map((name, index) => ({
+    id: 161 + index,
+    name,
+    is_paid: false,
+    price: null,
+    totalUnits: (index % 8) + 1,
+    companyCount: 4,
+    assignedCompanies: LONG_COMPANY_STRING,
+    updatedAt: new Date(
+      Date.UTC(2024, 4 + (index % 6), 1 + (index % 26), 9 + (index % 8), 0, 0)
+    ),
+    description: `${name} mock course for table pagination testing.`,
+    enrollmentValidityDays: index % 3 === 0 ? 365 : null,
+    completionValidityDays: index % 4 === 0 ? 365 : null,
+  })),
 ];

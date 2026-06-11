@@ -1,18 +1,14 @@
 // File: ./components/custom-ui/custom-table/table-pagination.tsx
 'use client';
+
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
+import { APPS } from '#types/ENUMS';
+import { Button } from '@/components/ui/button';
+import CustomButton from '../custom-button';
+import React from 'react';
 // components/custom-ui/custom-table/table-pagination.tsx
 import type { Table as TanstackTable } from '@tanstack/react-table';
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-} from 'lucide-react';
-import React from 'react';
-
-import { Button } from '@/components/ui/button';
-import { APPS } from '#types/ENUMS';
-import Themes from '../styling/Themes';
 import { cn } from '@/lib/utils';
 
 type TablePaginationProps<TData> = {
@@ -22,11 +18,13 @@ type TablePaginationProps<TData> = {
 
 export function TablePagination<TData>({
   table,
-  app = APPS.PORTAL,
 }: TablePaginationProps<TData>) {
   const currentPage = table.getState().pagination.pageIndex + 1;
   const totalPages = table.getPageCount();
-  const theme = Themes(app);
+  const canGoPrevious = table.getCanPreviousPage();
+  const canGoNext = table.getCanNextPage();
+
+  const activePageButtonClass = 'pointer-events-none font-semibold text-[var(--primary)] bg-[var(--highlight)]';
 
   // Function to generate page numbers with ellipsis
   const getPageNumbers = (): (number | string)[] => {
@@ -68,83 +66,71 @@ export function TablePagination<TData>({
   const pageItems = getPageNumbers();
 
   return (
-    <div className="flex items-center justify-center space-x-2 py-4 text-sm">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => table.setPageIndex(0)}
-        disabled={!table.getCanPreviousPage()}
-        aria-label="Go to first page"
-        className={theme.button.ghost}
-      >
-        <ChevronsLeft size={14} />
-      </Button>
-      <Button
-        variant="ghost"
-        size="sm"
+    <nav
+      aria-label='Pagination'
+      className='flex items-center justify-center text-sm'
+    >
+      <CustomButton
+        variant='ghost'
+        size='sm'
         onClick={() => table.previousPage()}
-        disabled={!table.getCanPreviousPage()}
-        aria-label="Go to previous page"
-        className={theme.button.ghost}
-      >
-        <ChevronLeft size={14} className="mr-1" />
-        Previous
-      </Button>
+        disabled={!canGoPrevious}
+        title='Previous'
+        leadingIcon={
+          <ChevronLeft
+            size={18}
+            strokeWidth={1.75}
+            className='size-[18px]'
+          />}
+        aria-label='Go to previous page'
+        className='rounded pl-2 pr-3 text-[var(--gray-700)]'
+      />
 
-      <div className="flex items-center gap-1">
+      <div className='mx-2.5 flex items-center gap-2.5'>
         {pageItems.map((pageNumber, idx) => {
           if (pageNumber === '...') {
             return (
-              <span key={`ellipsis-${idx}`} className="px-2">
+              <span
+                key={`ellipsis-${idx}`}
+                className='flex size-7 items-center justify-center font-medium text-[var(--gray-700)]'
+                aria-hidden='true'
+              >
                 ...
               </span>
             );
           }
           const pageIndex = Number(pageNumber) - 1;
-          const isCurrentPage =
-            pageIndex === table.getState().pagination.pageIndex;
+          const isCurrentPage = pageIndex === table.getState().pagination.pageIndex;
           return (
-            <Button
+            <CustomButton
               key={`page-${pageNumber}`}
-              variant="ghost"
-              size="sm"
-              className={cn(
-                'w-8 h-8 p-0',
-                theme.button.ghost,
-                isCurrentPage &&
-                  `pointer-events-none font-bold ${theme.button.secondary}`
-              )}
+              variant='ghost'
+              size='sm'
+              className={cn('text-[var(--gray-700)] rounded px-2.5', isCurrentPage && activePageButtonClass)}
               onClick={() => table.setPageIndex(pageIndex)}
               aria-label={`Go to page ${pageNumber}`}
               aria-current={isCurrentPage ? 'page' : undefined}
-            >
-              {pageNumber}
-            </Button>
+              title={pageNumber.toString()}
+            />
           );
         })}
       </div>
 
-      <Button
-        variant="ghost"
-        size="sm"
+      <CustomButton
+        variant='ghost'
+        size='sm'
         onClick={() => table.nextPage()}
-        disabled={!table.getCanNextPage()}
-        aria-label="Go to next page"
-        className={theme.button.ghost}
-      >
-        Next
-        <ChevronRight size={14} className="ml-1" />
-      </Button>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-        disabled={!table.getCanNextPage()}
-        aria-label="Go to last page"
-        className={theme.button.ghost}
-      >
-        <ChevronsRight size={14} />
-      </Button>
-    </div>
+        disabled={!canGoNext}
+        title='Next'
+        aria-label='Go to next page'
+        trailingIcon={
+          <ChevronRight
+            size={18}
+            strokeWidth={1.75}
+            className='size-[18px]'
+          />}
+        className='rounded pl-3 pr-2 text-[var(--gray-700)]'
+      />
+    </nav>
   );
 }

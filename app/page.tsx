@@ -64,7 +64,7 @@ export default function CoursesPage() {
     () =>
       getCourseListColumns({
         handleEdit: (course) => {
-           console.log('Edit course clicked:', course.id);
+          console.log('Edit course clicked:', course.id);
         },
         handleDelete: (course) => {
           dispatch({ type: ActionType.OPEN_DELETE_DIALOG, payload: course });
@@ -144,7 +144,7 @@ export default function CoursesPage() {
                 value={String(pagination.pageSize)}
                 onValueChange={(val) => table.setPageSize(Number(val))}
               >
-                <SelectTrigger className='h-8 w-[70px] bg-white p-2 border-[var(--gray-300)]'>
+                <SelectTrigger className='h-8 w-[54px] font-medium text-[var(--gray-700)] bg-white p-2 gap-0 rounded border-[var(--gray-300)]'>
                   <SelectValue placeholder={pagination.pageSize} />
                 </SelectTrigger>
                 <SelectContent>
@@ -158,7 +158,9 @@ export default function CoursesPage() {
                   ))}
                 </SelectContent>
               </Select>
-              <span className='md:inline-block hidden'>of {table.getFilteredRowModel().rows.length} results</span>
+              <span className='md:inline-block hidden'>
+                of {table.getFilteredRowModel().rows.length} result{table.getFilteredRowModel().rows.length > 1 ? 's' : ''}
+              </span>
             </div>
 
             <div className='h-9 w-px bg-[var(--gray-300)] md:mx-6 mx-3' />
@@ -205,10 +207,12 @@ export default function CoursesPage() {
         />
 
         {table.getPageCount() > 1 && (
-          <TablePagination
-            table={table}
-            app={APPS.TRAINING}
-          />
+          <div className='py-[26px]'>
+            <TablePagination
+              table={table}
+              app={APPS.TRAINING}
+            />
+          </div>
         )}
       </div>
 

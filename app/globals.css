@@ -277,8 +277,8 @@ html, body {
   border-color: var(--gray-300);
 }
 
-.custom-table button[data-slot="checkbox"][data-state="checked"],
-.custom-table button[data-slot="checkbox"][data-state="indeterminate"] {
+/* .custom-table button[data-slot="checkbox"][data-state="indeterminate"] */
+.custom-table button[data-slot="checkbox"][data-state="checked"] {
   border-color: #4c1d95;
 }
 
