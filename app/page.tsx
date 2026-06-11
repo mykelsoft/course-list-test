@@ -100,8 +100,8 @@ export default function CoursesPage() {
   return (
     <>
       {/* Top Controls: Search & Add */}
-      <div className='bg-white py-4 px-6'>
-        <div className='flex items-center gap-4'>
+      <div className='bg-white py-4 md:px-6 px-4'>
+        <div className='flex items-center md:gap-4 gap-2'>
           <CustomButton
             title='Filters'
             onClick={() => console.log('Filters Clicked')}
@@ -129,7 +129,7 @@ export default function CoursesPage() {
         </div>
       </div>
 
-      <div className='p-6 md:p-10'>
+      <div className='px-4 py-7 md:p-10'>
         <PageInfoBanner
           title='Free Courses List'
           subtitle='List of free courses available on the platform.'
@@ -139,7 +139,7 @@ export default function CoursesPage() {
         <div className='flex justify-between items-center py-0.5 mb-3'>
           <div className='flex items-center text-sm text-[var(--gray-700)]'>
             <div className='flex items-center gap-2.5'>
-              <span>Show</span>
+              <span className='md:inline-block hidden'>Show</span>
               <Select
                 value={String(pagination.pageSize)}
                 onValueChange={(val) => table.setPageSize(Number(val))}
@@ -158,10 +158,10 @@ export default function CoursesPage() {
                   ))}
                 </SelectContent>
               </Select>
-              <span>of {table.getFilteredRowModel().rows.length} results</span>
+              <span className='md:inline-block hidden'>of {table.getFilteredRowModel().rows.length} results</span>
             </div>
 
-            <div className='h-9 w-px bg-[var(--gray-300)] mx-6' />
+            <div className='h-9 w-px bg-[var(--gray-300)] md:mx-6 mx-3' />
 
             <button
               onClick={handleBulkArchive}
@@ -179,7 +179,12 @@ export default function CoursesPage() {
           </div>
 
           <CustomButton
-            title='Add Free Course'
+            title={
+              <>
+                <span className='md:inline-block hidden'>Add Free Course</span>
+                <span className='md:hidden inline-block'>Add</span>
+              </>
+            }
             onClick={() => console.log('Add Course Clicked')}
             leadingIcon={<Plus size={18} />}
             app={APPS.TRAINING}
