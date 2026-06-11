@@ -81,6 +81,24 @@ export default function CoursesPage() {
     [dispatch, handlers.handleOpenArchiveDialog]
   );
 
+  function getSearchableValue(row, _columnId, filterValue) {
+      const searchValue = String(filterValue ?? '')
+        .trim()
+        .toLowerCase();
+
+      if (!searchValue) {
+        return true;
+      }
+
+      const { id, name, assignedCompanies, totalUnits } = row.original;
+      const searchableValue = [id, name, assignedCompanies, totalUnits]
+        .filter((value) => value !== null && value !== undefined)
+        .join(' ')
+        .toLowerCase();
+
+      return searchableValue.includes(searchValue);
+  }
+
   const table = useReactTable({
     data: courses,
     columns,
@@ -90,6 +108,7 @@ export default function CoursesPage() {
     onGlobalFilterChange: setGlobalFilter,
     onRowSelectionChange: setRowSelection,
     onColumnFiltersChange: setColumnFilters,
+    globalFilterFn: getSearchableValue,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -119,6 +138,7 @@ export default function CoursesPage() {
                 <SearchIcon size={16} />
               </div>
               <Input
+                type="search"
                 placeholder='Search Courses'
                 value={globalFilter}
                 onChange={(event) => setGlobalFilter(event.target.value)}
@@ -147,7 +167,7 @@ export default function CoursesPage() {
                 <SelectTrigger className='h-8 w-[54px] font-medium text-[var(--gray-700)] bg-white p-2 gap-0 rounded border-[var(--gray-300)]'>
                   <SelectValue placeholder={pagination.pageSize} />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className='w-20'>
                   {[10, 20, 30, 50].map((size) => (
                     <SelectItem
                       key={size}

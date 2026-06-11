@@ -1,7 +1,7 @@
 // File: ./components/custom-ui/custom-table/table-pagination.tsx
 'use client';
 
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Ellipsis } from 'lucide-react';
 
 import { APPS } from '#types/ENUMS';
 import { Button } from '@/components/ui/button';
@@ -92,10 +92,10 @@ export function TablePagination<TData>({
             return (
               <span
                 key={`ellipsis-${idx}`}
-                className='flex size-7 items-center justify-center font-medium text-[var(--gray-700)]'
+                className='w-8 mt-2 flex items-center justify-center font-medium text-[var(--gray-700)]'
                 aria-hidden='true'
               >
-                ...
+                <Ellipsis size={16} />
               </span>
             );
           }

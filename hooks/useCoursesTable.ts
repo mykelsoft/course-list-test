@@ -192,9 +192,18 @@ function reducer(state: CoursesTableState, action: Action): CoursesTableState {
     case ActionType.SET_COLUMN_FILTERS:
       return { ...state, columnFilters: action.payload };
     case ActionType.SET_SEARCH_QUERY:
-      return { ...state, searchQuery: action.payload };
+      return {
+        ...state,
+        searchQuery: action.payload,
+        pagination: { ...state.pagination, pageIndex: 0 },
+      };
     case ActionType.SET_GLOBAL_FILTER:
-      return { ...state, globalFilter: action.payload };
+      return {
+        ...state,
+        globalFilter: action.payload,
+        searchQuery: action.payload,
+        pagination: { ...state.pagination, pageIndex: 0 },
+      };
     case ActionType.SET_FILTERS:
       return { ...state, filters: action.payload };
     case ActionType.SET_FILTER_OPEN:
@@ -321,7 +330,17 @@ export function useCoursesTable(initialCourses: CourseWithDetails[] = [], isPaid
     return state.courses.filter((course) => {
       if (state.searchQuery) {
         const query = state.searchQuery.toLowerCase();
-        if (!course.name.toLowerCase().includes(query)) {
+        const searchableValue = [
+          course.id,
+          course.name,
+          course.assignedCompanies,
+          course.totalUnits,
+        ]
+          .filter((value) => value !== null && value !== undefined)
+          .join(' ')
+          .toLowerCase();
+
+        if (!searchableValue.includes(query)) {
           return false;
         }
       }
@@ -383,8 +402,11 @@ export function useCoursesTable(initialCourses: CourseWithDetails[] = [], isPaid
     dispatch({ type: ActionType.SET_ROW_SELECTION, payload: typeof updater === 'function' ? updater(state.rowSelection) : updater });
   const setColumnFilters = (updater: Updater<ColumnFiltersState>) =>
     dispatch({ type: ActionType.SET_COLUMN_FILTERS, payload: typeof updater === 'function' ? updater(state.columnFilters) : updater });
-  const setGlobalFilter = (value: string) => 
-    dispatch({ type: ActionType.SET_GLOBAL_FILTER, payload: value });
+  const setGlobalFilter = (updater: Updater<string>) =>
+    dispatch({
+      type: ActionType.SET_GLOBAL_FILTER,
+      payload: typeof updater === 'function' ? updater(state.globalFilter) : updater,
+    });
 
 
   const handleOpenAddDialog = () => dispatch({ type: ActionType.OPEN_ADD_DIALOG });
