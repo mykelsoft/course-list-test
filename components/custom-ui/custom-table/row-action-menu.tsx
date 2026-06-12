@@ -32,39 +32,63 @@ const RowActionMenu: React.FC<RowActionMenuProps> = ({
   app = APPS.PORTAL,
 }) => {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className={`h-8 w-8 p-0 ${Glowing(app).icon}`}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <Spinner size={16} />
-          ) : (
-            <Ellipsis className={`size-[18px] ${Glowing(app).icon}`} />
-          )}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        className={Themes(app).dropdownMenu.content}
-      >
+    <>
+      <div className='flex items-center justify-end gap-2 md:hidden'>
         {menuItems.map((item) => (
-          <DropdownMenuItem
+          <Button
             key={item.label}
-            className={`${Themes(app).dropdownMenu.item}`}
+            type='button'
+            variant='ghost'
+            size='icon'
+            className={cn(
+              'size-7 p-0 text-[var(--gray-700)] hover:text-primary',
+              "[&_svg:not([class*='text-'])]:text-current!",
+              item.className,
+            )}
             onClick={item.onClick}
+            disabled={isLoading}
+            aria-label={item.label}
           >
             {item.icon}
-            <span className={cn("text-sm text-grey-700 align-left", item.className)}>
-              {item.label}
-            </span>
-          </DropdownMenuItem>
+          </Button>
         ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </div>
+
+      <div className='hidden md:block'>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant='ghost'
+              size='icon'
+              className={`h-8 w-8 p-0 ${Glowing(app).icon}`}
+              disabled={isLoading}
+            >
+              {isLoading ? <Spinner size={16} /> : <Ellipsis className={`size-[18px] ${Glowing(app).icon}`} />}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align='end'
+            className={Themes(app).dropdownMenu.content}
+          >
+            {menuItems.map((item) => (
+              <DropdownMenuItem
+                key={item.label}
+                className={cn(
+                  'text-[var(--gray-700)]',
+                  Themes(app).dropdownMenu.item,
+                  // Override shadcn's [&_svg]:text-muted-foreground so icons inherit item color on hover/highlight
+                  "[&_svg:not([class*='text-'])]:text-current!",
+                )}
+                onClick={item.onClick}
+              >
+                {item.icon}
+                <span className={cn('text-sm align-left', item.className)}>{item.label}</span>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </>
   );
 };
 
