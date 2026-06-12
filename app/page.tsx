@@ -137,17 +137,20 @@ export default function CoursesPage() {
 
           <div className='flex-1 min-w-0'>
             <div
-              className={cn('relative flex-1 rounded-md bg-[var(--gray-50)] border border-[var(--gray-300)]', Glowing(APPS.TRAINING).inputBox)}
+              className={cn(
+                'relative flex-1 rounded-md bg-[var(--gray-50)] border border-[var(--gray-300)] transition-shadow focus-within:ring-1 focus-within:ring-primary focus-within:shadow-[0_0_6px_var(--primary-shadow)]',
+                Glowing(APPS.TRAINING).inputBox,
+              )}
             >
               <div className='absolute left-3 top-1/2 -translate-y-1/2 text-[var(--gray-700)]'>
                 <SearchIcon size={16} />
               </div>
               <Input
-                type="search"
+                type='search'
                 placeholder='Search Courses'
                 value={globalFilter}
                 onChange={(event) => setGlobalFilter(event.target.value)}
-                className='placeholder:text-[var(--gray-400)] text-sm border-none h-[37px] text-sm pl-9 shadow-none ring-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0'
+                className='placeholder:text-[var(--gray-400)] focus:placeholder:text-transparent transition-colors duration-200 text-sm border-none h-[37px] pl-9 shadow-none ring-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0'
               />
             </div>
           </div>
