@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/tooltip';
 
 import { ArrowUpDownIcon } from 'lucide-react';
+import CustomButton from '../custom-button';
 import React from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils'; // Import cn utility
@@ -122,6 +123,43 @@ export function CustomTable<TData>({
   tooltipBodyClassName = 'text-xs text-[var(--text-secondary,#6B7280)]',
 }: GenericTableProps<TData>) {
   const rows = table.getRowModel().rows;
+  const mobileHeaderGroup = table.getHeaderGroups()[0];
+  const mobileSelectionHeader = mobileHeaderGroup?.headers.find(
+    (header) => header.column.id === 'select'
+  );
+  const mobileSortableHeader = mobileHeaderGroup?.headers.find(
+    (header) =>
+      header.column.id !== 'select' &&
+      header.column.id !== 'actions' &&
+      header.column.getCanSort()
+  );
+  const mobileSortHeaderLabel =
+    typeof mobileSortableHeader?.column.columnDef.header === 'string'
+      ? mobileSortableHeader.column.columnDef.header
+      : 'column';
+
+  const mobileTableHeader = mobileHeaderGroup ? (
+    <div className='flex items-center bg-[var(--gray-200)] px-4 py-3 rounded'>
+      {mobileSelectionHeader && !mobileSelectionHeader.isPlaceholder ? (
+        <div className='mr-4 flex shrink-0 items-center **:data-[slot=checkbox]:size-5 **:data-[slot=checkbox]:rounded'>
+          {flexRender(mobileSelectionHeader.column.columnDef.header, mobileSelectionHeader.getContext())}
+        </div>
+      ) : null}
+
+      <div className='min-w-0 flex-1 text-sm font-normal leading-normal text-[var(--gray-600)]'>Select All</div>
+
+      {mobileSortableHeader ? (
+        <CustomButton
+          type='button'
+          onClick={mobileSortableHeader.column.getToggleSortingHandler()}
+          width='size-7 p-0'
+          variant='ghost'
+          aria-label={`Sort by ${mobileSortHeaderLabel}`}
+          leadingIcon={<ArrowUpDownIcon size={20} className={mobileSortableHeader.column.getIsSorted() ? 'text-primary' : undefined} />}
+        />
+      ) : null}
+    </div>
+  ) : null;
 
   const renderMobileRow = (row: Row<TData>) => {
     const visibleCells = row.getVisibleCells();
@@ -139,53 +177,36 @@ export function CustomTable<TData>({
         key={row.id}
         data-state={row.getIsSelected() ? 'selected' : undefined}
         data-inactive={tooltipContent ? true : undefined}
-        className={cn(
-          'overflow-hidden rounded-[4px] border border-(--gray-300) bg-white',
-          getRowClassName?.(row)
-        )}
+        className={cn('overflow-hidden rounded border border-[var(--gray-200)] bg-white', getRowClassName?.(row))}
       >
-        <div className="flex h-[103px] items-center bg-(--gray-200) px-[31px]">
+        <div className='flex items-center bg-[var(--gray-200)] px-4 py-3'>
           {selectionCell ? (
-            <div className="mr-[33px] flex shrink-0 items-center **:data-[slot=checkbox]:size-[39px] **:data-[slot=checkbox]:rounded-[6px]">
-              {flexRender(
-                selectionCell.column.columnDef.cell,
-                selectionCell.getContext()
-              )}
+            <div className='mr-4 flex shrink-0 items-center **:data-[slot=checkbox]:size-5 **:data-[slot=checkbox]:rounded'>
+              {flexRender(selectionCell.column.columnDef.cell, selectionCell.getContext())}
             </div>
           ) : null}
 
           {primaryCell ? (
-            <div className="min-w-0 flex-1 text-[30px] font-semibold leading-none text-(--gray-700)">
-              {flexRender(
-                primaryCell.column.columnDef.cell,
-                primaryCell.getContext()
-              )}
+            <div className='min-w-0 flex-1 text-sm font-semibold leading-normal text-[var(--gray-700)]'>
+              {flexRender(primaryCell.column.columnDef.cell, primaryCell.getContext())}
             </div>
           ) : null}
 
           {actionsCell ? (
-            <div className="ml-4 flex shrink-0 items-center justify-end text-(--gray-700) [&_button]:size-10 [&_svg]:size-[28px]">
-              {flexRender(
-                actionsCell.column.columnDef.cell,
-                actionsCell.getContext()
-              )}
+            <div className='ml-4 flex shrink-0 items-center justify-end text-[var(--gray-700)] [&_button]:size-7 [&_svg]:size-4'>
+              {flexRender(actionsCell.column.columnDef.cell, actionsCell.getContext())}
             </div>
           ) : null}
         </div>
 
-        <div className="divide-y divide-(--gray-200)">
+        <div className='divide-y divide-[var(--gray-200)]'>
           {detailCells.map((cell, cellIndex) => (
             <div
               key={cell.id}
-              className={cn(
-                'grid grid-cols-[260px_minmax(0,1fr)] items-center bg-white',
-                cellIndex === 0 ? 'min-h-[105px]' : 'min-h-[90px]'
-              )}
+              className='grid grid-cols-[128px_minmax(0,1fr)] items-center bg-white px-4 py-3 gap-4'
             >
-              <div className="px-[31px] text-[30px] font-normal leading-tight text-(--gray-500)">
-                {getReadableColumnLabel(row, cell.column.id)}
-              </div>
-              <div className="min-w-0 px-0 pr-[31px] text-[30px] font-normal leading-tight text-(--gray-700) **:text-[30px] **:leading-tight">
+              <div className='text-sm leading-normal text-[var(--gray-500)]'>{getReadableColumnLabel(row, cell.column.id)}</div>
+              <div className='min-w-0 text-sm font-normal leading-normal text-[var(--gray-600)]'>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </div>
             </div>
@@ -224,12 +245,13 @@ export function CustomTable<TData>({
       </div>
 
       <div className='md:hidden'>
+        {mobileTableHeader ? <div className='mb-4'>{mobileTableHeader}</div> : null}
         {isLoading ? (
           <div className='flex flex-col gap-4'>
             {Array.from({ length: Math.min(skeletonRows, 3) }).map((_, rowIndex) => (
               <div
                 key={`mobile-skeleton-row-${rowIndex}`}
-                className='overflow-hidden rounded-[4px] border border-(--gray-300) bg-white'
+                className='overflow-hidden rounded border border-(--gray-300) bg-white'
               >
                 <div className='flex h-[103px] items-center gap-[33px] bg-(--gray-200) px-[31px]'>
                   <Skeleton className='size-[39px] rounded-[6px]' />
@@ -257,7 +279,7 @@ export function CustomTable<TData>({
         ) : rows.length > 0 ? (
           <div className='flex flex-col gap-4'>{rows.map(renderMobileRow)}</div>
         ) : (
-          <div className='rounded-[4px] border border-(--gray-300) bg-white p-8 text-center text-sm text-gray-500'>
+          <div className='rounded border border-(--gray-300) bg-white p-8 text-center text-sm text-gray-500'>
             {noResultsMessage}
           </div>
         )}
