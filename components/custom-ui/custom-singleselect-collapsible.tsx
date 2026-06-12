@@ -49,7 +49,6 @@ const CustomSingleSelectCollapsible: React.FC<
   setSearchTerm,
   app = APPS.PORTAL,
   disabled = false,
-  placeholder: _placeholder, // Reserved for future use
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
 }) => {

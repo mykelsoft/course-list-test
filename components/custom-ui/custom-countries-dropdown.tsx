@@ -19,7 +19,7 @@ import {
 } from './../ui/command';
 import countriesDataFull from 'world-countries'; // Import the data
 import { Glowing } from '@/components/custom-ui/styling/glowing'; // Adjust this path as necessary
-import { APPS } from '#types/ENUMS.ts';
+import { APPS } from '#types/ENUMS';
 
 const countryArr = countriesDataFull
   .map((country) => ({
@@ -38,6 +38,12 @@ export type CustomCountriesDropdownItem = {
   flag: string;
 };
 
+type CountrySource = {
+  code: string;
+  name: string;
+  flag?: string;
+};
+
 const customCountriesDropdownItems: CustomCountriesDropdownItem[] =
   sortedCountries.map((country) => ({
     value: country.code,
@@ -48,7 +54,7 @@ const customCountriesDropdownItems: CustomCountriesDropdownItem[] =
 type CustomCountriesDropdownProps = {
   app?: APPS | null;
   label?: string;
-  countries?: any[];
+  countries?: CountrySource[];
   selectedItemValue: CustomCountriesDropdownItem | null;
   hasValidationError?: boolean;
   validationError?: string;
@@ -78,7 +84,10 @@ const CustomCountriesDropdown: React.FC<CustomCountriesDropdownProps> = ({
       return countries.map((country) => ({
         value: country.code,
         label: country.name,
-        flag: countryArr.find((c) => c.code === country.code)?.flag || '🏳️', // Fallback flag if not found
+        flag:
+          country.flag ||
+          countryArr.find((c) => c.code === country.code)?.flag ||
+          '🏳️',
       }));
     }
     return customCountriesDropdownItems;

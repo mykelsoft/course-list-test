@@ -7,10 +7,10 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from '#components/ui/card.tsx';
-import { Separator } from '#components/ui/separator.tsx';
+} from '#components/ui/card';
+import { Separator } from '#components/ui/separator';
 import { cn } from '@/lib/utils';
-import { APPS } from '#types/ENUMS.ts';
+import { APPS } from '#types/ENUMS';
 
 type CustomCardExpandingProps = {
   children: React.ReactNode;

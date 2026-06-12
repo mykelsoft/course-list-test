@@ -1,13 +1,13 @@
 type Result = {
   success: boolean;
   message?: string;
-  data?: any;
+  data?: unknown;
 };
 
 type ResultWithError = {
   success: boolean;
   message?: string;
-  error?: any;
+  error?: unknown;
 };
 
 export type { Result, ResultWithError };

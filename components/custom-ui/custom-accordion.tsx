@@ -5,7 +5,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import type { ReactNode } from 'react';
 import React, { useState } from 'react';
 
-import { Separator } from '#components/ui/separator.tsx';
+import { Separator } from '#components/ui/separator';
 
 type CustomAccordionProps = {
   title: string | ReactNode;

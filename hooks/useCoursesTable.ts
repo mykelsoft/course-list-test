@@ -110,7 +110,13 @@ type Action =
   | { type: ActionType.FETCH_START }
   | { type: ActionType.FETCH_SUCCESS; payload: CourseWithDetails[] }
   | { type: ActionType.FETCH_ERROR; payload: string }
-  | { type: ActionType.SET_AUX_DATA; payload: { companies: any[]; jobRoles: any[] } } 
+  | {
+      type: ActionType.SET_AUX_DATA;
+      payload: {
+        companies: { id: number; name: string }[];
+        jobRoles: { id: number; name: string }[];
+      };
+    }
   | { type: ActionType.SET_SORTING; payload: SortingState }
   | { type: ActionType.SET_PAGINATION; payload: PaginationState }
   | { type: ActionType.SET_ROW_SELECTION; payload: RowSelectionState }

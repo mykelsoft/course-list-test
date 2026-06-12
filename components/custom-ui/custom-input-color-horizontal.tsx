@@ -31,7 +31,6 @@ type CustomInputProps = {
 const CustomInputColorHorizontal: React.FC<CustomInputProps> = ({
   label,
   name,
-  placeholder,
   value = '#000000',
   tooltipImageUrl,
   validationError,

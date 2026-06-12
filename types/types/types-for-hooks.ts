@@ -9,7 +9,7 @@ export enum DataStateTypes {
   isOpen = 'isOpen',
 }
 
-export type DataState<T = any> = {
+export type DataState<T = unknown> = {
   data: T;
   formData: React.FormEvent<HTMLFormElement> | null;
   isLoading: boolean;

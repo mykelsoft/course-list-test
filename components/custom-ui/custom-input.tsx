@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils';
 import { Input as ShadcnInput } from '../ui/input';
 import { TextArea } from '../ui/textarea';
 import { Glowing } from './styling/glowing';
-import { APPS } from '#types/ENUMS.ts';
+import { APPS } from '#types/ENUMS';
 import CustomErrorMessage from './custom-error-message';
 import {
   Tooltip,
@@ -95,7 +95,7 @@ const CustomInput = <TFieldValues extends FieldValues = FieldValues>({
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     if (rhfRegisteredProps.onChange) {
-      rhfRegisteredProps.onChange(event as any);
+      rhfRegisteredProps.onChange(event);
     }
     if (onValueChange) {
       onValueChange(event.target.value);
@@ -113,7 +113,11 @@ const CustomInput = <TFieldValues extends FieldValues = FieldValues>({
       restOfInputProps.onKeyDown &&
       typeof restOfInputProps.onKeyDown === 'function'
     ) {
-      restOfInputProps.onKeyDown(event as any);
+      if (event.currentTarget instanceof HTMLInputElement) {
+        restOfInputProps.onKeyDown(
+          event as React.KeyboardEvent<HTMLInputElement>
+        );
+      }
     }
   };
 
@@ -140,11 +144,8 @@ const CustomInput = <TFieldValues extends FieldValues = FieldValues>({
     defaultValue: uncontrolledDefaultValue,
     ...restOfInputProps,
     ...rhfRegisteredProps,
+    ...(onValueChange ? { value: controlledValue ?? '' } : {}),
   };
-
-  if (onValueChange) {
-    (commonProps as any).value = controlledValue ?? '';
-  }
 
   const renderInput = () => (
     <ShadcnInput

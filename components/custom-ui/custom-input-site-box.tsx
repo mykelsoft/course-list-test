@@ -14,7 +14,7 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { Input as ShadcnInput } from '../ui/input';
 import { Glowing } from './styling/glowing';
-import { APPS } from '#types/ENUMS.ts';
+import { APPS } from '#types/ENUMS';
 
 type CustomInputSiteBoxProps<TFieldValues extends FieldValues> = {
   label?: string;
@@ -71,20 +71,16 @@ const CustomInputSiteBox = <TFieldValues extends FieldValues = FieldValues>({
     rhfRegisteredProps = register(name as Path<TFieldValues>, registerOptions);
   }
 
-  const handleChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (rhfRegisteredProps.onChange) {
-      rhfRegisteredProps.onChange(event as any);
+      rhfRegisteredProps.onChange(event);
     }
     if (onValueChange) {
       onValueChange(event.target.value);
     }
   };
 
-  const handleKeyDown = (
-    event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' && onEnterKeyPress) {
       event.preventDefault();
       onEnterKeyPress();
@@ -93,7 +89,7 @@ const CustomInputSiteBox = <TFieldValues extends FieldValues = FieldValues>({
       restOfInputProps.onKeyDown &&
       typeof restOfInputProps.onKeyDown === 'function'
     ) {
-      restOfInputProps.onKeyDown(event as any);
+      restOfInputProps.onKeyDown(event);
     }
   };
 
@@ -118,13 +114,9 @@ const CustomInputSiteBox = <TFieldValues extends FieldValues = FieldValues>({
     name: name as string,
     defaultValue: uncontrolledDefaultValue,
     ...restOfInputProps,
-    ...rhfRegisteredProps, // Spread RHF props here
+    ...rhfRegisteredProps,
+    ...(onValueChange ? { value: controlledValue ?? '' } : {}),
   };
-
-  // Only add the `value` prop if this is a controlled component (not using RHF)
-  if (onValueChange) {
-    (commonProps as any).value = controlledValue ?? '';
-  }
 
   return (
     <div

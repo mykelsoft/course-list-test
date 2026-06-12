@@ -4,7 +4,6 @@
 import { ChevronLeft, ChevronRight, Ellipsis } from 'lucide-react';
 
 import { APPS } from '#types/ENUMS';
-import { Button } from '@/components/ui/button';
 import CustomButton from '../custom-button';
 import React from 'react';
 // components/custom-ui/custom-table/table-pagination.tsx

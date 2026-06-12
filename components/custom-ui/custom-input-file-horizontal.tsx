@@ -1,10 +1,10 @@
 // File: ./components/custom-ui/custom-input-file-horizontal.tsx
 import React, { useState } from 'react';
-import type { UseFormRegister } from 'react-hook-form';
+import type { FieldValues, UseFormRegister } from 'react-hook-form';
 
 import CustomErrorMessage from './custom-error-message';
 import { Label } from '@/components/ui/label';
-import { Button } from '#components/ui/button.tsx';
+import { Button } from '#components/ui/button';
 
 type CustomInputFileHorizontalProps = {
   label?: string;
@@ -20,7 +20,7 @@ type CustomInputFileHorizontalProps = {
   onValueChange?: (value: string) => void;
   icon?: React.ReactNode;
   disableValidation?: boolean;
-  register?: UseFormRegister<any>;
+  register?: UseFormRegister<FieldValues>;
 } & React.ComponentProps<'input'>; // This includes onChange
 
 const CustomInputFileHorizontal: React.FC<CustomInputFileHorizontalProps> = ({

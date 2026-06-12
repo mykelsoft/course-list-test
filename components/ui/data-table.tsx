@@ -32,7 +32,7 @@ const DEFAULT_FILTER_FIELDS: string[] = [];
 
 export type CustomTablePropsType<TData> = React.PropsWithChildren<{
   row: Row<TData>;
-}> & { [x: string]: any };
+}> & { [x: string]: unknown };
 
 type DataTableProps<TData> = {
   columns: ColumnDef<TData, unknown>[];
@@ -55,6 +55,7 @@ export function DataTable<TData extends Record<string, unknown>>({
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table manages its own memoization
   const table = useReactTable({
     data,
     columns,

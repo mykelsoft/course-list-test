@@ -6,7 +6,7 @@ import type { DateRange } from 'react-day-picker';
 
 import { cn } from '@/lib/utils';
 import CustomButton from '@/components/custom-ui/custom-button';
-import { BUTTON_VARIANTS } from '#components/custom-ui/button-variants.ts';
+import { BUTTON_VARIANTS } from '#components/custom-ui/button-variants';
 import { Calendar } from '@/components/ui/calendar';
 import { Card } from '@/components/ui/card';
 import {
@@ -14,8 +14,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Glowing } from '#components/custom-ui/styling/glowing.ts';
-import { APPS } from '#types/ENUMS.ts';
+import { Glowing } from '#components/custom-ui/styling/glowing';
+import { APPS } from '#types/ENUMS';
 
 type CustomDateRangePickerProps = React.HTMLAttributes<HTMLDivElement> & {
   app?: APPS;

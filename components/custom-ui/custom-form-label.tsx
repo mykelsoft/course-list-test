@@ -7,7 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { APPS } from '#types/ENUMS.ts'; // Import APPS enum
+import { APPS } from '#types/ENUMS'; // Import APPS enum
 import { cn } from '@/lib/utils'; // Import cn utility
 
 type LabelProps = {

@@ -25,7 +25,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
-import { APPS } from '#types/ENUMS.ts';
+import { APPS } from '#types/ENUMS';
 
 // --- MODIFIED PROPS ---
 type CustomInputPasswordProps<

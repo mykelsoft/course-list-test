@@ -1,13 +1,13 @@
-import { Button } from '#components/ui/button.tsx';
+import { Button } from '#components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '#components/ui/dropdown-menu.tsx';
+} from '#components/ui/dropdown-menu';
 import { ChevronDown } from 'lucide-react';
 import { Glowing } from './styling/glowing';
-import { APPS } from '#types/ENUMS.ts';
+import { APPS } from '#types/ENUMS';
 
 export interface CustomDropdownItem {
   id: number;

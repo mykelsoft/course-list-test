@@ -1,7 +1,7 @@
-import { Button } from '#components/ui/button.tsx';
-import { Input } from '#components/ui/input.tsx';
+import { Button } from '#components/ui/button';
+import { Input } from '#components/ui/input';
 import { Glowing } from '@/components/custom-ui/styling/glowing';
-import { APPS } from '#types/ENUMS.ts';
+import { APPS } from '#types/ENUMS';
 
 type CustomInputNumberRockerProps = {
   app?: APPS;
@@ -30,12 +30,13 @@ const CustomInputNumberRocker: React.FC<CustomInputNumberRockerProps> = ({
     }
   };
 
-  const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInput = (event: React.FormEvent<HTMLInputElement>) => {
     if (!disabled) {
-      const value = event.target.value;
+      const input = event.currentTarget;
+      const value = input.value;
       // Replace any non-numeric characters with an empty string
-      event.target.value = value.replace(/\D/g, '');
-      const numericValue = Number(event.target.value);
+      input.value = value.replace(/\D/g, '');
+      const numericValue = Number(input.value);
       if (numericValue >= 0) {
         onChange(numericValue);
       }

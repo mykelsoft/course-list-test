@@ -151,6 +151,7 @@ export function CustomTable<TData>({
       {mobileSortableHeader ? (
         <CustomButton
           type='button'
+          title={null}
           onClick={mobileSortableHeader.column.getToggleSortingHandler()}
           width='size-7 p-0'
           variant='ghost'
@@ -200,7 +201,7 @@ export function CustomTable<TData>({
         </div>
 
         <div className='divide-y divide-[var(--gray-200)]'>
-          {detailCells.map((cell, cellIndex) => (
+          {detailCells.map((cell) => (
             <div
               key={cell.id}
               className='grid grid-cols-[128px_minmax(0,1fr)] items-center bg-white px-4 py-3 gap-4'

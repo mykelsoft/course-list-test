@@ -13,7 +13,7 @@ type CustomButtonProps = {
   isLoading?: boolean; // Loading state flag
   width?: string; // Optional width (Tailwind CSS class) for the content container
   type?: 'button' | 'submit' | 'reset'; // Optional button type (default: "button")
-  buttonProps?: Record<string, any>;
+  buttonProps?: Record<string, unknown>;
   variant?: ButtonVariant;
 };
 

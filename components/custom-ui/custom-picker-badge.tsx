@@ -6,24 +6,24 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '#components/ui/command.tsx';
+} from '#components/ui/command';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '#components/ui/popover.tsx';
-import { Label } from '#components/ui/label.tsx';
-import { cn } from '#lib/utils.ts';
+} from '#components/ui/popover';
+import { Label } from '#components/ui/label';
+import { cn } from '#lib/utils';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@radix-ui/react-tooltip'; // Keep direct import if needed
 import { Check, ChevronsUpDown, InfoIcon, X } from 'lucide-react';
-import { Button } from '#components/ui/button.tsx';
+import { Button } from '#components/ui/button';
 import { useState, useEffect } from 'react';
 import { Glowing } from '@/components/custom-ui/styling/glowing';
-import { Badge } from '#components/ui/badge.tsx';
+import { Badge } from '#components/ui/badge';
 import { APPS } from '@/types/ENUMS';
 
 // Define a generic item type for the picker

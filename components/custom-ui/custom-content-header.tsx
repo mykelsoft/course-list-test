@@ -4,7 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
-import { APPS } from '#types/ENUMS.ts';
+import { APPS } from '#types/ENUMS';
 import Themes from './styling/Themes';
 
 type CustomContentHeaderProps = {

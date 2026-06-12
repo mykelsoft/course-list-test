@@ -2,8 +2,8 @@
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
-import { Glowing } from '#components/custom-ui/styling/glowing.ts';
-import { APPS } from '#types/ENUMS.ts';
+import { Glowing } from '#components/custom-ui/styling/glowing';
+import { APPS } from '#types/ENUMS';
 
 function TextArea({ className, ...props }: React.ComponentProps<'textarea'>) {
   return (

@@ -3,7 +3,7 @@ import CustomButton from './custom-button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 // ... existing code ...
 
-const CustomPageCounter = ({ table }: { table: Table<any> }) => {
+const CustomPageCounter = <TData,>({ table }: { table: Table<TData> }) => {
   const totalPages = table.getPageCount();
 
   if (totalPages <= 1) return null; // No pagination needed if there's only one page

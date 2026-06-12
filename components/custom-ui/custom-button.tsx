@@ -17,8 +17,9 @@ type CustomButtonProps = {
   isLoading?: boolean;
   width?: string;
   type?: 'button' | 'submit' | 'reset';
-  buttonProps?: Record<string, any>;
+  buttonProps?: Record<string, unknown>;
   variant?: ButtonVariant;
+  size?: React.ComponentProps<typeof Button>['size'];
   disabled?: boolean;
   leadingIcon?: React.ReactNode;
   trailingIcon?: React.ReactNode;
@@ -30,7 +31,7 @@ type CustomButtonProps = {
 const defaultButtonProps = {};
 
 const CustomButton = (
-    { ref, onClick, url, app = APPS.PORTAL, title, isLoading, width = 'px-[16px] py-[10px]', type = 'button', buttonProps = defaultButtonProps, variant = BUTTON_VARIANTS.DEFAULT, disabled = false, className, leadingIcon, trailingIcon, buttonClass, form }: CustomButtonProps & { ref?: React.RefObject<HTMLButtonElement | null> }
+    { ref, onClick, url, app = APPS.PORTAL, title, isLoading, width = 'px-[16px] py-[10px]', type = 'button', buttonProps = defaultButtonProps, variant = BUTTON_VARIANTS.DEFAULT, size, disabled = false, className, leadingIcon, trailingIcon, buttonClass, form }: CustomButtonProps & { ref?: React.RefObject<HTMLButtonElement | null> }
   ) => {
     const content = (
       <span className="inline-flex justify-center items-center gap-1 w-full min-w-0 overflow-hidden">
@@ -65,6 +66,7 @@ const CustomButton = (
       // --- FIX: Pass the correct variant to the underlying Shadcn Button ---
       variant: variant === BUTTON_VARIANTS.PRIMARY ? 'default' : variant,
       // --- END FIX ---
+      size,
       className: `h-[41px] ${width || 'min-w-[150px]'} ${(isLoading && 'opacity-50') || ''} 
       ${variant === BUTTON_VARIANTS.DEFAULT && Themes(app).button.default}
       ${variant === BUTTON_VARIANTS.OUTLINE && Themes(app).button.outline}

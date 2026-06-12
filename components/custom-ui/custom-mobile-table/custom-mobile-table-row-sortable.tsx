@@ -182,7 +182,6 @@ export function CustomMobileTableRowSortable({
     ? { ...listeners, ...dragHandle.listeners }
     : listeners;
 
-  const _hasHeaderControls = checkbox || switchProps || actions || customActionMenu || dragHandle;
   const headerRef = React.useRef<HTMLDivElement>(null);
   const actionButtonsRef = React.useRef<HTMLDivElement>(null);
   const [hasWrapped, setHasWrapped] = React.useState(false);

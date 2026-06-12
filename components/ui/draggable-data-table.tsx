@@ -9,7 +9,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import type { ColumnDef } from '@tanstack/react-table';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import DraggableTableStyle from '@/assets/draggable-table.module.css';
 import type { CustomTablePropsType } from '@/components/ui/data-table';
@@ -30,6 +30,11 @@ function DraggableTable<TData extends TDataType>({
   onRowReorder,
 }: DraggableTableProps<TData>) {
   const [items, setItems] = useState(data);
+  const [prevData, setPrevData] = useState(data);
+  if (data !== prevData) {
+    setPrevData(data);
+    setItems(data);
+  }
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -43,11 +48,6 @@ function DraggableTable<TData extends TDataType>({
       }
     }
   };
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
-    setItems(data);
-  }, [data]);
 
   const columnsWithDragHandle: ColumnDef<TData>[] = [...columns];
 

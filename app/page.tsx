@@ -12,8 +12,9 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import type { FilterFn } from '@tanstack/react-table';
 
-import { APPS } from '@/types/courses';
+import { APPS, type CourseWithDetails } from '@/types/courses';
 import CustomButton from '@/components/custom-ui/custom-button';
 import CustomDeleteDialog from '@/components/custom-ui/custom-delete-dialog';
 import { CustomTable } from '@/components/custom-ui/custom-table/custom-table';
@@ -81,7 +82,11 @@ export default function CoursesPage() {
     [dispatch, handlers.handleOpenArchiveDialog]
   );
 
-  function getSearchableValue(row, _columnId, filterValue) {
+  const getSearchableValue: FilterFn<CourseWithDetails> = (
+    row,
+    _columnId,
+    filterValue
+  ) => {
       const searchValue = String(filterValue ?? '')
         .trim()
         .toLowerCase();
@@ -97,7 +102,7 @@ export default function CoursesPage() {
         .toLowerCase();
 
       return searchableValue.includes(searchValue);
-  }
+  };
 
   const table = useReactTable({
     data: courses,
@@ -132,7 +137,7 @@ export default function CoursesPage() {
 
           <div className='flex-1 min-w-0'>
             <div
-              className={cn('relative flex-1 rounded-md border border-[var(--gray-300)]', Glowing(APPS.TRAINING).inputBox)}
+              className={cn('relative flex-1 rounded-md bg-[var(--gray-50)] border border-[var(--gray-300)]', Glowing(APPS.TRAINING).inputBox)}
             >
               <div className='absolute left-3 top-1/2 -translate-y-1/2 text-[var(--gray-700)]'>
                 <SearchIcon size={16} />
@@ -142,7 +147,7 @@ export default function CoursesPage() {
                 placeholder='Search Courses'
                 value={globalFilter}
                 onChange={(event) => setGlobalFilter(event.target.value)}
-                className='bg-[var(--content-background)] placeholder:text-[var(--gray-400)] placeholder:text-sm border-none h-[37px] text-sm pl-9 shadow-none ring-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0'
+                className='placeholder:text-[var(--gray-400)] text-sm border-none h-[37px] text-sm pl-9 shadow-none ring-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0'
               />
             </div>
           </div>

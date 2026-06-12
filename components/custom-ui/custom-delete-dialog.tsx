@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dialog';
 
 import CustomButton from './custom-button';
-import { APPS } from '#types/ENUMS.ts';
+import { APPS } from '#types/ENUMS';
 import Themes from './styling/Themes';
 
 type CustomDeleteDialogProps = {

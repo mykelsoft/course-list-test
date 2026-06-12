@@ -103,7 +103,8 @@ export const courseService = {
 
   async removeCourseFromJobRole(courseId: number, jobRoleId: number) {
     await delay(300);
-    // No-op for mock, just simulate delay
+    void courseId;
+    void jobRoleId;
     return { success: true };
   },
 

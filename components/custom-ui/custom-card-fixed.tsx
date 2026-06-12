@@ -5,8 +5,8 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from '#components/ui/card.tsx';
-import { Separator } from '#components/ui/separator.tsx';
+} from '#components/ui/card';
+import { Separator } from '#components/ui/separator';
 
 type CustomCardFixedProps = {
   children: React.ReactNode;

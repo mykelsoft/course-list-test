@@ -14,7 +14,7 @@ import {
 
 import { Input } from '../ui/input';
 import Glowing from './styling/glowing';
-import { APPS } from '#types/ENUMS.ts';
+import { APPS } from '#types/ENUMS';
 
 type CustomInputProps<TFieldValues extends FieldValues> = {
   app?: APPS;

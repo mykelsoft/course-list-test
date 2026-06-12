@@ -1,5 +1,5 @@
 // File: ./components/custom-ui/styling/glowing.ts
-import { APPS } from '#types/ENUMS.ts';
+import { APPS } from '#types/ENUMS';
 
 // Define the return type for themed apps
 type GlowingThemeObject = {

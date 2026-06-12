@@ -43,9 +43,11 @@ export enum EmailTemplateType {
   PASSWORD_RESET_CODE_EMAIL = 'password-reset-code-email.tsx',
 }
 
-export default {
+const ENUMS = {
   ROLES,
   CompanyQueryTypes,
   EmailVariableType,
   EmailTemplateType,
 };
+
+export default ENUMS;
