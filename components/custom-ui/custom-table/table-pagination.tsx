@@ -67,7 +67,7 @@ export function TablePagination<TData>({
   return (
     <nav
       aria-label='Pagination'
-      className='flex sm:flex-row flex-col items-center justify-center text-sm'
+      className='grid grid-cols-2 gap-2.5 sm:flex sm:flex-row flex-col items-center justify-center text-sm'
     >
       <CustomButton
         variant='ghost'
@@ -85,7 +85,7 @@ export function TablePagination<TData>({
         className='rounded pl-2 pr-3 text-[var(--gray-700)]'
       />
 
-      <div className='mx-2.5 flex items-center gap-2.5'>
+      <div className='col-span-2 -order-1 sm:order-none flex items-center justify-center gap-2.5'>
         {pageItems.map((pageNumber, idx) => {
           if (pageNumber === '...') {
             return (

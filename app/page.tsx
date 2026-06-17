@@ -244,7 +244,7 @@ export default function CoursesPage() {
         />
 
         {table.getPageCount() > 1 && (
-          <div className='py-4 sm:py-[22px]'>
+          <div className='pt-4 sm:py-[22px]'>
             <TablePagination
               table={table}
               app={APPS.TRAINING}
