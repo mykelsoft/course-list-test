@@ -67,7 +67,7 @@ export function TablePagination<TData>({
   return (
     <nav
       aria-label='Pagination'
-      className='flex items-center justify-center text-sm'
+      className='flex sm:flex-row flex-col items-center justify-center text-sm'
     >
       <CustomButton
         variant='ghost'
@@ -77,10 +77,10 @@ export function TablePagination<TData>({
         title='Previous'
         leadingIcon={
           <ChevronLeft
-            size={18}
             strokeWidth={1.75}
-            className='size-[18px]'
-          />}
+            className='size-6 -mt-0.5 mr-0.5'
+          />
+        }
         aria-label='Go to previous page'
         className='rounded pl-2 pr-3 text-[var(--gray-700)]'
       />
@@ -124,10 +124,10 @@ export function TablePagination<TData>({
         aria-label='Go to next page'
         trailingIcon={
           <ChevronRight
-            size={18}
             strokeWidth={1.75}
-            className='size-[18px]'
-          />}
+            className='size-6 -mt-0.5 ml-0.5'
+          />
+        }
         className='rounded pl-3 pr-2 text-[var(--gray-700)]'
       />
     </nav>

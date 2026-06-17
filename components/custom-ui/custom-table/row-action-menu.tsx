@@ -41,7 +41,7 @@ const RowActionMenu: React.FC<RowActionMenuProps> = ({
             variant='ghost'
             size='icon'
             className={cn(
-              'size-7 p-0 text-[var(--gray-700)] hover:text-primary',
+              'size-[30px]! p-0 text-[var(--gray-700)] hover:text-primary',
               "[&_svg:not([class*='text-'])]:text-current!",
               item.className,
             )}

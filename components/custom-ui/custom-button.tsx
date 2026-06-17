@@ -6,6 +6,7 @@ import Link from 'next/link';
 import React from 'react';
 import Spinner from '../ui/spinner';
 import Themes from './styling/Themes';
+import { cn } from '@/lib/utils';
 
 type ButtonVariant = (typeof BUTTON_VARIANTS)[keyof typeof BUTTON_VARIANTS];
 
@@ -25,35 +26,36 @@ type CustomButtonProps = {
   trailingIcon?: React.ReactNode;
   className?: string;
   buttonClass?: string;
+  contentClassName?: string;
   form?: string;
 };
 
 const defaultButtonProps = {};
 
 const CustomButton = (
-    { ref, onClick, url, app = APPS.PORTAL, title, isLoading, width = 'px-[16px] py-[10px]', type = 'button', buttonProps = defaultButtonProps, variant = BUTTON_VARIANTS.DEFAULT, size, disabled = false, className, leadingIcon, trailingIcon, buttonClass, form }: CustomButtonProps & { ref?: React.RefObject<HTMLButtonElement | null> }
+    { ref, onClick, url, app = APPS.PORTAL, title, isLoading, width = 'px-[16px] py-[10px]', type = 'button', buttonProps = defaultButtonProps, variant = BUTTON_VARIANTS.DEFAULT, size, disabled = false, className, leadingIcon, trailingIcon, buttonClass, contentClassName, form }: CustomButtonProps & { ref?: React.RefObject<HTMLButtonElement | null> }
   ) => {
     const content = (
-      <span className="inline-flex justify-center items-center gap-1 w-full min-w-0 overflow-hidden">
+      <span className={cn('inline-flex justify-center items-center gap-1 w-full min-w-0 overflow-hidden', contentClassName)}>
         {isLoading === true ? (
-          <div className="flex flex-row justify-center items-center gap-1 min-w-0 overflow-hidden">
+          <div className='flex flex-row justify-center items-center gap-1 min-w-0 overflow-hidden'>
             <Spinner
               size={16}
               color={
                 variant === BUTTON_VARIANTS.DESTRUCTIVE
                   ? 'text-white'
                   : variant === BUTTON_VARIANTS.OUTLINE
-                  ? 'text-gray-700'
-                  : 'text-white'
+                    ? 'text-gray-700'
+                    : 'text-white'
               }
             />
-            <span className="truncate">{title}</span>
+            <span className='truncate leading-normal'>{title}</span>
           </div>
         ) : (
           <>
-            {leadingIcon && <span className="flex-shrink-0">{leadingIcon}</span>}
-            <span className="truncate">{title}</span>
-            {trailingIcon && <span className="flex-shrink-0">{trailingIcon}</span>}
+            {leadingIcon && <span className='flex-shrink-0'>{leadingIcon}</span>}
+            <span className='truncate leading-normal'>{title}</span>
+            {trailingIcon && <span className='flex-shrink-0'>{trailingIcon}</span>}
           </>
         )}
       </span>

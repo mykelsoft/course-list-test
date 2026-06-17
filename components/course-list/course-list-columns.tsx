@@ -129,20 +129,20 @@ export const getCourseListColumns = ({
 
       menuItems.push({
         label: 'View Course',
-        icon: <Eye size={16} />,
+        icon: <Eye className="size-[18px] md:size-4" />,
         onClick: () => handleEdit(row.original),
       });
 
       menuItems.push({
         label: 'Edit Course',
-        icon: <Pencil size={16} />,
+        icon: <Pencil className="size-[18px] md:size-4" />,
         onClick: () => handleEdit(row.original),
       });
 
       if (handleDuplicate) {
         menuItems.push({
           label: 'Duplicate Course',
-          icon: <Copy size={16} />,
+          icon: <Copy className="size-[18px] md:size-4" />,
           onClick: () => handleDuplicate(row.original),
         });
       }
@@ -151,7 +151,7 @@ export const getCourseListColumns = ({
       if (!showPrice && handleAssign) {
           menuItems.push({
               label: 'Add to Company or Job Role',
-              icon: <Plus size={16} />, 
+              icon: <Plus className="size-[18px] md:size-4" />, 
               onClick: () => handleAssign(row.original),
               className: 'text-[#FFA600]' // Orange
           });
@@ -160,10 +160,14 @@ export const getCourseListColumns = ({
       // Show for Paid courses - Company Only
       if (showPrice && handleAssign) {
           menuItems.push({
-              label: 'Add to Company',
-              icon: <Plus size={16} className="text-[#FFA600]" />, // Icon color separately
-              onClick: () => handleAssign(row.original),
-              className: 'text-[#FFA600]' // Orange text
+            label: 'Add to Company',
+            icon: (
+              <Plus
+                className='size-[18px] md:size-4 text-[#FFA600]'
+              />
+            ), // Icon color separately
+            onClick: () => handleAssign(row.original),
+            className: 'text-[#FFA600]', // Orange text
           });
       }
 
@@ -171,7 +175,7 @@ export const getCourseListColumns = ({
       if (!showPrice && handleShowJobRoles) {
         menuItems.push({
             label: 'Show Job Roles',
-            icon: <Briefcase size={16} />, 
+            icon: <Briefcase className="size-[18px] md:size-4" />, 
             onClick: () => handleShowJobRoles(row.original),
         });
       }
@@ -179,13 +183,13 @@ export const getCourseListColumns = ({
       // Archive option added
       menuItems.push({
         label: 'Archive Course',
-        icon: <Archive size={16} />,
+        icon: <Archive className="size-[18px] md:size-4" />,
         onClick: () => handleArchive(row.original),
       });
 
       menuItems.push({
         label: 'Delete Course',
-        icon: <Trash2 size={16} />,
+        icon: <Trash2 className="size-[18px] md:size-4" />,
         onClick: () => handleDelete(row.original),
       });
 

@@ -121,10 +121,23 @@ export default function CoursesPage() {
     enableRowSelection: true,
   });
 
+  const hasSelectedRows = table.getSelectedRowModel().rows.length > 0;
+
   return (
     <>
+      {/* <div className='bg-white py-4 md:px-6 px-4 border-b border-[var(--gray-200)]'>
+        <div className='flex items-center md:gap-4 gap-2'>
+          <CustomButton
+            title='Active Courses'
+            onClick={() => console.log('Filters Clicked')}
+            app={APPS.TRAINING}
+            variant='ghost'
+          />
+        </div>
+      </div> */}
+
       {/* Top Controls: Search & Add */}
-      <div className='bg-white py-4 md:px-6 px-4'>
+      <div className='bg-white py-4 md:px-6 px-4 border-b border-[var(--gray-200)]'>
         <div className='flex items-center md:gap-4 gap-2'>
           <CustomButton
             title='Filters'
@@ -159,20 +172,20 @@ export default function CoursesPage() {
 
       <div className='px-4 py-7 md:p-10'>
         <PageInfoBanner
-          title='Free Courses List'
-          subtitle='List of free courses available on the platform.'
+          title='Active Units List'
+          subtitle='List of active units available on the platform.'
         />
 
         {/* Middle Controls: Results Count & Bulk Actions */}
-        <div className='flex justify-between items-center py-0.5 mb-3'>
+        <div className='flex justify-between items-center mb-2 md:mb-3 py-0.5'>
           <div className='flex items-center text-sm text-[var(--gray-700)]'>
             <div className='flex items-center gap-2.5'>
-              <span className='md:inline-block hidden'>Show</span>
+              <span className='md:inline-block hidden text-[var(--gray-700)] text-sm leading-normal'>Show</span>
               <Select
                 value={String(pagination.pageSize)}
                 onValueChange={(val) => table.setPageSize(Number(val))}
               >
-                <SelectTrigger className='h-8 w-[54px] font-medium text-[var(--gray-700)] bg-white p-2 gap-0 rounded border-[var(--gray-300)]'>
+                <SelectTrigger className='h-[37px]! w-[54px] font-medium text-[var(--gray-700)] bg-white p-2 gap-0 rounded border-[var(--gray-300)]'>
                   <SelectValue placeholder={pagination.pageSize} />
                 </SelectTrigger>
                 <SelectContent className='w-20'>
@@ -186,39 +199,35 @@ export default function CoursesPage() {
                   ))}
                 </SelectContent>
               </Select>
-              <span className='md:inline-block hidden'>
+              <span className='md:inline-block hidden text-[var(--gray-700)] text-sm leading-normal'>
                 of {table.getFilteredRowModel().rows.length} result{table.getFilteredRowModel().rows.length > 1 ? 's' : ''}
               </span>
             </div>
 
-            <div className='h-9 w-px bg-[var(--gray-300)] md:mx-6 mx-3' />
+            <div className='h-[37px] w-px bg-[var(--gray-300)] md:ml-6 mr-2 ml-3' />
 
-            <button
+            <CustomButton
+              title='Archive'
               onClick={handleBulkArchive}
-              disabled={selectedCount === 0}
-              className={cn(
-                'flex items-center gap-2 transition-colors font-medium text-sm',
-                selectedCount > 0
-                  ? 'text-var(--gray-700) hover:text-[#CF9800] cursor-pointer'
-                  : 'text-gray-400 cursor-not-allowed',
-              )}
-            >
-              <Archive size={18} />
-              <span>Archive</span>
-            </button>
+              disabled={!hasSelectedRows}
+              leadingIcon={<Archive className='mr-1 size-[18px]' />}
+              app={APPS.TRAINING}
+              variant='ghost'
+              buttonClass='px-3 text-sm rounded text-[var(--gray-700)] font-normal'
+            />
           </div>
 
           <CustomButton
             title={
               <>
                 <span className='md:inline-block hidden'>Add Free Course</span>
-                <span className='md:hidden inline-block'>Add</span>
+                <span className='md:hidden inline-block pl-0.5'>Add</span>
               </>
             }
             onClick={() => console.log('Add Course Clicked')}
-            leadingIcon={<Plus size={18} />}
+            leadingIcon={<Plus className='size-3.5 md:size-[18px]' />}
             app={APPS.TRAINING}
-            buttonClass='font-semibold'
+            width='w-[82px]'
           />
         </div>
 
@@ -235,7 +244,7 @@ export default function CoursesPage() {
         />
 
         {table.getPageCount() > 1 && (
-          <div className='py-[26px]'>
+          <div className='py-4 sm:py-[22px]'>
             <TablePagination
               table={table}
               app={APPS.TRAINING}

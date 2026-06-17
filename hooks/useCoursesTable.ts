@@ -507,6 +507,7 @@ export function useCoursesTable(initialCourses: CourseWithDetails[] = [], isPaid
   }, [state.selectedCourse, fetchCourses]);
 
   const handleBulkArchive = () => {
+    if (Object.keys(state.rowSelection).length === 0) return;
     dispatch({ type: ActionType.OPEN_BULK_ARCHIVE_DIALOG });
   };
 
