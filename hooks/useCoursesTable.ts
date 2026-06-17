@@ -24,10 +24,21 @@ import { DateToaster } from '@/components/ui/sonner';
 // --- Types ---
 
 export type CourseFilters = {
-  type: string[];
+  companies: string[];
+  hasCompany: boolean;
+  noCompany: boolean;
   minUnits: number | '';
   maxUnits: number | '';
   lastModified: string;
+};
+
+export const EMPTY_COURSE_FILTERS: CourseFilters = {
+  companies: [],
+  hasCompany: false,
+  noCompany: false,
+  minUnits: '',
+  maxUnits: '',
+  lastModified: 'All',
 };
 
 export type JobRoleBasic = { id: number; name: string };
@@ -158,12 +169,7 @@ const initialState: CoursesTableState = {
   columnFilters: [],
   searchQuery: '',
   globalFilter: '',
-  filters: {
-    type: [],
-    minUnits: '',
-    maxUnits: '',
-    lastModified: 'All',
-  },
+  filters: { ...EMPTY_COURSE_FILTERS },
   isFilterOpen: false,
   addDialogOpen: false,
   editDialogOpen: false,
@@ -347,6 +353,29 @@ export function useCoursesTable(initialCourses: CourseWithDetails[] = [], isPaid
           .toLowerCase();
 
         if (!searchableValue.includes(query)) {
+          return false;
+        }
+      }
+      if (state.filters.companies.length > 0) {
+        const assigned = course.assignedCompanies;
+        if (assigned === 'None') {
+          return false;
+        }
+        const courseCompanies = assigned.split(', ');
+        const hasMatch = state.filters.companies.some((company) =>
+          courseCompanies.includes(company),
+        );
+        if (!hasMatch) {
+          return false;
+        }
+      }
+      if (state.filters.hasCompany && !state.filters.noCompany) {
+        if (course.assignedCompanies === 'None') {
+          return false;
+        }
+      }
+      if (state.filters.noCompany && !state.filters.hasCompany) {
+        if (course.assignedCompanies !== 'None') {
           return false;
         }
       }

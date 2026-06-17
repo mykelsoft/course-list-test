@@ -63,7 +63,7 @@ const CustomDeleteDialog: React.FC<CustomDeleteDialogProps> = ({
       open={isOpen}
       onOpenChange={setIsOpen}
     >
-      <DialogContent className='p-0 m-0 sm:max-w-[560px] gap-0 border-[var(--gray-200)]'>
+      <DialogContent className='p-0 m-0 sm:max-w-[560px] gap-0 border-[var(--gray-200)] shadow-[0px_4px_8px_rgba(0,0,0,0.1)]'>
         <DialogHeader className='px-6 py-4 min-h-[78px] flex flex-row items-center justify-between gap-2'>
           <div className='flex items-center gap-2.5'>
             {icon || <AlertTriangle className='size-[18px] text-[var(--primary)]' />}

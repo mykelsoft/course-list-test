@@ -68,7 +68,7 @@ const RowActionMenu: React.FC<RowActionMenuProps> = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align='end'
-            className={Themes(app).dropdownMenu.content}
+            className={`space-y-1 border-[var(--gray-200)] rounded! shadow-[0px_4px_8px_rgba(0,0,0,0.1)] ${Themes(app).dropdownMenu.content}`}
           >
             {menuItems.map((item) => (
               <DropdownMenuItem

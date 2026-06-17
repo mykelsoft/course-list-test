@@ -2,7 +2,7 @@
 'use client';
 
 import { ActionType, useCoursesTable } from '@/hooks/useCoursesTable';
-import { Archive, Filter, InfoIcon, Plus, SearchIcon } from 'lucide-react';
+import { Archive, InfoIcon, Plus, SearchIcon } from 'lucide-react';
 import React, { useMemo } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
@@ -24,6 +24,7 @@ import PageInfoBanner from '@/components/PageInfoBanner';
 import { TablePagination } from '@/components/custom-ui/custom-table/table-pagination';
 import { cn } from '@/lib/utils';
 // Assuming you migrate columns to a local component folder
+import { CourseFiltersPopover } from '@/components/course-list/course-filters-popover';
 import { getCourseListColumns } from '@/components/course-list/course-list-columns';
 
 export default function CoursesPage() {
@@ -42,7 +43,7 @@ export default function CoursesPage() {
     setRowSelection,
     setColumnFilters,
     selectedCount,
-    handlers
+    handlers,
   } = useCoursesTable([]); 
 
   const {
@@ -59,6 +60,8 @@ export default function CoursesPage() {
     bulkArchiveDialogOpen,
     selectedCourse,
     isProcessing,
+    filters,
+    allCompanies,
   } = state;
 
   const columns = useMemo(
@@ -139,13 +142,11 @@ export default function CoursesPage() {
       {/* Top Controls: Search & Add */}
       <div className='bg-white py-4 md:px-6 px-4 border-b border-[var(--gray-200)]'>
         <div className='flex items-center md:gap-4 gap-2'>
-          <CustomButton
-            title='Filters'
-            onClick={() => console.log('Filters Clicked')}
-            leadingIcon={<Filter size={18} />}
+          <CourseFiltersPopover
             app={APPS.TRAINING}
-            variant='outline'
-            buttonClass='font-semibold'
+            filters={filters}
+            companyOptions={allCompanies}
+            onApply={handlers.handleFilterChange}
           />
 
           <div className='flex-1 min-w-0'>
