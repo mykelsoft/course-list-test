@@ -99,6 +99,30 @@ const renderTooltipContent = (
   );
 };
 
+const getDesktopSkeletonCell = (columnId: string) => {
+  switch (columnId) {
+    case 'select':
+      return <Skeleton className='mx-auto size-4 rounded-[4px]' />;
+    case 'actions':
+      return <Skeleton className='mx-auto size-7 rounded-md' />;
+    case 'id':
+      return <Skeleton className='h-4 w-10 rounded' />;
+    case 'name':
+      return <Skeleton className='h-4 w-48 max-w-full rounded' />;
+    case 'assignedCompanies':
+      return <Skeleton className='h-4 w-36 max-w-full rounded' />;
+    case 'totalUnits':
+      return <Skeleton className='h-4 w-8 rounded' />;
+    case 'price':
+      return <Skeleton className='h-4 w-16 rounded' />;
+    default:
+      return <Skeleton className='h-4 w-full rounded' />;
+  }
+};
+
+const MOBILE_DETAIL_LABEL_WIDTHS = ['w-16', 'w-24', 'w-20', 'w-28'] as const;
+const MOBILE_DETAIL_VALUE_WIDTHS = ['w-28', 'w-36', 'w-20', 'w-32'] as const;
+
 export function CustomTable<TData>({
   children, // MODIFIED: Destructure children
   table,
@@ -137,6 +161,22 @@ export function CustomTable<TData>({
     typeof mobileSortableHeader?.column.columnDef.header === 'string'
       ? mobileSortableHeader.column.columnDef.header
       : 'column';
+
+  const mobileDataColumnCount =
+    mobileHeaderGroup?.headers.filter(
+      (header) =>
+        header.column.id !== 'select' && header.column.id !== 'actions',
+    ).length ?? 0;
+  const mobileDetailRowCount = Math.max(mobileDataColumnCount - 1, 0);
+  const mobileSkeletonRowCount = Math.min(skeletonRows, 3);
+
+  const mobileLoadingHeader = (
+    <div className='mb-3 flex h-[52px] items-center rounded border border-[var(--gray-200)] bg-[var(--gray-200)] px-4'>
+      <Skeleton className='mr-4 size-5 shrink-0 rounded-[4px]' />
+      <Skeleton className='h-4 w-20 flex-1 rounded' />
+      <Skeleton className='size-[26px] shrink-0 rounded' />
+    </div>
+  );
 
   const mobileTableHeader = mobileHeaderGroup ? (
     <div className='flex items-center bg-[var(--gray-200)] px-4 py-3 rounded border border-[var(--gray-200)]'>
@@ -247,41 +287,51 @@ export function CustomTable<TData>({
       </div>
 
       <div className='md:hidden'>
-        {mobileTableHeader ? <div className='mb-3'>{mobileTableHeader}</div> : null}
+        {isLoading
+          ? mobileLoadingHeader
+          : mobileTableHeader
+            ? <div className='mb-3'>{mobileTableHeader}</div>
+            : null}
         {isLoading ? (
           <div className='flex flex-col gap-3'>
-            {Array.from({ length: Math.min(skeletonRows, 3) }).map((_, rowIndex) => (
+            {Array.from({ length: mobileSkeletonRowCount }).map((_, rowIndex) => (
               <div
                 key={`mobile-skeleton-row-${rowIndex}`}
-                className='overflow-hidden rounded border border-(--gray-300) bg-white'
+                className='overflow-hidden rounded border border-[var(--gray-200)] bg-white'
               >
-                <div className='flex h-[103px] items-center gap-[33px] bg-(--gray-200) px-[31px]'>
-                  <Skeleton className='size-[39px] rounded-[6px]' />
-                  <Skeleton className='h-8 w-24 rounded' />
+                <div className='flex h-[52px] items-center bg-[var(--gray-200)] px-4'>
+                  <Skeleton className='mr-4 size-5 shrink-0 rounded-[4px]' />
+                  <Skeleton className='h-4 w-24 flex-1 rounded' />
+                  <Skeleton className='ml-4 size-7 shrink-0 rounded-md' />
                 </div>
-                {Array.from({ length: 3 }).map((__, cellIndex) => (
-                  <div
-                    key={`mobile-skeleton-cell-${rowIndex}-${cellIndex}`}
-                    className={cn(
-                      'grid grid-cols-[260px_minmax(0,1fr)] items-center border-t border-(--gray-200) bg-white',
-                      cellIndex === 0 ? 'min-h-[105px]' : 'min-h-[90px]',
-                    )}
-                  >
-                    <div className='px-[31px]'>
-                      <Skeleton className='h-7 w-40 rounded' />
+                <div className='divide-y divide-[var(--gray-200)]'>
+                  {Array.from({ length: mobileDetailRowCount }).map((__, cellIndex) => (
+                    <div
+                      key={`mobile-skeleton-cell-${rowIndex}-${cellIndex}`}
+                      className='grid grid-cols-[96px_minmax(0,1fr)] sm:grid-cols-[128px_minmax(0,1fr)] items-center bg-white px-4 py-2.5 min-h-[45px] gap-4'
+                    >
+                      <Skeleton
+                        className={cn(
+                          'h-4 rounded',
+                          MOBILE_DETAIL_LABEL_WIDTHS[cellIndex % MOBILE_DETAIL_LABEL_WIDTHS.length],
+                        )}
+                      />
+                      <Skeleton
+                        className={cn(
+                          'h-4 rounded',
+                          MOBILE_DETAIL_VALUE_WIDTHS[cellIndex % MOBILE_DETAIL_VALUE_WIDTHS.length],
+                        )}
+                      />
                     </div>
-                    <div className='pr-[31px]'>
-                      <Skeleton className='h-7 w-full rounded' />
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             ))}
           </div>
         ) : rows.length > 0 ? (
           <div className='flex flex-col gap-3'>{rows.map(renderMobileRow)}</div>
         ) : (
-          <div className='rounded border border-(--gray-300) bg-white p-8 text-center text-sm text-gray-500'>
+          <div className='rounded border border-[var(--gray-200)] bg-white p-8 text-center text-sm text-gray-500'>
             {noResultsMessage}
           </div>
         )}
@@ -373,10 +423,11 @@ export function CustomTable<TData>({
                 Array.from({ length: skeletonRows }).map((_, rowIndex) => (
                   <TableRow
                     key={`skeleton-row-${rowIndex}`}
-                    className={`
-                  ${rowIndex % 2 === 0 ? `px-2 m-0 box-border relative z-10` : `bg-[var(--table-background-secondary)] px-2 m-0 box-border relative z-10`}
-                  ${bodyRowClassName} ${tableRowHeight}
-                `}
+                    className={cn(
+                      'bg-white px-2 m-0 box-border relative z-10',
+                      bodyRowClassName,
+                      tableRowHeight,
+                    )}
                   >
                     {table.getHeaderGroups()[0]?.headers.map((header, cellIndex) => {
                       const isActionsColumn = header.column.id === 'actions';
@@ -405,7 +456,7 @@ export function CustomTable<TData>({
                                 : (header.column.columnDef.meta as ColumnMeta)?.whiteSpace,
                           }}
                         >
-                          <Skeleton className='h-5 w-full rounded' />
+                          {getDesktopSkeletonCell(header.column.id)}
                         </TableCell>
                       );
                     })}
