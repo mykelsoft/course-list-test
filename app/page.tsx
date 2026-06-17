@@ -227,7 +227,7 @@ export default function CoursesPage() {
             onClick={() => console.log('Add Course Clicked')}
             leadingIcon={<Plus className='size-3.5 md:size-[18px]' />}
             app={APPS.TRAINING}
-            width='w-[82px]'
+            width='w-[82px] sm:w-auto'
           />
         </div>
 
