@@ -2,9 +2,9 @@
 // File: ./components/custom-ui/custom-accordion.tsx
 //
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import type { ReactNode } from 'react';
 import React, { useState } from 'react';
 
+import type { ReactNode } from 'react';
 import { Separator } from '#components/ui/separator';
 
 type CustomAccordionProps = {
@@ -43,7 +43,7 @@ const CustomAccordion = ({
   const renderTitle = () => {
     if (typeof title === 'string') {
       return (
-        <h2 className="text-base font-semibold text-[var(--text-primary)]">
+        <h2 className="text-base leading-normal font-semibold text-[var(--gray-700)]">
           {title}
         </h2>
       );
@@ -61,11 +61,9 @@ const CustomAccordion = ({
   };
 
   return (
-    <div
-      className={`bg-white rounded-lg border border-[var(--table-border)] ${className}`}
-    >
+    <div className={`bg-white rounded-lg border border-[var(--gray-200)] ${className}`}>
       <div
-        className="flex items-center justify-between p-6 cursor-pointer"
+        className='flex items-center justify-between p-6 cursor-pointer'
         onClick={handleToggle}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -73,16 +71,16 @@ const CustomAccordion = ({
             handleToggle();
           }
         }}
-        role="button"
+        role='button'
         tabIndex={0}
         aria-expanded={isExpanded}
         aria-label={`Toggle ${typeof title === 'string' ? title : 'accordion'}`}
       >
         {/* Left-aligned group for title and header children */}
-        <div className="flex items-center gap-6">
+        <div className='flex items-center gap-6'>
           {!description && renderTitle()}
           {description && (
-            <div className="flex flex-col gap-2">
+            <div className='flex flex-col gap-2'>
               {renderTitle()}
               {renderDescription()}
             </div>
@@ -91,24 +89,18 @@ const CustomAccordion = ({
           <div
             onClick={(e) => e.stopPropagation()}
             onKeyDown={(e) => e.stopPropagation()}
-            role="presentation" // Add role to indicate it's just for grouping
+            role='presentation' // Add role to indicate it's just for grouping
           >
             {headerChildren}
           </div>
         </div>
 
         {/* Right-aligned chevron icon */}
-        <div className="group p-1 rounded-sm ml-4">
+        <div className='group p-1 rounded-sm ml-4'>
           {isExpanded ? (
-            <ChevronUp
-              size={28}
-              className="text-gray-600 group-hover:text-primary"
-            />
+            <ChevronUp className='size-6 text-[var(--gray-700)] group-hover:text-primary' />
           ) : (
-            <ChevronDown
-              size={28}
-              className="text-gray-600 group-hover:text-primary"
-            />
+            <ChevronDown className='size-6 text-[var(--gray-700)] group-hover:text-primary' />
           )}
         </div>
       </div>
@@ -120,11 +112,11 @@ const CustomAccordion = ({
           isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className="p-6 space-y-3">{children}</div>
+        <div className='p-6 space-y-6'>{children}</div>
         {footerContent && (
           <>
             <Separator />
-            <div className="p-6 flex justify-end">{footerContent}</div>
+            <div className='p-6 flex justify-end'>{footerContent}</div>
           </>
         )}
       </div>

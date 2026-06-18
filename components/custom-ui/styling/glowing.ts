@@ -321,6 +321,9 @@ function Glowing(app: APPS | null = null): string | GlowingThemeObject {
 
   switch (app) {
     case APPS.PORTAL:
+    case APPS.TRAINING:
+    case APPS.CONTRACTORS:
+    case APPS.HAZARDS:
       return portal;
     case APPS.POLICIES_AND_PROCEDURES:
       return policiesAndProcedures;
@@ -329,7 +332,7 @@ function Glowing(app: APPS | null = null): string | GlowingThemeObject {
     case APPS.INSPECTIONS:
       return inspections;
     default:
-      return portalDefault();
+      return portal;
   }
 }
 

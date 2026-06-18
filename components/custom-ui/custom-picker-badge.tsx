@@ -1,3 +1,4 @@
+import { Check, ChevronsUpDown, InfoIcon, X } from 'lucide-react';
 // File: components/custom-ui/custom-picker-badge.tsx
 import {
   Command,
@@ -12,19 +13,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '#components/ui/popover';
-import { Label } from '#components/ui/label';
-import { cn } from '#lib/utils';
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
-} from '@radix-ui/react-tooltip'; // Keep direct import if needed
-import { Check, ChevronsUpDown, InfoIcon, X } from 'lucide-react';
-import { Button } from '#components/ui/button';
-import { useState, useEffect } from 'react';
-import { Glowing } from '@/components/custom-ui/styling/glowing';
-import { Badge } from '#components/ui/badge';
+} from '@/components/ui/tooltip';
+import { useEffect, useState } from 'react';
+
 import { APPS } from '@/types/ENUMS';
+import { Badge } from '#components/ui/badge';
+import { Button } from '#components/ui/button';
+import { Glowing } from '@/components/custom-ui/styling/glowing';
+import { Label } from '#components/ui/label';
+import { cn } from '#lib/utils';
 
 // Define a generic item type for the picker
 export type PickerItem = {
@@ -87,31 +89,33 @@ const CustomPickerBadge: React.FC<CustomPickerBadgeProps> = ({
   };
 
   return (
-    <div className="w-full flex flex-row items-start gap-4">
+    <div className="w-full flex flex-row items-start gap-10">
       {' '}
       {/* Changed items-center to items-start */}
-      <div className="w-50 flex flex-col items-start pt-2">
+      <div className="w-[240px] flex flex-col items-start pt-2">
         {' '}
         {/* Adjusted for alignment */}
         {label && (
-          <Label className="shrink-0 w-50 text-sm self-start text-[#374151]">
+          <Label className="shrink-0 text-sm self-start text-[var(--gray-700)]">
             <div className="flex flex-row items-center gap-2">
               {label}
               {tooltip && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <InfoIcon className="w-4 h-4 text-primary cursor-pointer" />
-                  </TooltipTrigger>
-                  <TooltipContent className="rounded-md py-1 px-2 bg-primary text-white text-xs ">
-                    {tooltip}
-                  </TooltipContent>
-                </Tooltip>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <InfoIcon className="w-4 h-4 text-primary cursor-pointer" />
+                    </TooltipTrigger>
+                    <TooltipContent className="rounded-md py-1 px-2 bg-primary text-white text-xs ">
+                      {tooltip}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
             </div>
           </Label>
         )}
       </div>
-      <div className="w-full h-auto flex flex-col justify-start gap-2">
+      <div className="w-full flex-1 min-w-0 h-auto flex flex-col justify-start gap-2">
         <style jsx global>
           {glowingContentStyles}
         </style>
@@ -169,9 +173,9 @@ const CustomPickerBadge: React.FC<CustomPickerBadgeProps> = ({
             </Button>
           </PopoverTrigger>
           <PopoverContent
-            className={`p-0 ${glowingContentStyles}`}
+            className='p-0'
             style={{ width: 'var(--radix-popover-trigger-width)' }}
-            align="start"
+            align='start'
           >
             <Command>
               <CommandInput

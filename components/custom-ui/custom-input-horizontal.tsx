@@ -1,20 +1,20 @@
-// File: components/custom-ui/custom-input-horizontal.tsx
-import { InfoIcon } from 'lucide-react';
-import React from 'react';
 // --- FIX: Added Path to imports ---
-import type { UseFormRegister, FieldValues, Path } from 'react-hook-form';
-
-import CustomErrorMessage from './custom-error-message';
-import { Label } from '@/components/ui/label';
+import type { FieldValues, Path, UseFormRegister } from 'react-hook-form';
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-import { Input } from '../ui/input';
-import Glowing from './styling/glowing';
 import { APPS } from '#types/ENUMS';
+import CustomErrorMessage from './custom-error-message';
+import Glowing from './styling/glowing';
+// File: components/custom-ui/custom-input-horizontal.tsx
+import { InfoIcon } from 'lucide-react';
+import { Input } from '../ui/input';
+import { Label } from '@/components/ui/label';
+import React from 'react';
 
 type CustomInputProps<TFieldValues extends FieldValues> = {
   app?: APPS;
@@ -73,37 +73,31 @@ const CustomInput = <TFieldValues extends FieldValues = FieldValues>({
   const inputId = props.id || name;
 
   return (
-    <div
-      className={`w-full flex flex-col items-start gap-1 ${containerClassName}`}
-    >
-      <div
-        className={`w-full flex flex-row items-center gap-4 ${containerClassName}`}
-      >
+    <div className={`w-full flex flex-col items-start ${containerClassName}`}>
+      <div className={`w-full flex flex-row items-center gap-10 ${containerClassName}`}>
         {label && (
           <Label
             htmlFor={inputId}
-            className={`text-[#374151] shrink-0 ${labelClassName} ${labelWidth}`}
+            className={`text-[var(--gray-700)] font-medium shrink-0 ${labelClassName} ${labelWidth}`}
           >
-            <div className="flex flex-row items-center gap-2">
+            <div className='flex flex-row items-center gap-3'>
               {label}
               {tooltip && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <InfoIcon className="w-4 h-4 text-[var(--primary)]" />
-                  </TooltipTrigger>
-                  <TooltipContent>{tooltip}</TooltipContent>
-                </Tooltip>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <InfoIcon className='size-5 text-[var(--primary)]' />
+                    </TooltipTrigger>
+                    <TooltipContent>{tooltip}</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
             </div>
           </Label>
         )}
-        <div className="flex flex-col gap-2 w-full">
-          <div className="relative flex-1">
-            {icon && (
-              <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                {icon}
-              </div>
-            )}
+        <div className='flex flex-col gap-2 w-full'>
+          <div className='relative flex-1'>
+            {icon && <div className='absolute left-3 top-1/2 -translate-y-1/2'>{icon}</div>}
             {/* with glowing effect */}
             <Input
               id={inputId}
@@ -116,6 +110,10 @@ const CustomInput = <TFieldValues extends FieldValues = FieldValues>({
               bg-white
               font-normal
               shadow-none
+              border-[var(--gray-300)]
+              rounded-md
+              placeholder:text-[var(--gray-400)]
+              bg-[var(--gray-50)]
               ${inputClassName.includes('w-') ? '' : width} 
               ${icon ? 'pl-10' : ''} 
               ${inputClassName} 
@@ -128,8 +126,7 @@ const CustomInput = <TFieldValues extends FieldValues = FieldValues>({
           </div>
         </div>
       </div>
-      <div className="w-full flex flex-row items-start gap-4">
-        <div className="w-50 h-4" />
+      <div className='w-full flex flex-row items-start gap-4'>
         {validationError && (
           <CustomErrorMessage
             errorMessage={validationError}

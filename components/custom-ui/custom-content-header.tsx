@@ -1,11 +1,11 @@
 // components/custom-ui/custom-content-header.tsx
 
+import { APPS } from '#types/ENUMS';
 import { ArrowLeft } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { useMemo } from 'react';
-import { cn } from '@/lib/utils';
-import { APPS } from '#types/ENUMS';
 import Themes from './styling/Themes';
+import { cn } from '@/lib/utils';
+import { useMemo } from 'react';
 
 type CustomContentHeaderProps = {
   title: string;
@@ -20,7 +20,7 @@ type CustomContentHeaderProps = {
 const CustomContentHeader: React.FC<CustomContentHeaderProps> = ({
   title,
   description,
-  descriptionColor = 'text-gray-600',
+  descriptionColor = 'text-[var(--gray-600)]',
   onBack,
   children,
   headerRight,
@@ -44,33 +44,31 @@ const CustomContentHeader: React.FC<CustomContentHeaderProps> = ({
     default:
   }
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex flex-row gap-2 items-center justify-between">
-        <div className="flex flex-col gap-2 items-start justify-between">
-          <div className="flex gap-1 flex-col items-start">
+    <div className='flex flex-col gap-2'>
+      <div className='flex flex-row gap-2 items-center justify-between'>
+        <div className='flex flex-col gap-2 items-start justify-between'>
+          <div className='flex gap-2 flex-col items-start'>
             {onBack && (
               <button
-                type="button"
+                type='button'
                 onClick={onBack}
                 // Apply theme-aware classes for ghost button behavior
                 className={cn(
-                  'py-3 px-4 rounded-sm cursor-pointer flex gap-2 items-center font-semibold',
+                  'py-2.5 px-4.5 rounded-sm cursor-pointer flex gap-1 items-center font-semibold',
                   theme.button.ghost,
-                  buttonTextColor
+                  buttonTextColor,
                 )}
-                aria-label="Go back"
+                aria-label='Go back'
               >
-                <ArrowLeft className="size-4.5" />
-                <span className="text-sm">Back</span>
+                <ArrowLeft className='-mt-px size-[18px] text-[#6D28D9]' />
+                <span className='text-sm text-[#6D28D9] font-semibold leading-normal'>Back</span>
               </button>
             )}
-            <span className="text-lg font-semibold text-gray-800">{title}</span>
+            <span className='text-lg leading-normal font-semibold text-[var(--gray-800)]'>{title}</span>
           </div>
-          <span className={`text-sm ${descriptionColor}`}>{description}</span>
+          <span className={`text-sm leading-normal ${descriptionColor}`}>{description}</span>
         </div>
-        <div className="flex flex-row gap-2 items-center justify-end">
-          {headerRight}
-        </div>
+        <div className='flex flex-row gap-2 items-center justify-end'>{headerRight}</div>
       </div>
       {children}
     </div>
