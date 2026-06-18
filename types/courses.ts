@@ -13,6 +13,7 @@ export enum APPS {
 export type CourseWithDetails = {
   id: number;
   name: string;
+  unitType: string;
   is_paid: boolean;
   price: number | null;
   totalUnits: number;

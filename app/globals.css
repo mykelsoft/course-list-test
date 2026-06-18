@@ -250,8 +250,16 @@ html, body {
   width: 68px
 }
 
-.custom-table thead tr > th:last-child {
+.custom-table thead tr > th:nth-child(2) {
   width: 120px
+}
+
+.custom-table thead tr > th:last-child {
+  width: 100px
+}
+
+.custom-table thead tr > th:nth-child(6) {
+  width: 160px
 }
 
 .custom-table {
@@ -276,6 +284,11 @@ html, body {
 .custom-table button[data-slot="checkbox"][data-state="unchecked"] {
   background-color: var(--gray-50);
   border-color: var(--gray-300);
+}
+
+.custom-table tr td .course-row-checkbox:hover button[data-slot="checkbox"][data-state="unchecked"] {
+  background-color: #fff;
+  border-color: var(--primary);
 }
 
 /* .custom-table button[data-slot="checkbox"][data-state="indeterminate"] */

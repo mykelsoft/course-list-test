@@ -345,8 +345,9 @@ export function useCoursesTable(initialCourses: CourseWithDetails[] = [], isPaid
         const searchableValue = [
           course.id,
           course.name,
+          course.unitType,
           course.assignedCompanies,
-          course.totalUnits,
+          course.is_paid ? course.price : 'Free',
         ]
           .filter((value) => value !== null && value !== undefined)
           .join(' ')

@@ -2,142 +2,46 @@
 
 import type { CourseWithDetails } from '@/types/courses';
 
-const LONG_COMPANY_STRING = "ISO Safety, ASHR Construction, Mond Corp., Safety Culture";
+const LONG_COMPANY_STRING = 'ISO Safety, ASHR Construction, Mond Corp., Safety Culture';
 
-const BASE_MOCK_COURSES: CourseWithDetails[] = [
-  {
-    id: 151,
-    name: "Project Management Workshop",
-    is_paid: false,
-    price: null,
-    totalUnits: 2,
-    companyCount: 4,
-    assignedCompanies: LONG_COMPANY_STRING,
-    updatedAt: new Date('2023-10-15T10:00:00Z'),
-    description: "Learn the fundamentals of project management.",
-    enrollmentValidityDays: 365,
-    completionValidityDays: null,
-  },
-  {
-    id: 152,
-    name: "Leadership Development Program",
-    is_paid: false,
-    price: null,
-    totalUnits: 3,
-    companyCount: 4,
-    assignedCompanies: LONG_COMPANY_STRING,
-    updatedAt: new Date('2023-11-20T14:30:00Z'),
-    description: "Develop essential leadership skills.",
-    enrollmentValidityDays: null,
-    completionValidityDays: 365,
-  },
-  {
-    id: 153,
-    name: "Data Analytics Bootcamp",
-    is_paid: false,
-    price: null,
-    totalUnits: 4,
-    companyCount: 4,
-    assignedCompanies: LONG_COMPANY_STRING,
-    updatedAt: new Date('2024-01-05T09:15:00Z'),
-    description: "Intensive course on data analysis tools.",
-    enrollmentValidityDays: 180,
-    completionValidityDays: null,
-  },
-  {
-    id: 154,
-    name: "Project Management Essentials",
-    is_paid: false,
-    price: null,
-    totalUnits: 5,
-    companyCount: 4,
-    assignedCompanies: LONG_COMPANY_STRING,
-    updatedAt: new Date('2024-01-10T11:00:00Z'),
-    description: "Core concepts for managing projects effectively.",
-    enrollmentValidityDays: null,
-    completionValidityDays: null,
-  },
-  {
-    id: 155,
-    name: "Effective Communication Skills",
-    is_paid: false,
-    price: null,
-    totalUnits: 2,
-    companyCount: 4,
-    assignedCompanies: LONG_COMPANY_STRING,
-    updatedAt: new Date('2024-02-01T13:45:00Z'),
-    description: "Improve your verbal and written communication.",
-    enrollmentValidityDays: 365,
-    completionValidityDays: 730,
-  },
-  {
-    id: 156,
-    name: "Time Management Techniques",
-    is_paid: false,
-    price: null,
-    totalUnits: 1,
-    companyCount: 4,
-    assignedCompanies: LONG_COMPANY_STRING,
-    updatedAt: new Date('2024-02-15T08:30:00Z'),
-    description: "Master your schedule and increase productivity.",
-    enrollmentValidityDays: null,
-    completionValidityDays: null,
-  },
-  {
-    id: 157,
-    name: "Team Building Activities",
-    is_paid: false,
-    price: null,
-    totalUnits: 6,
-    companyCount: 4,
-    assignedCompanies: LONG_COMPANY_STRING,
-    updatedAt: new Date('2024-03-01T15:20:00Z'),
-    description: "Strategies for building cohesive teams.",
-    enrollmentValidityDays: 90,
-    completionValidityDays: null,
-  },
-  {
-    id: 158,
-    name: "Customer Service Excellence",
-    is_paid: false,
-    price: null,
-    totalUnits: 2,
-    companyCount: 4,
-    assignedCompanies: LONG_COMPANY_STRING,
-    updatedAt: new Date('2024-03-10T10:10:00Z'),
-    description: "Delivering outstanding customer experiences.",
-    enrollmentValidityDays: 365,
-    completionValidityDays: 365,
-  },
-  {
-    id: 159,
-    name: "Conflict Resolution Strategies",
-    is_paid: false,
-    price: null,
-    totalUnits: 3,
-    companyCount: 4,
-    assignedCompanies: LONG_COMPANY_STRING,
-    updatedAt: new Date('2024-03-20T16:00:00Z'),
-    description: "Methods for resolving workplace conflicts.",
-    enrollmentValidityDays: null,
-    completionValidityDays: null,
-  },
-  {
-    id: 160,
-    name: "Sales Fundamentals Training",
-    is_paid: false,
-    price: null,
-    totalUnits: 7,
-    companyCount: 4,
-    assignedCompanies: LONG_COMPANY_STRING,
-    updatedAt: new Date('2024-04-05T09:00:00Z'),
-    description: "Basic principles of successful selling.",
-    enrollmentValidityDays: 180,
-    completionValidityDays: 365,
-  }
+const UNIT_TYPES = ['License', 'Scorm', 'Read & Acknowledge', 'Assignment'] as const;
+
+const createUnit = (
+  id: number,
+  name: string,
+  unitType: string,
+  is_paid: boolean,
+  price: number | null,
+  updatedAt: string,
+): CourseWithDetails => ({
+  id,
+  name,
+  unitType,
+  is_paid,
+  price,
+  totalUnits: (id % 8) + 1,
+  companyCount: 4,
+  assignedCompanies: LONG_COMPANY_STRING,
+  updatedAt: new Date(updatedAt),
+  description: `${name} mock unit for table testing.`,
+  enrollmentValidityDays: id % 3 === 0 ? 365 : null,
+  completionValidityDays: id % 4 === 0 ? 365 : null,
+});
+
+const SCREENSHOT_UNITS: CourseWithDetails[] = [
+  createUnit(1, 'Forklift Operation Safety', 'License', false, null, '2024-01-05T09:15:00Z'),
+  createUnit(2, 'Corporate Cyber Security 2026', 'Scorm', true, 149, '2024-01-10T11:00:00Z'),
+  createUnit(3, 'Workplace Harassment Policy', 'Read & Acknowledge', true, 49, '2024-02-01T13:45:00Z'),
+  createUnit(4, 'Advanced Structural Engineering', 'Assignment', false, null, '2024-02-15T08:30:00Z'),
+  createUnit(5, 'First Aid & CPR Certification', 'License', false, null, '2024-03-01T15:20:00Z'),
+  createUnit(6, 'Ethics in the Modern Workplace', 'Scorm', true, 99, '2024-03-10T10:10:00Z'),
+  createUnit(7, 'Equipment Maintenance Log', 'Read and Acknowledge', true, 49, '2024-03-20T16:00:00Z'),
+  createUnit(8, 'Annual Financial Disclosure', 'Assignment', true, 29, '2024-04-05T09:00:00Z'),
+  createUnit(9, "Site Supervisor's Permit", 'Assignment', false, null, '2024-04-12T14:00:00Z'),
+  createUnit(10, 'Employee Health and Safety Induction Online', 'Assignment', true, 89, '2024-04-20T10:30:00Z'),
 ];
 
-const ADDITIONAL_COURSE_NAMES = [
+const ADDITIONAL_UNIT_NAMES = [
   'Workplace Health and Safety Basics',
   'Manual Handling Awareness',
   'Emergency Response Planning',
@@ -190,21 +94,20 @@ const ADDITIONAL_COURSE_NAMES = [
   'Business Writing Essentials',
 ];
 
-export const MOCK_COURSES: CourseWithDetails[] = [
-  ...BASE_MOCK_COURSES,
-  ...ADDITIONAL_COURSE_NAMES.map((name, index) => ({
-    id: 161 + index,
+const ADDITIONAL_UNITS: CourseWithDetails[] = ADDITIONAL_UNIT_NAMES.map((name, index) => {
+  const id = 11 + index;
+  const unitType = UNIT_TYPES[index % UNIT_TYPES.length];
+  const is_paid = index % 3 !== 0;
+  const price = is_paid ? [29, 49, 79, 99, 149][index % 5] : null;
+
+  return createUnit(
+    id,
     name,
-    is_paid: false,
-    price: null,
-    totalUnits: (index % 8) + 1,
-    companyCount: 4,
-    assignedCompanies: LONG_COMPANY_STRING,
-    updatedAt: new Date(
-      Date.UTC(2024, 4 + (index % 6), 1 + (index % 26), 9 + (index % 8), 0, 0)
-    ),
-    description: `${name} mock course for table pagination testing.`,
-    enrollmentValidityDays: index % 3 === 0 ? 365 : null,
-    completionValidityDays: index % 4 === 0 ? 365 : null,
-  })),
-];
+    unitType,
+    is_paid,
+    price,
+    new Date(Date.UTC(2024, 4 + (index % 6), 1 + (index % 26), 9 + (index % 8), 0, 0)).toISOString(),
+  );
+});
+
+export const MOCK_COURSES: CourseWithDetails[] = [...SCREENSHOT_UNITS, ...ADDITIONAL_UNITS];

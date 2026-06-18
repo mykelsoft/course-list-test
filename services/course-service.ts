@@ -10,13 +10,10 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 let _courses = [...MOCK_COURSES];
 
 export const courseService = {
-  async fetchCourses({ isPaid = false, archived = false }: { isPaid?: boolean, archived?: boolean } = {}): Promise<CourseWithDetails[]> {
+  async fetchCourses({ isPaid, archived = false }: { isPaid?: boolean; archived?: boolean } = {}): Promise<CourseWithDetails[]> {
     await delay(600);
-    
-    // Simple filter simulation
-    return _courses.filter(c => {
-      // Filter by paid status if specified (undefined usually means fetch all in some contexts, 
-      // but strictly following the mock data which is all is_paid: false for now)
+
+    return _courses.filter((c) => {
       if (isPaid !== undefined && c.is_paid !== isPaid) return false;
       
       // Filter by archived status

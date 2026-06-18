@@ -2,54 +2,52 @@
 'use client';
 
 import type { ColumnDef } from '@tanstack/react-table';
-import { Pencil, Trash2, Eye, Copy, Plus, Briefcase, Archive } from 'lucide-react';
+import { Pencil, Copy, Plus, List, Archive, Search } from 'lucide-react';
 import RowActionMenu from '@/components/custom-ui/custom-table/row-action-menu';
 import { Checkbox } from '@/components/ui/checkbox';
 import { APPS, type CourseWithDetails } from '@/types/courses';
 
 type Handlers = {
+  handleView: (course: CourseWithDetails) => void;
   handleEdit: (course: CourseWithDetails) => void;
-  handleDelete: (course: CourseWithDetails) => void;
-  handleDuplicate?: (course: CourseWithDetails) => void;
-  handleAssign?: (course: CourseWithDetails) => void; 
-  handleShowJobRoles?: (course: CourseWithDetails) => void; 
+  handleDuplicate: (course: CourseWithDetails) => void;
+  handleAssign: (course: CourseWithDetails) => void;
+  handleShowJobRoles: (course: CourseWithDetails) => void;
   handleArchive: (course: CourseWithDetails) => void;
-  showPrice?: boolean;
 };
 
 export const getCourseListColumns = ({
+  handleView,
   handleEdit,
-  handleDelete,
   handleDuplicate,
   handleAssign,
   handleShowJobRoles,
   handleArchive,
-  showPrice = false,
 }: Handlers): ColumnDef<CourseWithDetails>[] => {
   
   const columns: ColumnDef<CourseWithDetails>[] = [
     {
       id: 'select',
-      header: ({ table }) => (
-        <div className="flex items-center justify-center w-full">
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && 'indeterminate')
-            }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Select all"
-            className="border-gray-300"
-          />
-        </div>
-      ),
+      // header: ({ table }) => (
+      //   <div className="flex items-center justify-center w-full">
+      //     <Checkbox
+      //       checked={
+      //         table.getIsAllPageRowsSelected() ||
+      //         (table.getIsSomePageRowsSelected() && 'indeterminate')
+      //       }
+      //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+      //       aria-label="Select all"
+      //       className="bg-[var(--gray-50)] border-[var(--gray-300)] rounded"
+      //     />
+      //   </div>
+      // ),
+      header: () => null,
       cell: ({ row }) => (
-        <div className="flex items-center justify-center w-full">
+        <div className='course-row-checkbox flex items-center justify-center w-[36px] h-[36px] hover:bg-[var(--third)] rounded'>
           <Checkbox
             checked={row.getIsSelected()}
             onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-            className="border-gray-300"
+            aria-label='Select row'
           />
         </div>
       ),
@@ -59,15 +57,21 @@ export const getCourseListColumns = ({
     },
     {
       accessorKey: 'id',
-      header: 'Course ID',
+      header: 'ID',
       enableSorting: true,
-      cell: ({ row }) => <span>{row.original.id}</span>,
+      cell: ({ row }) => <span>{String(row.original.id).padStart(3, '0')}</span>,
     },
     {
       accessorKey: 'name',
-      header: 'Course Name',
+      header: 'Unit Name',
       enableSorting: true,
       cell: ({ row }) => <span>{row.original.name}</span>,
+    },
+    {
+      accessorKey: 'unitType',
+      header: 'Unit Type',
+      enableSorting: true,
+      cell: ({ row }) => <span>{row.original.unitType}</span>,
     },
     {
       accessorKey: 'assignedCompanies',
@@ -76,125 +80,96 @@ export const getCourseListColumns = ({
       cell: ({ row }) => {
         const names = row.original.assignedCompanies;
         if (!names || names === 'None') {
-            return <span className="text-gray-400 italic text-sm">None</span>;
+          return <span className='text-gray-400 italic text-sm'>None</span>;
         }
 
         const companies = names.split(', ');
-        const displayLimit = 2;
+        const displayLimit = 3;
 
         if (companies.length <= displayLimit) {
-            return <span className="truncate" title={names}>{names}</span>;
+          return (
+            <span
+              className='truncate'
+              title={names}
+            >
+              {names}
+            </span>
+          );
         }
-        
+
         const displayed = companies.slice(0, displayLimit).join(', ');
-        const remaining = companies.length - displayLimit;
 
         return (
-          <span className="text-sm" title={names}>
-            {displayed}, <span className="font-medium">+{remaining} more</span>
+          <span
+            className='text-sm'
+            title={names}
+          >
+            {displayed},{' '}
+            <button
+              type='button'
+              className='font-medium text-[#FFA600] hover:underline'
+            >
+              see more
+            </button>
           </span>
         );
       },
     },
     {
-      accessorKey: 'totalUnits',
-      header: 'Total Units',
+      accessorKey: 'price',
+      header: 'Price',
       enableSorting: true,
-      cell: ({ row }) => <span>{row.original.totalUnits}</span>,
+      cell: ({ row }) => {
+        const { is_paid, price } = row.original;
+
+        if (!is_paid || price === null) {
+          return <span className='text-[#FFA600]'>Free</span>;
+        }
+
+        return <span>${price.toFixed(2)}</span>;
+      },
     },
   ];
 
-  if (showPrice) {
-    columns.push({
-      accessorKey: 'price',
-      header: 'Yearly Subscription',
-      enableSorting: true,
-      cell: ({ row }) => {
-        const price = row.original.price;
-        return (
-          <span>
-            {price !== null ? `$${price}` : '-'}
-          </span>
-        );
-      },
-    });
-  }
-
   columns.push({
     id: 'actions',
-    header: () => <div className="text-center">Actions</div>,
+    header: () => <div className='text-center'>Actions</div>,
     cell: ({ row }) => {
-      // Build menu items
-      const menuItems = [];
-
-      menuItems.push({
-        label: 'View Course',
-        icon: <Eye className="size-[18px] md:size-4" />,
-        onClick: () => handleEdit(row.original),
-      });
-
-      menuItems.push({
-        label: 'Edit Course',
-        icon: <Pencil className="size-[18px] md:size-4" />,
-        onClick: () => handleEdit(row.original),
-      });
-
-      if (handleDuplicate) {
-        menuItems.push({
-          label: 'Duplicate Course',
-          icon: <Copy className="size-[18px] md:size-4" />,
+      const menuItems = [
+        {
+          label: 'View Unit',
+          icon: <Search className='text-[var(--gray-700)] size-[18px] md:size-3.5' />,
+          onClick: () => handleView(row.original),
+        },
+        {
+          label: 'Edit Unit',
+          icon: <Pencil className='text-[var(--gray-700)] size-[18px] md:size-3.5' />,
+          onClick: () => handleEdit(row.original),
+        },
+        {
+          label: 'Duplicate Unit',
+          icon: <Copy className='text-[var(--gray-700)] size-[18px] md:size-3.5' />,
           onClick: () => handleDuplicate(row.original),
-        });
-      }
-
-      // Show for Free courses
-      if (!showPrice && handleAssign) {
-          menuItems.push({
-              label: 'Add to Company or Job Role',
-              icon: <Plus className="size-[18px] md:size-4" />, 
-              onClick: () => handleAssign(row.original),
-              className: 'text-[#FFA600]' // Orange
-          });
-      }
-
-      // Show for Paid courses - Company Only
-      if (showPrice && handleAssign) {
-          menuItems.push({
-            label: 'Add to Company',
-            icon: (
-              <Plus
-                className='size-[18px] md:size-4 text-[#FFA600]'
-              />
-            ), // Icon color separately
-            onClick: () => handleAssign(row.original),
-            className: 'text-[#FFA600]', // Orange text
-          });
-      }
-
-      // Only show for Free courses
-      if (!showPrice && handleShowJobRoles) {
-        menuItems.push({
-            label: 'Show Job Roles',
-            icon: <Briefcase className="size-[18px] md:size-4" />, 
-            onClick: () => handleShowJobRoles(row.original),
-        });
-      }
-
-      // Archive option added
-      menuItems.push({
-        label: 'Archive Course',
-        icon: <Archive className="size-[18px] md:size-4" />,
-        onClick: () => handleArchive(row.original),
-      });
-
-      menuItems.push({
-        label: 'Delete Course',
-        icon: <Trash2 className="size-[18px] md:size-4" />,
-        onClick: () => handleDelete(row.original),
-      });
+        },
+        {
+          label: 'Add to Company or Job Role',
+          icon: <Plus className='text-[var(--gray-700)] size-[18px] md:size-3.5' />,
+          onClick: () => handleAssign(row.original),
+        },
+        {
+          label: 'Show Job Roles',
+          icon: <List className='text-[var(--gray-700)] size-[18px] md:size-3.5' />,
+          onClick: () => handleShowJobRoles(row.original),
+        },
+        {
+          label: 'Archive Unit',
+          icon: <Archive className='text-[var(--gray-700)] size-[18px] md:size-3.5' />,
+          onClick: () => handleArchive(row.original),
+        },
+      ];
 
       return (
-        <div className="flex justify-center">
+        <div className='flex justify-center'>
           <RowActionMenu
             app={APPS.TRAINING}
             menuItems={menuItems}

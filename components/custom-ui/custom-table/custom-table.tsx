@@ -111,6 +111,8 @@ const getDesktopSkeletonCell = (columnId: string) => {
       return <Skeleton className='h-4 w-48 max-w-full rounded' />;
     case 'assignedCompanies':
       return <Skeleton className='h-4 w-36 max-w-full rounded' />;
+    case 'unitType':
+      return <Skeleton className='h-4 w-28 max-w-full rounded' />;
     case 'totalUnits':
       return <Skeleton className='h-4 w-8 rounded' />;
     case 'price':
@@ -468,7 +470,7 @@ export function CustomTable<TData>({
                   // const isEven = index % 2 === 0;
 
                   const baseRowClasses = [
-                    'px-2 m-0 box-border relative z-10 group data-[inactive=true]:hover:[&_td]:border-[var(--table-border)] data-[inactive=true]:hover:[&_td]:text-[#4B5563]',
+                    'p-0 m-0 box-border relative z-10 group data-[inactive=true]:hover:[&_td]:border-[var(--table-border)] data-[inactive=true]:hover:[&_td]:text-[#4B5563]',
                     bodyRowClassName,
                     tableRowHeight,
                   ];

@@ -70,20 +70,22 @@ export default function CoursesPage() {
   const columns = useMemo(
     () =>
       getCourseListColumns({
-        handleEdit: (course) => {
-          console.log('Edit course clicked:', course.id);
+        handleView: (course) => {
+          console.log('View unit clicked:', course.id);
         },
-        handleDelete: (course) => {
-          dispatch({ type: ActionType.OPEN_DELETE_DIALOG, payload: course });
+        handleEdit: (course) => {
+          console.log('Edit unit clicked:', course.id);
         },
         handleDuplicate: (course) => {
           dispatch({ type: ActionType.OPEN_DUPLICATE_DIALOG, payload: course });
         },
+        handleAssign: (course) => {
+          console.log('Add to company or job role clicked:', course.id);
+        },
+        handleShowJobRoles: (course) => {
+          console.log('Show job roles clicked:', course.id);
+        },
         handleArchive: handlers.handleOpenArchiveDialog,
-        // We aren't testing assignment logic in this assessment, so these are no-ops or removed
-        handleAssign: undefined,
-        handleShowJobRoles: undefined,
-        showPrice: false, // Default to free view
       }),
     [dispatch, handlers.handleOpenArchiveDialog]
   );
@@ -101,8 +103,8 @@ export default function CoursesPage() {
         return true;
       }
 
-      const { id, name, assignedCompanies, totalUnits } = row.original;
-      const searchableValue = [id, name, assignedCompanies, totalUnits]
+      const { id, name, unitType, assignedCompanies, price, is_paid } = row.original;
+      const searchableValue = [id, name, unitType, assignedCompanies, is_paid ? price : 'Free']
         .filter((value) => value !== null && value !== undefined)
         .join(' ')
         .toLowerCase();
@@ -159,7 +161,7 @@ export default function CoursesPage() {
                   </div>
                   <Input
                     type='search'
-                    placeholder='Search Courses'
+                    placeholder='Search Unit'
                     value={globalFilter}
                     onChange={(event) => setGlobalFilter(event.target.value)}
                     className='placeholder:text-[var(--gray-400)] focus:placeholder:text-transparent transition-colors duration-200 text-sm border-none h-[37px] pl-9 shadow-none ring-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0'
@@ -167,8 +169,8 @@ export default function CoursesPage() {
                 </div>
               </div>
             </div>
-            </div>
-            
+          </div>
+
           <div className='px-4 py-7 md:p-10'>
             <PageInfoBanner
               title='Active Units List'
@@ -176,7 +178,7 @@ export default function CoursesPage() {
             />
 
             {/* Middle Controls: Results Count & Bulk Actions */}
-            <div className='flex justify-between items-center mb-2 md:mb-3 py-0.5'>
+            <div className='flex justify-between items-center mb-2 md:mb-4 py-0.5'>
               <div className='flex items-center text-sm text-[var(--gray-700)]'>
                 <div className='flex items-center gap-2.5'>
                   <span className='md:inline-block hidden text-[var(--gray-700)] text-sm leading-normal'>Show</span>
@@ -217,12 +219,7 @@ export default function CoursesPage() {
               </div>
 
               <CustomButton
-                title={
-                  <>
-                    <span className='md:inline-block hidden'>Add Free Course</span>
-                    <span className='md:hidden inline-block'>Add</span>
-                  </>
-                }
+                title='Add Unit'
                 onClick={() => setShowAddForm(true)}
                 leadingIcon={<Plus className='size-3.5' />}
                 app={APPS.TRAINING}
@@ -233,13 +230,15 @@ export default function CoursesPage() {
             <CustomTable
               table={table}
               isLoading={isLoading}
-              noResultsMessage='No free courses found.'
+              noResultsMessage='No units found.'
               skeletonRows={pagination.pageSize}
               headerRowClassName='hover:bg-[var(--gray-200)]/80 bg-[var(--gray-200)] border-b border-[var(--gray-300)]'
-              headerCellClassName='text-[var(--gray-800)] font-semibold text-sm px-4 py-3 h-12'
+              headerCellClassName='text-[var(--gray-800)] font-semibold text-sm px-4 py-3'
               bodyRowClassName='hover:bg-gray-50 transition-colors'
               bodyCellClassName='px-4 py-3 text-sm text-gray-600'
               tableClassName='custom-table'
+              tableHeaderHeight='h-[45px]'
+              tableRowHeight='h-[60px]'
             />
 
             {table.getPageCount() > 1 && (
