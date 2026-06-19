@@ -64,7 +64,7 @@ const CustomContentHeader: React.FC<CustomContentHeaderProps> = ({
                 <span className='text-sm text-[#6D28D9] font-semibold leading-normal'>Back</span>
               </button>
             )}
-            <span className='text-lg leading-normal font-semibold text-[var(--gray-800)]'>{title}</span>
+            <span className='text-lg leading-none font-semibold text-[var(--gray-800)]'>{title}</span>
           </div>
           <span className={`text-sm leading-normal ${descriptionColor}`}>{description}</span>
         </div>

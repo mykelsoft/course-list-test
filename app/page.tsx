@@ -3,7 +3,8 @@
 
 import { ActionType, useCoursesTable } from '@/hooks/useCoursesTable';
 import { Archive, InfoIcon, Plus, SearchIcon } from 'lucide-react';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   getCoreRowModel,
@@ -25,13 +26,12 @@ import { TablePagination } from '@/components/custom-ui/custom-table/table-pagin
 import { cn } from '@/lib/utils';
 // Assuming you migrate columns to a local component folder
 import { CourseFiltersPopover } from '@/components/course-list/course-filters-popover';
-import AddCompanyForm from '@/components/course-list/add-company-form';
 import { getCourseListColumns } from '@/components/course-list/course-list-columns';
 import { AddToCompanyDialog } from '@/components/course-list/add-to-company-dialog';
 import { LinkedJobRolesDialog } from '@/components/course-list/linked-job-roles-dialog';
 
 export default function CoursesPage() {
-  const [showAddForm, setShowAddForm] = useState(false);
+  const router = useRouter();
 
   // We pass an empty array initially; the hook will fetch mock data on mount
   const {
@@ -83,7 +83,7 @@ export default function CoursesPage() {
     () =>
       getCourseListColumns({
         handleView: (course) => {
-          console.log('View unit clicked:', course.id);
+          router.push(`/units/${course.id}`);
         },
         handleEdit: (course) => {
           console.log('Edit unit clicked:', course.id);
@@ -95,7 +95,7 @@ export default function CoursesPage() {
         handleShowJobRoles: handlers.handleOpenShowJobRolesDialog,
         handleArchive: handlers.handleOpenArchiveDialog,
       }),
-    [dispatch, handlers.handleOpenArchiveDialog, handlers.handleOpenAssignDialog, handlers.handleOpenShowJobRolesDialog]
+    [dispatch, handlers.handleOpenArchiveDialog, handlers.handleOpenAssignDialog, handlers.handleOpenShowJobRolesDialog, router]
   );
 
   const getSearchableValue: FilterFn<CourseWithDetails> = (
@@ -141,14 +141,8 @@ export default function CoursesPage() {
 
   return (
     <>
-      {showAddForm ? (
-        <div className='px-4 py-7 md:px-10 md:py-6'>
-          <AddCompanyForm onBack={() => setShowAddForm(false)} />
-        </div>
-      ) : (
-        <>
-          {/* Top Controls: Search & Add */}
-          <div className='bg-white py-4 md:px-6 px-4 border-b border-[var(--gray-200)]'>
+      {/* Top Controls: Search & Add */}
+      <div className='bg-white py-4 md:px-6 px-4 border-b border-[var(--gray-200)]'>
             <div className='flex items-center md:gap-4 gap-2'>
               <CourseFiltersPopover
                 app={APPS.TRAINING}
@@ -228,7 +222,7 @@ export default function CoursesPage() {
 
               <CustomButton
                 title='Add Unit'
-                onClick={() => setShowAddForm(true)}
+                onClick={() => router.push('/units/add')}
                 leadingIcon={<Plus className='size-3.5 -mt-0.5' />}
                 app={APPS.TRAINING}
                 buttonClass='order-1 md:order-2'
@@ -258,8 +252,6 @@ export default function CoursesPage() {
               </div>
             )}
           </div>
-        </>
-      )}
 
       {/* Dialogs */}
       <CustomDeleteDialog

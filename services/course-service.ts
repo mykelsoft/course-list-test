@@ -10,6 +10,11 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 let _courses = [...MOCK_COURSES];
 
 export const courseService = {
+  async fetchCourseById(id: number): Promise<CourseWithDetails | null> {
+    await delay(300);
+    return _courses.find((course) => course.id === id) ?? null;
+  },
+
   async fetchCourses({ isPaid, archived = false }: { isPaid?: boolean; archived?: boolean } = {}): Promise<CourseWithDetails[]> {
     await delay(600);
 

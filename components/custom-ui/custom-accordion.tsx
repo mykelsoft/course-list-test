@@ -43,7 +43,7 @@ const CustomAccordion = ({
   const renderTitle = () => {
     if (typeof title === 'string') {
       return (
-        <h2 className="text-base leading-normal font-semibold text-[var(--gray-700)]">
+        <h2 className="text-base leading-[36px] font-semibold text-[var(--gray-700)]">
           {title}
         </h2>
       );
