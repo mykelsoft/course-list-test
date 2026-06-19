@@ -10,7 +10,6 @@ import type {
   Updater,
 } from '@tanstack/react-table';
 import { toast } from 'sonner';
-import { isSameDay, subDays, isAfter } from 'date-fns';
 
 // Mock Service
 import { courseService } from '@/services/course-service';
@@ -24,21 +23,15 @@ import { DateToaster } from '@/components/ui/sonner';
 // --- Types ---
 
 export type CourseFilters = {
-  companies: string[];
-  hasCompany: boolean;
-  noCompany: boolean;
-  minUnits: number | '';
-  maxUnits: number | '';
-  lastModified: string;
+  unitTypes: string[];
+  minUnitPrice: number | '';
+  maxUnitPrice: number | '';
 };
 
 export const EMPTY_COURSE_FILTERS: CourseFilters = {
-  companies: [],
-  hasCompany: false,
-  noCompany: false,
-  minUnits: '',
-  maxUnits: '',
-  lastModified: 'All',
+  unitTypes: [],
+  minUnitPrice: '',
+  maxUnitPrice: '',
 };
 
 export type JobRoleBasic = { id: number; name: string };
@@ -345,8 +338,9 @@ export function useCoursesTable(initialCourses: CourseWithDetails[] = [], isPaid
         const searchableValue = [
           course.id,
           course.name,
+          course.unitType,
           course.assignedCompanies,
-          course.totalUnits,
+          course.is_paid ? course.price : 'Free',
         ]
           .filter((value) => value !== null && value !== undefined)
           .join(' ')
@@ -356,58 +350,24 @@ export function useCoursesTable(initialCourses: CourseWithDetails[] = [], isPaid
           return false;
         }
       }
-      if (state.filters.companies.length > 0) {
-        const assigned = course.assignedCompanies;
-        if (assigned === 'None') {
-          return false;
-        }
-        const courseCompanies = assigned.split(', ');
-        const hasMatch = state.filters.companies.some((company) =>
-          courseCompanies.includes(company),
-        );
-        if (!hasMatch) {
+      if (state.filters.unitTypes.length > 0) {
+        if (!state.filters.unitTypes.includes(course.unitType)) {
           return false;
         }
       }
-      if (state.filters.hasCompany && !state.filters.noCompany) {
-        if (course.assignedCompanies === 'None') {
-          return false;
-        }
-      }
-      if (state.filters.noCompany && !state.filters.hasCompany) {
-        if (course.assignedCompanies !== 'None') {
-          return false;
-        }
-      }
-      if (state.filters.minUnits !== '' && course.totalUnits < state.filters.minUnits) {
+      const coursePrice =
+        course.is_paid && course.price !== null ? course.price : 0;
+      if (
+        state.filters.minUnitPrice !== '' &&
+        coursePrice < state.filters.minUnitPrice
+      ) {
         return false;
       }
-      if (state.filters.maxUnits !== '' && course.totalUnits > state.filters.maxUnits) {
+      if (
+        state.filters.maxUnitPrice !== '' &&
+        coursePrice > state.filters.maxUnitPrice
+      ) {
         return false;
-      }
-      if (state.filters.lastModified !== 'All' && course.updatedAt) {
-        const today = new Date();
-        const updated = new Date(course.updatedAt);
-        switch (state.filters.lastModified) {
-          case 'Today':
-            if (!isSameDay(today, updated)) return false;
-            break;
-          case 'Yesterday': {
-            const yesterday = subDays(today, 1);
-            if (!isSameDay(yesterday, updated)) return false;
-            break;
-          }
-          case 'Last 7 Days': {
-            const last7Days = subDays(today, 7);
-            if (!isAfter(updated, last7Days)) return false;
-            break;
-          }
-          case 'Last 30 Days': {
-            const last30Days = subDays(today, 30);
-            if (!isAfter(updated, last30Days)) return false;
-            break;
-          }
-        }
       }
       return true;
     });
@@ -591,6 +551,47 @@ export function useCoursesTable(initialCourses: CourseWithDetails[] = [], isPaid
       }
   };
 
+  const handleConfirmAssign = useCallback(
+    async (companyIds: number[], addToMasterJobRole: boolean) => {
+      if (!state.selectedCourse) return;
+
+      dispatch({ type: ActionType.ACTION_START });
+      try {
+        const companySeatMap: Record<string, number> = {};
+        companyIds.forEach((id) => {
+          const company = state.allCompanies.find((c) => c.id === id);
+          if (company) {
+            companySeatMap[company.name] = 1;
+          }
+        });
+
+        await courseService.assignToCompanies(
+          state.selectedCourse.id,
+          companySeatMap,
+        );
+
+        if (addToMasterJobRole) {
+          const jobRoleIds = state.allJobRoles.map((role) => role.id);
+          await courseService.assignToJobRoles(state.selectedCourse.id, jobRoleIds);
+        }
+
+        toast.success(
+          addToMasterJobRole
+            ? 'Assigned to companies and master job role.'
+            : 'Assigned to companies.',
+          DateToaster(),
+        );
+        dispatch({ type: ActionType.ACTION_SUCCESS });
+        fetchCourses();
+      } catch (error) {
+        const msg = error instanceof Error ? error.message : 'Assignment failed';
+        dispatch({ type: ActionType.ACTION_ERROR, payload: msg });
+        toast.error(msg, DateToaster());
+      }
+    },
+    [state.selectedCourse, state.allCompanies, state.allJobRoles, fetchCourses],
+  );
+
   const refreshData = fetchCourses;
 
   return {
@@ -612,6 +613,7 @@ export function useCoursesTable(initialCourses: CourseWithDetails[] = [], isPaid
       handleArchiveCourse, 
       handleAssignToCompanies,
       handleAssignToJobRoles,
+      handleConfirmAssign,
       handleRemoveJobRole,
       setSorting,
       setPagination,

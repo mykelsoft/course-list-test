@@ -2,7 +2,7 @@
 // File: ./components/custom-ui/custom-accordion.tsx
 //
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import type { ReactNode } from 'react';
 import { Separator } from '#components/ui/separator';
@@ -17,20 +17,39 @@ type CustomAccordionProps = {
   footerContent?: ReactNode;
   onToggle?: (isExpanded: boolean) => void;
   headerChildren?: React.ReactNode;
+  headerActions?: React.ReactNode;
 };
+
+const CONTENT_TRANSITION_MS = 300;
 
 const CustomAccordion = ({
   title,
   description,
-  descriptionColor = 'text-gray-600',
+  descriptionColor = 'text-[var(--gray-600)]',
   children,
   className = '',
   defaultExpanded = true,
   footerContent,
   onToggle,
   headerChildren,
+  headerActions,
 }: CustomAccordionProps) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+  const [showSeparator, setShowSeparator] = useState(defaultExpanded);
+
+  useEffect(() => {
+    if (isExpanded) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setShowSeparator(true);
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setShowSeparator(false);
+    }, CONTENT_TRANSITION_MS);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [isExpanded]);
 
   const handleToggle = () => {
     const newExpandedState = !isExpanded;
@@ -42,11 +61,7 @@ const CustomAccordion = ({
 
   const renderTitle = () => {
     if (typeof title === 'string') {
-      return (
-        <h2 className="text-base leading-normal font-semibold text-[var(--gray-700)]">
-          {title}
-        </h2>
-      );
+      return <h2 className='text-base leading-8 font-semibold text-[var(--gray-700)]'>{title}</h2>;
     }
     return title;
   };
@@ -54,7 +69,7 @@ const CustomAccordion = ({
   const renderDescription = () => {
     if (typeof description === 'string') {
       return (
-        <span className={`text-sm ${descriptionColor}`}>{description}</span>
+        <span className={`text-sm -mt-px ${descriptionColor}`}>{description}</span>
       );
     }
     return description;
@@ -63,7 +78,7 @@ const CustomAccordion = ({
   return (
     <div className={`bg-white rounded-lg border border-[var(--gray-200)] ${className}`}>
       <div
-        className='flex items-center justify-between p-6 cursor-pointer'
+        className='flex items-center justify-between p-4 md:p-6 cursor-pointer'
         onClick={handleToggle}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -80,7 +95,7 @@ const CustomAccordion = ({
         <div className='flex items-center gap-6'>
           {!description && renderTitle()}
           {description && (
-            <div className='flex flex-col gap-2'>
+            <div className='flex flex-col'>
               {renderTitle()}
               {renderDescription()}
             </div>
@@ -95,24 +110,34 @@ const CustomAccordion = ({
           </div>
         </div>
 
-        {/* Right-aligned chevron icon */}
-        <div className='group p-1 rounded-sm ml-4'>
-          {isExpanded ? (
-            <ChevronUp className='size-6 text-[var(--gray-700)] group-hover:text-primary' />
-          ) : (
-            <ChevronDown className='size-6 text-[var(--gray-700)] group-hover:text-primary' />
+        <div className='flex items-center gap-2 md:gap-3'>
+          {headerActions && (
+            <div
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => e.stopPropagation()}
+              role='presentation'
+            >
+              {headerActions}
+            </div>
           )}
+          <div className='group p-1.5 rounded hover:bg-[#FFA600]/10'>
+            {isExpanded ? (
+              <ChevronUp className='size-[18px] md:size-6 text-[var(--gray-700)] group-hover:text-[#FFA600]' />
+            ) : (
+              <ChevronDown className='size-[18px] md:size-6 text-[var(--gray-700)] group-hover:text-[#FFA600]' />
+            )}
+          </div>
         </div>
       </div>
 
-      <Separator />
+      {showSeparator && <Separator />}
 
       <div
         className={`transition-all duration-300 ease-in-out overflow-hidden ${
           isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className='p-6 space-y-6'>{children}</div>
+        <div className='p-4 md:p-6 space-y-4 md:space-y-6'>{children}</div>
         {footerContent && (
           <>
             <Separator />

@@ -15,10 +15,12 @@ import { InfoIcon } from 'lucide-react';
 import { Input } from '../ui/input';
 import { Label } from '@/components/ui/label';
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 type CustomInputProps<TFieldValues extends FieldValues> = {
   app?: APPS;
   label?: string;
+  labelSuffix?: string;
   // --- FIX: Use Path<TFieldValues> so the generic is used ---
   name: Path<TFieldValues>; 
   value?: string; 
@@ -42,6 +44,7 @@ type CustomInputProps<TFieldValues extends FieldValues> = {
 
 const CustomInput = <TFieldValues extends FieldValues = FieldValues>({
   label,
+  labelSuffix = '',
   app = APPS.PORTAL,
   name,
   placeholder,
@@ -50,7 +53,7 @@ const CustomInput = <TFieldValues extends FieldValues = FieldValues>({
   validationError,
   type = 'text',
   width = 'w-full',
-  labelWidth = 'w-50',
+  labelWidth = 'w-full',
   containerClassName = '',
   labelClassName = '',
   inputClassName = '',
@@ -72,16 +75,20 @@ const CustomInput = <TFieldValues extends FieldValues = FieldValues>({
   // Ensure an ID is available for accessibility association
   const inputId = props.id || name;
 
+  const labelSuffixText = labelSuffix.trim().length > 0 ? ` (${labelSuffix})` : '';
+
   return (
     <div className={`w-full flex flex-col items-start ${containerClassName}`}>
-      <div className={`w-full flex flex-row items-center gap-10 ${containerClassName}`}>
+      <div className={cn('form-field-row', containerClassName)}>
         {label && (
           <Label
             htmlFor={inputId}
-            className={`text-[var(--gray-700)] font-medium shrink-0 ${labelClassName} ${labelWidth}`}
+            className={`w-full text-[var(--gray-700)] font-medium shrink-0 ${labelClassName} ${labelWidth}`}
           >
             <div className='flex flex-row items-center gap-3'>
-              {label}
+              <span>
+                {label} {labelSuffixText ? <span className='text-sm text-[var(--gray-400)]'> {labelSuffixText}</span> : null}
+              </span>
               {tooltip && (
                 <TooltipProvider>
                   <Tooltip>
@@ -106,12 +113,11 @@ const CustomInput = <TFieldValues extends FieldValues = FieldValues>({
               type={type}
               value={value}
               className={`
-              w-full 
-              bg-white
+              w-full
               font-normal
               shadow-none
-              border-[var(--gray-300)]
               rounded-md
+              border-0
               placeholder:text-[var(--gray-400)]
               bg-[var(--gray-50)]
               ${inputClassName.includes('w-') ? '' : width} 

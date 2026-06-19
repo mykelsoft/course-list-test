@@ -69,29 +69,34 @@ export function CustomMobileTable({
         {Array.from({ length: skeletonRows }).map((_, index) => (
           <div
             key={`skeleton-${index}`}
-            className="bg-white border border-[#e5e7eb] border-solid rounded-[4px] overflow-clip flex flex-col w-full"
+            className='bg-white border border-[#e5e7eb] border-solid rounded-sm overflow-clip flex flex-col w-full'
           >
-            {/* Skeleton Header */}
-            <div className="bg-[#e5e7eb] border-b border-[#e5e7eb] border-l-0 border-r-0 border-t-0 border-solid flex items-center justify-between px-[16px] h-[41px] w-full shrink-0">
-              <div className="flex gap-[8px] items-center">
-                <Skeleton className="size-[20px] rounded-[4px]" />
-                <Skeleton className="h-[14px] w-[30px] rounded" />
+            <div className='bg-[#e5e7eb] border-b border-[#e5e7eb] border-l-0 border-r-0 border-t-0 border-solid flex flex-wrap items-center justify-between px-4 py-[8px] min-h-[41px] w-full shrink-0'>
+              <div className='flex items-center gap-2'>
+                <Skeleton className='size-[20px] rounded-[4px]' />
+                <Skeleton className='h-[14px] w-[30px] rounded' />
               </div>
-              <Skeleton className="h-[18px] w-[18px] rounded" />
+              <div className='flex flex-wrap items-center gap-2'>
+                {Array.from({ length: 4 }).map((__, actionIndex) => (
+                  <Skeleton
+                    key={`skeleton-action-${index}-${actionIndex}`}
+                    className='size-[24px] rounded'
+                  />
+                ))}
+              </div>
             </div>
 
-            {/* Skeleton Fields */}
             {Array.from({ length: 3 }).map((_, fieldIndex) => (
               <div
                 key={`skeleton-field-${fieldIndex}`}
-                className="border-b border-[#e5e7eb] border-l-0 border-r-0 border-t-0 border-solid last:border-b-0 flex items-center justify-between px-[16px] py-[12px] w-full shrink-0"
+                className='border-b border-[#e5e7eb] border-l-0 border-r-0 border-t-0 border-solid last:border-b-0 flex items-start justify-between px-4 py-[8px] w-full shrink-0'
               >
-                <div className="flex-[1_0_0] gap-[8px] grid grid-cols-[minmax(0,_1fr)_minmax(0,_2fr)] grid-rows-[repeat(1,_fit-content(100%))] min-h-px min-w-px relative">
-                  <div className="col-[1] flex items-center justify-start self-stretch">
-                    <Skeleton className="h-[14px] w-[60px] rounded" />
+                <div className='flex-[1_0_0] gap-[8px] grid grid-cols-[minmax(0,_1fr)_minmax(0,_2fr)] grid-rows-[repeat(1,_fit-content(100%))] min-h-px min-w-px relative'>
+                  <div className='col-[1] flex items-start justify-start self-stretch'>
+                    <Skeleton className='h-[14px] w-[60px] rounded' />
                   </div>
-                  <div className="col-[2] flex items-center justify-self-stretch self-start">
-                    <Skeleton className="h-[14px] w-[100px] rounded" />
+                  <div className='col-[2] flex items-start justify-self-stretch self-start'>
+                    <Skeleton className='h-[14px] w-[100px] rounded' />
                   </div>
                 </div>
               </div>

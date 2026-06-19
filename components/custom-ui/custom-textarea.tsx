@@ -1,13 +1,11 @@
+import { APPS } from '@/types/ENUMS';
+import CustomErrorMessage from './custom-error-message';
+import { Glowing } from './styling/glowing';
+import { Label } from '@/components/ui/label';
 // File: ./components/custom-ui/custom-textarea.tsx
 import React from 'react';
-
-import CustomErrorMessage from './custom-error-message';
-import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
-import { APPS } from '@/types/ENUMS';
-import { Glowing } from './styling/glowing';
-
 import { TextArea } from '../ui/textarea';
+import { cn } from '@/lib/utils';
 
 type CustomTextAreaProps = {
   label?: React.ReactNode;
@@ -59,7 +57,7 @@ const CustomTextArea: React.FC<CustomTextAreaProps> = ({
         className={cn(
           'min-h-[80px] resize-y',
           // 1. Add the default border color for the normal state.
-          'border-[var(--table-border)]',
+          'bg-[var(--gray-50)] border-[var(--gray-300)] py-2 px-3 placeholder:text-[var(--gray-400)] leading-[20px]',
           // 2. Remove default focus rings so our theme can take over.
           'focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0',
           // 3. Apply width and other custom classes.

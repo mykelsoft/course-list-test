@@ -104,13 +104,15 @@ const getDesktopSkeletonCell = (columnId: string) => {
     case 'select':
       return <Skeleton className='mx-auto size-4 rounded-[4px]' />;
     case 'actions':
-      return <Skeleton className='mx-auto size-7 rounded-md' />;
+      return <Skeleton className='mx-auto size-[30px] rounded' />;
     case 'id':
       return <Skeleton className='h-4 w-10 rounded' />;
     case 'name':
       return <Skeleton className='h-4 w-48 max-w-full rounded' />;
     case 'assignedCompanies':
       return <Skeleton className='h-4 w-36 max-w-full rounded' />;
+    case 'unitType':
+      return <Skeleton className='h-4 w-28 max-w-full rounded' />;
     case 'totalUnits':
       return <Skeleton className='h-4 w-8 rounded' />;
     case 'price':
@@ -119,6 +121,8 @@ const getDesktopSkeletonCell = (columnId: string) => {
       return <Skeleton className='h-4 w-full rounded' />;
   }
 };
+
+const MOBILE_ACTION_SKELETON_COUNT = 6;
 
 const MOBILE_DETAIL_LABEL_WIDTHS = ['w-16', 'w-24', 'w-20', 'w-28'] as const;
 const MOBILE_DETAIL_VALUE_WIDTHS = ['w-28', 'w-36', 'w-20', 'w-32'] as const;
@@ -171,17 +175,17 @@ export function CustomTable<TData>({
   const mobileSkeletonRowCount = Math.min(skeletonRows, 3);
 
   const mobileLoadingHeader = (
-    <div className='mb-3 flex h-[52px] items-center rounded border border-[var(--gray-200)] bg-[var(--gray-200)] px-4'>
-      <Skeleton className='mr-4 size-5 shrink-0 rounded-[4px]' />
-      <Skeleton className='h-4 w-20 flex-1 rounded' />
+    <div className='mb-3 flex items-center gap-2 rounded bg-[var(--gray-200)] p-2 shadow-[0_0_0_1px_var(--gray-200)]'>
+      <Skeleton className='size-5 shrink-0 rounded' />
+      <Skeleton className='h-4 flex-1 rounded' />
       <Skeleton className='size-[26px] shrink-0 rounded' />
     </div>
   );
 
   const mobileTableHeader = mobileHeaderGroup ? (
-    <div className='flex items-center bg-[var(--gray-200)] px-4 py-3 rounded border border-[var(--gray-200)]'>
+    <div className='flex items-center gap-2 bg-[var(--gray-200)] p-2 rounded shadow-[0_0_0_1px_var(--gray-200)]'>
       {mobileSelectionHeader && !mobileSelectionHeader.isPlaceholder ? (
-        <div className='mr-4 flex shrink-0 items-center **:data-[slot=checkbox]:size-5 **:data-[slot=checkbox]:rounded'>
+        <div className='flex shrink-0 items-center **:data-[slot=checkbox]:size-5 **:data-[slot=checkbox]:rounded'>
           {flexRender(mobileSelectionHeader.column.columnDef.header, mobileSelectionHeader.getContext())}
         </div>
       ) : null}
@@ -221,21 +225,23 @@ export function CustomTable<TData>({
         data-inactive={tooltipContent ? true : undefined}
         className={cn('overflow-hidden rounded border border-[var(--gray-200)] bg-white', getRowClassName?.(row))}
       >
-        <div className='flex items-center bg-[var(--gray-200)] px-4 py-2.5 h-[52px]'>
-          {selectionCell ? (
-            <div className='mr-4 flex shrink-0 items-center **:data-[slot=checkbox]:size-5 **:data-[slot=checkbox]:rounded'>
-              {flexRender(selectionCell.column.columnDef.cell, selectionCell.getContext())}
-            </div>
-          ) : null}
+        <div className='bg-[var(--gray-200)]'>
+          <div className='flex items-center p-2'>
+            {selectionCell ? (
+              <div className='flex shrink-0 items-center **:data-[slot=checkbox]:size-5 **:data-[slot=checkbox]:rounded'>
+                {flexRender(selectionCell.column.columnDef.cell, selectionCell.getContext())}
+              </div>
+            ) : null}
 
-          {primaryCell ? (
-            <div className='min-w-0 flex-1 text-sm font-semibold leading-normal text-[var(--gray-700)]'>
-              {flexRender(primaryCell.column.columnDef.cell, primaryCell.getContext())}
-            </div>
-          ) : null}
+            {primaryCell ? (
+              <div className='min-w-0 flex-1 text-sm font-semibold leading-normal text-[var(--gray-700)]'>
+                {flexRender(primaryCell.column.columnDef.cell, primaryCell.getContext())}
+              </div>
+            ) : null}
+          </div>
 
           {actionsCell ? (
-            <div className='ml-4 flex shrink-0 items-center justify-end text-[var(--gray-700)] [&_button]:size-7 [&_svg]:size-4'>
+            <div className='text-[var(--gray-700)] [&_button]:size-[30px] [&_svg]:size-[18px] p-2'>
               {flexRender(actionsCell.column.columnDef.cell, actionsCell.getContext())}
             </div>
           ) : null}
@@ -245,10 +251,10 @@ export function CustomTable<TData>({
           {detailCells.map((cell) => (
             <div
               key={cell.id}
-              className='grid grid-cols-[96px_minmax(0,1fr)] sm:grid-cols-[128px_minmax(0,1fr)] items-center bg-white px-4 py-2.5 min-h-[45px] gap-4'
+              className='grid grid-cols-[96px_minmax(0,1fr)] sm:grid-cols-[144px_minmax(0,1fr)] md:grid-cols-[160px_minmax(0,1fr)] items-center bg-white px-4 py-2.5 min-h-[45px] gap-2'
             >
               <div className='text-sm leading-normal text-[var(--gray-500)]'>{getReadableColumnLabel(row, cell.column.id)}</div>
-              <div className='min-w-0 text-sm font-normal leading-normal text-[var(--gray-600)] truncate'>
+              <div className='min-w-0 text-sm font-normal leading-normal text-[var(--gray-600)]'>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </div>
             </div>
@@ -299,16 +305,25 @@ export function CustomTable<TData>({
                 key={`mobile-skeleton-row-${rowIndex}`}
                 className='overflow-hidden rounded border border-[var(--gray-200)] bg-white'
               >
-                <div className='flex h-[52px] items-center bg-[var(--gray-200)] px-4'>
-                  <Skeleton className='mr-4 size-5 shrink-0 rounded-[4px]' />
-                  <Skeleton className='h-4 w-24 flex-1 rounded' />
-                  <Skeleton className='ml-4 size-7 shrink-0 rounded-md' />
+                <div className='bg-[var(--gray-200)]'>
+                  <div className='flex items-center p-2'>
+                    <Skeleton className='size-5 shrink-0 rounded' />
+                    <Skeleton className='ml-2 h-4 flex-1 rounded' />
+                  </div>
+                  <div className='flex flex-wrap items-center gap-2 p-2'>
+                    {Array.from({ length: MOBILE_ACTION_SKELETON_COUNT }).map((__, actionIndex) => (
+                      <Skeleton
+                        key={`mobile-skeleton-action-${rowIndex}-${actionIndex}`}
+                        className='size-[30px] shrink-0 rounded'
+                      />
+                    ))}
+                  </div>
                 </div>
                 <div className='divide-y divide-[var(--gray-200)]'>
                   {Array.from({ length: mobileDetailRowCount }).map((__, cellIndex) => (
                     <div
                       key={`mobile-skeleton-cell-${rowIndex}-${cellIndex}`}
-                      className='grid grid-cols-[96px_minmax(0,1fr)] sm:grid-cols-[128px_minmax(0,1fr)] items-center bg-white px-4 py-2.5 min-h-[45px] gap-4'
+                      className='grid grid-cols-[96px_minmax(0,1fr)] sm:grid-cols-[144px_minmax(0,1fr)] md:grid-cols-[160px_minmax(0,1fr)] items-center bg-white px-4 py-2.5 min-h-[45px] gap-2'
                     >
                       <Skeleton
                         className={cn(
@@ -468,7 +483,7 @@ export function CustomTable<TData>({
                   // const isEven = index % 2 === 0;
 
                   const baseRowClasses = [
-                    'px-2 m-0 box-border relative z-10 group data-[inactive=true]:hover:[&_td]:border-[var(--table-border)] data-[inactive=true]:hover:[&_td]:text-[#4B5563]',
+                    'p-0 m-0 box-border relative z-10 group data-[inactive=true]:hover:[&_td]:border-[var(--table-border)] data-[inactive=true]:hover:[&_td]:text-[#4B5563]',
                     bodyRowClassName,
                     tableRowHeight,
                   ];

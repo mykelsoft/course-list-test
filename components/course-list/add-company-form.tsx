@@ -56,7 +56,7 @@ export default function AddCompanyForm({ onBack }: AddCompanyFormProps) {
   const [admins] = useState<CompanyAdmin[]>(DEFAULT_ADMINS);
 
   return (
-    <div className='space-y-10'>
+    <div className='space-y-8 md:space-y-10'>
       <CustomContentHeader
         title='Add Company'
         description='Create a company profile to manage business details, team, and services.'
@@ -65,7 +65,7 @@ export default function AddCompanyForm({ onBack }: AddCompanyFormProps) {
       />
 
       <CustomAccordion title='Company Details'>
-        <div className='space-y-12'>
+        <div className='space-y-8 md:space-y-12'>
           <CustomInputHorizontal
             app={APPS.TRAINING}
             label='Company Name'
@@ -99,8 +99,8 @@ export default function AddCompanyForm({ onBack }: AddCompanyFormProps) {
           />
 
           <div className='flex items-center'>
-            <div className='w-full flex items-start gap-10'>
-              <p className='text-sm text-[var(--gray-700)] font-medium w-[240px] pt-2'>Company Admin/s</p>
+            <div className='form-field-row'>
+              <p className='w-full text-sm text-[var(--gray-700)] font-medium pt-2'>Company Admin/s</p>
               <div className='flex flex-col gap-2.5 flex-1 min-w-0'>
                 <div className='flex items-center gap-4'>
                   <CustomButton

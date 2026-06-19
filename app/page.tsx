@@ -3,7 +3,8 @@
 
 import { ActionType, useCoursesTable } from '@/hooks/useCoursesTable';
 import { Archive, InfoIcon, Plus, SearchIcon } from 'lucide-react';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   getCoreRowModel,
@@ -25,11 +26,12 @@ import { TablePagination } from '@/components/custom-ui/custom-table/table-pagin
 import { cn } from '@/lib/utils';
 // Assuming you migrate columns to a local component folder
 import { CourseFiltersPopover } from '@/components/course-list/course-filters-popover';
-import AddCompanyForm from '@/components/course-list/add-company-form';
 import { getCourseListColumns } from '@/components/course-list/course-list-columns';
+import { AddToCompanyDialog } from '@/components/course-list/add-to-company-dialog';
+import { LinkedJobRolesDialog } from '@/components/course-list/linked-job-roles-dialog';
 
 export default function CoursesPage() {
-  const [showAddForm, setShowAddForm] = useState(false);
+  const router = useRouter();
 
   // We pass an empty array initially; the hook will fetch mock data on mount
   const {
@@ -61,31 +63,39 @@ export default function CoursesPage() {
     duplicateDialogOpen,
     archiveDialogOpen,
     bulkArchiveDialogOpen,
+    assignDialogOpen,
+    showJobRolesDialogOpen,
     selectedCourse,
     isProcessing,
+    dialogError,
     filters,
     allCompanies,
+    linkedJobRoles,
+    isLoadingJobRoles,
   } = state;
+
+  const unitTypeOptions = useMemo(
+    () => [...new Set(courses.map((course) => course.unitType))].sort(),
+    [courses],
+  );
 
   const columns = useMemo(
     () =>
       getCourseListColumns({
-        handleEdit: (course) => {
-          console.log('Edit course clicked:', course.id);
+        handleView: (course) => {
+          router.push(`/units/${course.id}`);
         },
-        handleDelete: (course) => {
-          dispatch({ type: ActionType.OPEN_DELETE_DIALOG, payload: course });
+        handleEdit: (course) => {
+          router.push(`/units/add?id=${course.id}`);
         },
         handleDuplicate: (course) => {
           dispatch({ type: ActionType.OPEN_DUPLICATE_DIALOG, payload: course });
         },
+        handleAssign: handlers.handleOpenAssignDialog,
+        handleShowJobRoles: handlers.handleOpenShowJobRolesDialog,
         handleArchive: handlers.handleOpenArchiveDialog,
-        // We aren't testing assignment logic in this assessment, so these are no-ops or removed
-        handleAssign: undefined,
-        handleShowJobRoles: undefined,
-        showPrice: false, // Default to free view
       }),
-    [dispatch, handlers.handleOpenArchiveDialog]
+    [dispatch, handlers.handleOpenArchiveDialog, handlers.handleOpenAssignDialog, handlers.handleOpenShowJobRolesDialog, router]
   );
 
   const getSearchableValue: FilterFn<CourseWithDetails> = (
@@ -101,8 +111,8 @@ export default function CoursesPage() {
         return true;
       }
 
-      const { id, name, assignedCompanies, totalUnits } = row.original;
-      const searchableValue = [id, name, assignedCompanies, totalUnits]
+      const { id, name, unitType, assignedCompanies, price, is_paid } = row.original;
+      const searchableValue = [id, name, unitType, assignedCompanies, is_paid ? price : 'Free']
         .filter((value) => value !== null && value !== undefined)
         .join(' ')
         .toLowerCase();
@@ -131,26 +141,20 @@ export default function CoursesPage() {
 
   return (
     <>
-      {showAddForm ? (
-        <div className='px-4 py-7 md:px-10 md:py-6'>
-          <AddCompanyForm onBack={() => setShowAddForm(false)} />
-        </div>
-      ) : (
-        <>
-          {/* Top Controls: Search & Add */}
-          <div className='bg-white py-4 md:px-6 px-4 border-b border-[var(--gray-200)]'>
+      {/* Top Controls: Search & Add */}
+      <div className='bg-white py-4 md:px-6 px-4 border-b border-[var(--gray-200)]'>
             <div className='flex items-center md:gap-4 gap-2'>
               <CourseFiltersPopover
                 app={APPS.TRAINING}
                 filters={filters}
-                companyOptions={allCompanies}
+                unitTypeOptions={unitTypeOptions}
                 onApply={handlers.handleFilterChange}
               />
 
               <div className='flex-1 min-w-0'>
                 <div
                   className={cn(
-                    'relative flex-1 rounded-md bg-[var(--gray-50)] border border-[var(--gray-300)] transition-shadow focus-within:ring-1 focus-within:ring-primary focus-within:shadow-[0_0_6px_var(--primary-shadow)]',
+                    'relative flex-1 rounded-md bg-[var(--gray-50)] transition-shadow focus-within:ring-1 focus-within:ring-primary focus-within:shadow-[0_0_6px_var(--primary-shadow)]',
                     Glowing(APPS.TRAINING).inputBox,
                   )}
                 >
@@ -159,7 +163,7 @@ export default function CoursesPage() {
                   </div>
                   <Input
                     type='search'
-                    placeholder='Search Courses'
+                    placeholder='Search Unit'
                     value={globalFilter}
                     onChange={(event) => setGlobalFilter(event.target.value)}
                     className='placeholder:text-[var(--gray-400)] focus:placeholder:text-transparent transition-colors duration-200 text-sm border-none h-[37px] pl-9 shadow-none ring-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0'
@@ -167,8 +171,8 @@ export default function CoursesPage() {
                 </div>
               </div>
             </div>
-            </div>
-            
+          </div>
+
           <div className='px-4 py-7 md:p-10'>
             <PageInfoBanner
               title='Active Units List'
@@ -176,8 +180,8 @@ export default function CoursesPage() {
             />
 
             {/* Middle Controls: Results Count & Bulk Actions */}
-            <div className='flex justify-between items-center mb-2 md:mb-3 py-0.5'>
-              <div className='flex items-center text-sm text-[var(--gray-700)]'>
+            <div className='flex flex-col md:flex-row md:justify-between md:items-center mb-2 md:mb-4 gap-4'>
+              <div className='flex items-center text-sm text-[var(--gray-700)] order-2 md:order-1 py-0.5'>
                 <div className='flex items-center gap-2.5'>
                   <span className='md:inline-block hidden text-[var(--gray-700)] text-sm leading-normal'>Show</span>
                   <Select
@@ -217,29 +221,34 @@ export default function CoursesPage() {
               </div>
 
               <CustomButton
-                title={
-                  <>
-                    <span className='md:inline-block hidden'>Add Free Course</span>
-                    <span className='md:hidden inline-block'>Add</span>
-                  </>
-                }
-                onClick={() => setShowAddForm(true)}
-                leadingIcon={<Plus className='size-3.5' />}
+                title='Add Unit'
+                onClick={() => router.push('/units/add')}
+                leadingIcon={<Plus className='size-3.5 -mt-0.5' />}
                 app={APPS.TRAINING}
-                width='w-[82px] sm:w-auto'
+                buttonClass='order-1 md:order-2'
               />
             </div>
 
             <CustomTable
               table={table}
               isLoading={isLoading}
-              noResultsMessage='No free courses found.'
+              noResultsMessage='No units found.'
               skeletonRows={pagination.pageSize}
-              headerRowClassName='hover:bg-[var(--gray-200)]/80 bg-[var(--gray-200)] border-b border-[var(--gray-300)]'
-              headerCellClassName='text-[var(--gray-800)] font-semibold text-sm px-4 py-3 h-12'
-              bodyRowClassName='hover:bg-gray-50 transition-colors'
-              bodyCellClassName='px-4 py-3 text-sm text-gray-600'
-              tableClassName='custom-table'
+              headerRowClassName='hover:bg-[var(--gray-200)]/80 bg-[var(--gray-200)] border-b-0'
+              headerCellClassName='text-[var(--gray-800)] font-semibold text-sm px-4 py-3'
+              bodyRowClassName='hover:bg-[var(--gray-50)] transition-colors border-b-0'
+              bodyCellClassName='px-4 py-3 text-sm text-[var(--gray-600)]'
+              tableClassName={cn(
+                'custom-table',
+                '[&_thead_tr>th:first-child]:w-[68px]',
+                '[&_thead_tr>th:nth-child(2)]:w-[120px]',
+                '[&_thead_tr>th:nth-child(3)]:w-[440px]',
+                '[&_thead_tr>th:nth-child(4)]:w-[240px]',
+                '[&_thead_tr>th:nth-child(6)]:w-[160px]',
+                '[&_thead_tr>th:last-child]:w-[100px]',
+              )}
+              tableHeaderHeight='h-[45px]'
+              tableRowHeight='h-[60px]'
             />
 
             {table.getPageCount() > 1 && (
@@ -251,8 +260,6 @@ export default function CoursesPage() {
               </div>
             )}
           </div>
-        </>
-      )}
 
       {/* Dialogs */}
       <CustomDeleteDialog
@@ -272,24 +279,24 @@ export default function CoursesPage() {
         isOpen={duplicateDialogOpen}
         setIsOpen={() => dispatch({ type: ActionType.CLOSE_DIALOGS })}
         onDelete={handleDuplicateCourse}
-        title='Duplicate Course'
-        message='Are you sure you want to duplicate this course?'
-        description='This will create an exact copy of the course.'
+        title='Duplicate Unit'
+        message='Are you sure you want to duplicate this unit?'
+        description='This will create an exact copy of the unit. Do you want to proceed?'
         isLoading={isProcessing}
         onDeleteTitle='Confirm'
         cancelButtonText='Cancel'
         app={APPS.TRAINING}
         confirmButtonVariant='default'
-        icon={<InfoIcon className='text-[#FFA600] h-5 w-5' />}
+        icon={<InfoIcon className='text-[#FFA600] size-5' />}
       />
 
       <CustomDeleteDialog
         isOpen={archiveDialogOpen}
         setIsOpen={() => dispatch({ type: ActionType.CLOSE_DIALOGS })}
         onDelete={handleArchiveCourse}
-        title='Archive Course?'
-        message={`Are you sure you want to archive "${selectedCourse?.name}"?`}
-        description='This course will be moved to the archive.'
+        title='Archive Unit'
+        message={`Are you sure you want to archive the selected Job Role?`}
+        description='This item will be archived and move to archive list and users will no longer have access to this job role. Do you want to continue?'
         isLoading={isProcessing}
         onDeleteTitle='Archive'
         app={APPS.TRAINING}
@@ -307,6 +314,35 @@ export default function CoursesPage() {
         onDeleteTitle='Archive All'
         app={APPS.TRAINING}
         confirmButtonVariant='default'
+      />
+
+      <LinkedJobRolesDialog
+        isOpen={showJobRolesDialogOpen}
+        setIsOpen={(open) => {
+          if (!open) {
+            dispatch({ type: ActionType.CLOSE_DIALOGS });
+          }
+        }}
+        jobRoles={linkedJobRoles}
+        isLoading={isLoadingJobRoles}
+        onRemoveJobRole={handlers.handleRemoveJobRole}
+        app={APPS.TRAINING}
+      />
+
+      <AddToCompanyDialog
+        isOpen={assignDialogOpen}
+        setIsOpen={(open) => {
+          if (!open) {
+            dispatch({ type: ActionType.CLOSE_DIALOGS });
+          }
+        }}
+        companies={allCompanies}
+        onConfirm={({ companyIds, addToMasterJobRole }) =>
+          handlers.handleConfirmAssign(companyIds, addToMasterJobRole)
+        }
+        isLoading={isProcessing}
+        errorMessage={dialogError ?? undefined}
+        app={APPS.TRAINING}
       />
     </>
   );

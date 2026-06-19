@@ -1,7 +1,7 @@
 // services/course-service.ts
 
-import { MOCK_COURSES } from '@/lib/mock-data';
 import type { CourseWithDetails } from '@/types/courses';
+import { MOCK_COURSES } from '@/lib/mock-data';
 
 // Simulate network latency
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -10,13 +10,35 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 let _courses = [...MOCK_COURSES];
 
 export const courseService = {
-  async fetchCourses({ isPaid = false, archived = false }: { isPaid?: boolean, archived?: boolean } = {}): Promise<CourseWithDetails[]> {
+  async fetchCourseById(id: number): Promise<CourseWithDetails | null> {
+    await delay(300);
+    return _courses.find((course) => course.id === id) ?? null;
+  },
+
+  async fetchCourses({ isPaid, archived = false }: { isPaid?: boolean; archived?: boolean } = {}): Promise<CourseWithDetails[]> {
     await delay(600);
-    
-    // Simple filter simulation
-    return _courses.filter(c => {
-      // Filter by paid status if specified (undefined usually means fetch all in some contexts, 
-      // but strictly following the mock data which is all is_paid: false for now)
+
+    const mockById = new Map(MOCK_COURSES.map((course) => [course.id, course]));
+
+    _courses = _courses.map((course) => {
+      const fresh = mockById.get(course.id);
+      if (!fresh) return course;
+
+      return {
+        ...course,
+        assignedCompanies: fresh.assignedCompanies,
+        companyCount: fresh.companyCount,
+      };
+    });
+
+    const existingIds = new Set(_courses.map((course) => course.id));
+    MOCK_COURSES.forEach((mockCourse) => {
+      if (!existingIds.has(mockCourse.id)) {
+        _courses.push({ ...mockCourse });
+      }
+    });
+
+    return _courses.filter((c) => {
       if (isPaid !== undefined && c.is_paid !== isPaid) return false;
       
       // Filter by archived status
@@ -49,13 +71,15 @@ export const courseService = {
     ];
   },
 
-  async fetchLinkedJobRoles(courseId: number) {
+  async fetchLinkedJobRoles(_courseId: number) {
     await delay(400);
-    // Return random subset for demo purposes
-    if (courseId % 2 === 0) {
-      return [{ id: 1, name: 'Safety Officer' }, { id: 2, name: 'Site Manager' }];
-    }
-    return [];
+    return [
+      { id: 1, name: 'Warehouse Supervisor' },
+      { id: 2, name: 'Logistics Coordinator' },
+      { id: 3, name: 'Inventory Manager' },
+      { id: 4, name: 'Shipping Clerk' },
+      { id: 5, name: 'Quality Control Inspector' },
+    ];
   },
 
   async deleteCourse(id: number) {

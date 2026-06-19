@@ -33,7 +33,7 @@ const RowActionMenu: React.FC<RowActionMenuProps> = ({
 }) => {
   return (
     <>
-      <div className='flex items-center justify-end gap-2 md:hidden'>
+      <div className='flex items-center justify-between gap-2 md:hidden'>
         {menuItems.map((item) => (
           <Button
             key={item.label}
@@ -60,7 +60,7 @@ const RowActionMenu: React.FC<RowActionMenuProps> = ({
             <Button
               variant='ghost'
               size='icon'
-              className={`h-8 w-8 p-0 ${Glowing(app).icon}`}
+              className={`size-[30px] ${Glowing(app).icon}`}
               disabled={isLoading}
             >
               {isLoading ? <Spinner size={16} /> : <Ellipsis className={`size-[18px] ${Glowing(app).icon}`} />}
