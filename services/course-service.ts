@@ -66,13 +66,15 @@ export const courseService = {
     ];
   },
 
-  async fetchLinkedJobRoles(courseId: number) {
+  async fetchLinkedJobRoles(_courseId: number) {
     await delay(400);
-    // Return random subset for demo purposes
-    if (courseId % 2 === 0) {
-      return [{ id: 1, name: 'Safety Officer' }, { id: 2, name: 'Site Manager' }];
-    }
-    return [];
+    return [
+      { id: 1, name: 'Warehouse Supervisor' },
+      { id: 2, name: 'Logistics Coordinator' },
+      { id: 3, name: 'Inventory Manager' },
+      { id: 4, name: 'Shipping Clerk' },
+      { id: 5, name: 'Quality Control Inspector' },
+    ];
   },
 
   async deleteCourse(id: number) {

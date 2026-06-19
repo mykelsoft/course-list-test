@@ -60,7 +60,7 @@ const RowActionMenu: React.FC<RowActionMenuProps> = ({
             <Button
               variant='ghost'
               size='icon'
-              className={`h-8 w-8 p-0 ${Glowing(app).icon}`}
+              className={`size-[30px] ${Glowing(app).icon}`}
               disabled={isLoading}
             >
               {isLoading ? <Spinner size={16} /> : <Ellipsis className={`size-[18px] ${Glowing(app).icon}`} />}

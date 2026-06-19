@@ -104,7 +104,7 @@ const getDesktopSkeletonCell = (columnId: string) => {
     case 'select':
       return <Skeleton className='mx-auto size-4 rounded-[4px]' />;
     case 'actions':
-      return <Skeleton className='mx-auto size-7 rounded-md' />;
+      return <Skeleton className='mx-auto size-[30px] rounded' />;
     case 'id':
       return <Skeleton className='h-4 w-10 rounded' />;
     case 'name':
@@ -121,6 +121,8 @@ const getDesktopSkeletonCell = (columnId: string) => {
       return <Skeleton className='h-4 w-full rounded' />;
   }
 };
+
+const MOBILE_ACTION_SKELETON_COUNT = 6;
 
 const MOBILE_DETAIL_LABEL_WIDTHS = ['w-16', 'w-24', 'w-20', 'w-28'] as const;
 const MOBILE_DETAIL_VALUE_WIDTHS = ['w-28', 'w-36', 'w-20', 'w-32'] as const;
@@ -173,9 +175,9 @@ export function CustomTable<TData>({
   const mobileSkeletonRowCount = Math.min(skeletonRows, 3);
 
   const mobileLoadingHeader = (
-    <div className='mb-3 flex h-[52px] items-center rounded border border-[var(--gray-200)] bg-[var(--gray-200)] px-4'>
-      <Skeleton className='mr-4 size-5 shrink-0 rounded-[4px]' />
-      <Skeleton className='h-4 w-20 flex-1 rounded' />
+    <div className='mb-3 flex items-center gap-2 rounded bg-[var(--gray-200)] p-2 shadow-[0_0_0_1px_var(--gray-200)]'>
+      <Skeleton className='size-5 shrink-0 rounded' />
+      <Skeleton className='h-4 flex-1 rounded' />
       <Skeleton className='size-[26px] shrink-0 rounded' />
     </div>
   );
@@ -303,16 +305,25 @@ export function CustomTable<TData>({
                 key={`mobile-skeleton-row-${rowIndex}`}
                 className='overflow-hidden rounded border border-[var(--gray-200)] bg-white'
               >
-                <div className='flex h-[52px] items-center bg-[var(--gray-200)] px-4'>
-                  <Skeleton className='mr-4 size-5 shrink-0 rounded-[4px]' />
-                  <Skeleton className='h-4 w-24 flex-1 rounded' />
-                  <Skeleton className='ml-4 size-7 shrink-0 rounded-md' />
+                <div className='bg-[var(--gray-200)]'>
+                  <div className='flex items-center p-2'>
+                    <Skeleton className='size-5 shrink-0 rounded' />
+                    <Skeleton className='ml-2 h-4 flex-1 rounded' />
+                  </div>
+                  <div className='flex flex-wrap items-center gap-2 p-2'>
+                    {Array.from({ length: MOBILE_ACTION_SKELETON_COUNT }).map((__, actionIndex) => (
+                      <Skeleton
+                        key={`mobile-skeleton-action-${rowIndex}-${actionIndex}`}
+                        className='size-[30px] shrink-0 rounded'
+                      />
+                    ))}
+                  </div>
                 </div>
                 <div className='divide-y divide-[var(--gray-200)]'>
                   {Array.from({ length: mobileDetailRowCount }).map((__, cellIndex) => (
                     <div
                       key={`mobile-skeleton-cell-${rowIndex}-${cellIndex}`}
-                      className='grid grid-cols-[96px_minmax(0,1fr)] sm:grid-cols-[128px_minmax(0,1fr)] items-center bg-white px-4 py-2.5 min-h-[45px] gap-2'
+                      className='grid grid-cols-[96px_minmax(0,1fr)] sm:grid-cols-[144px_minmax(0,1fr)] md:grid-cols-[160px_minmax(0,1fr)] items-center bg-white px-4 py-2.5 min-h-[45px] gap-2'
                     >
                       <Skeleton
                         className={cn(

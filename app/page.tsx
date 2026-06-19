@@ -27,6 +27,7 @@ import { cn } from '@/lib/utils';
 import { CourseFiltersPopover } from '@/components/course-list/course-filters-popover';
 import AddCompanyForm from '@/components/course-list/add-company-form';
 import { getCourseListColumns } from '@/components/course-list/course-list-columns';
+import { LinkedJobRolesDialog } from '@/components/course-list/linked-job-roles-dialog';
 
 export default function CoursesPage() {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -61,10 +62,13 @@ export default function CoursesPage() {
     duplicateDialogOpen,
     archiveDialogOpen,
     bulkArchiveDialogOpen,
+    showJobRolesDialogOpen,
     selectedCourse,
     isProcessing,
     filters,
     allCompanies,
+    linkedJobRoles,
+    isLoadingJobRoles,
   } = state;
 
   const columns = useMemo(
@@ -82,12 +86,10 @@ export default function CoursesPage() {
         handleAssign: (course) => {
           console.log('Add to company or job role clicked:', course.id);
         },
-        handleShowJobRoles: (course) => {
-          console.log('Show job roles clicked:', course.id);
-        },
+        handleShowJobRoles: handlers.handleOpenShowJobRolesDialog,
         handleArchive: handlers.handleOpenArchiveDialog,
       }),
-    [dispatch, handlers.handleOpenArchiveDialog]
+    [dispatch, handlers.handleOpenArchiveDialog, handlers.handleOpenShowJobRolesDialog]
   );
 
   const getSearchableValue: FilterFn<CourseWithDetails> = (
@@ -271,15 +273,15 @@ export default function CoursesPage() {
         isOpen={duplicateDialogOpen}
         setIsOpen={() => dispatch({ type: ActionType.CLOSE_DIALOGS })}
         onDelete={handleDuplicateCourse}
-        title='Duplicate Course'
-        message='Are you sure you want to duplicate this course?'
-        description='This will create an exact copy of the course.'
+        title='Duplicate Unit'
+        message='Are you sure you want to duplicate this unit?'
+        description='This will create an exact copy of the unit. Do you want to proceed?'
         isLoading={isProcessing}
         onDeleteTitle='Confirm'
         cancelButtonText='Cancel'
         app={APPS.TRAINING}
         confirmButtonVariant='default'
-        icon={<InfoIcon className='text-[#FFA600] h-5 w-5' />}
+        icon={<InfoIcon className='text-[#FFA600] size-5' />}
       />
 
       <CustomDeleteDialog
@@ -287,12 +289,12 @@ export default function CoursesPage() {
         setIsOpen={() => dispatch({ type: ActionType.CLOSE_DIALOGS })}
         onDelete={handleArchiveCourse}
         title='Archive Unit'
-        message={`Are you sure you want to archive "${selectedCourse?.name}"?`}
-        description='This course will be moved to the archive.'
+        message={`Are you sure you want to archive the selected Job Role?`}
+        description='This item will be archived and move to archive list and users will no longer have access to this job role. Do you want to continue?'
         isLoading={isProcessing}
         onDeleteTitle='Archive'
         app={APPS.TRAINING}
-        confirmButtonVariant='default'
+        confirmButtonVariant='Archive'
       />
 
       <CustomDeleteDialog
@@ -306,6 +308,19 @@ export default function CoursesPage() {
         onDeleteTitle='Archive All'
         app={APPS.TRAINING}
         confirmButtonVariant='default'
+      />
+
+      <LinkedJobRolesDialog
+        isOpen={showJobRolesDialogOpen}
+        setIsOpen={(open) => {
+          if (!open) {
+            dispatch({ type: ActionType.CLOSE_DIALOGS });
+          }
+        }}
+        jobRoles={linkedJobRoles}
+        isLoading={isLoadingJobRoles}
+        onRemoveJobRole={handlers.handleRemoveJobRole}
+        app={APPS.TRAINING}
       />
     </>
   );
