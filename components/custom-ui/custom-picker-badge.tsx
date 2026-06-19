@@ -89,7 +89,7 @@ const CustomPickerBadge: React.FC<CustomPickerBadgeProps> = ({
   };
 
   return (
-    <div className="w-full flex flex-row items-start gap-10">
+    <div className='form-field-row'>
       {' '}
       {/* Changed items-center to items-start */}
       <div className="w-[240px] flex flex-col items-start pt-2">

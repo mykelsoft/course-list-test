@@ -99,8 +99,8 @@ export default function AddCompanyForm({ onBack }: AddCompanyFormProps) {
           />
 
           <div className='flex items-center'>
-            <div className='w-full flex items-start gap-10'>
-              <p className='text-sm text-[var(--gray-700)] font-medium w-[240px] pt-2'>Company Admin/s</p>
+            <div className='form-field-row'>
+              <p className='text-sm text-[var(--gray-700)] font-medium pt-2'>Company Admin/s</p>
               <div className='flex flex-col gap-2.5 flex-1 min-w-0'>
                 <div className='flex items-center gap-4'>
                   <CustomButton

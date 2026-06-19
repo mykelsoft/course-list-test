@@ -68,7 +68,10 @@ const CustomContentHeader: React.FC<CustomContentHeaderProps> = ({
           </div>
           <span className={`text-sm leading-normal ${descriptionColor}`}>{description}</span>
         </div>
-        <div className='md:flex flex-row gap-2 items-center justify-end'>{headerRight}</div>
+
+        {headerRight ? (
+          <div className='md:flex flex-row gap-2 items-center justify-end'>{headerRight}</div>
+        ) : null}
       </div>
       {children}
     </div>

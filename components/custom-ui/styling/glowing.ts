@@ -112,7 +112,7 @@ function Glowing(app: APPS | null = null): string | GlowingThemeObject {
       hover:text-[var(--primary)]
     `,
 
-    icon: `text-grey-700 hover:text-[var(--primary)] hover:bg-[var(--secondary)]`,
+    icon: `text-[var(--gray-700)] hover:text-[var(--primary)] hover:bg-[var(--secondary)]`,
 
     jsx: `[cmdk-item][data-highlighted=true] { 
       background-color: var(--highlight) !important; 

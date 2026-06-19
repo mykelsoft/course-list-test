@@ -17,6 +17,7 @@ type CustomAccordionProps = {
   footerContent?: ReactNode;
   onToggle?: (isExpanded: boolean) => void;
   headerChildren?: React.ReactNode;
+  headerActions?: React.ReactNode;
 };
 
 const CustomAccordion = ({
@@ -29,6 +30,7 @@ const CustomAccordion = ({
   footerContent,
   onToggle,
   headerChildren,
+  headerActions,
 }: CustomAccordionProps) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
@@ -95,13 +97,23 @@ const CustomAccordion = ({
           </div>
         </div>
 
-        {/* Right-aligned chevron icon */}
-        <div className='group p-1 rounded-sm ml-4'>
-          {isExpanded ? (
-            <ChevronUp className='size-6 text-[var(--gray-700)] group-hover:text-primary' />
-          ) : (
-            <ChevronDown className='size-6 text-[var(--gray-700)] group-hover:text-primary' />
+        <div className='flex items-center gap-2 ml-4'>
+          {headerActions && (
+            <div
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => e.stopPropagation()}
+              role='presentation'
+            >
+              {headerActions}
+            </div>
           )}
+          <div className='group p-1 rounded-sm'>
+            {isExpanded ? (
+              <ChevronUp className='size-6 text-[var(--gray-700)] group-hover:text-primary' />
+            ) : (
+              <ChevronDown className='size-6 text-[var(--gray-700)] group-hover:text-primary' />
+            )}
+          </div>
         </div>
       </div>
 

@@ -15,6 +15,7 @@ import { InfoIcon } from 'lucide-react';
 import { Input } from '../ui/input';
 import { Label } from '@/components/ui/label';
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 type CustomInputProps<TFieldValues extends FieldValues> = {
   app?: APPS;
@@ -74,7 +75,7 @@ const CustomInput = <TFieldValues extends FieldValues = FieldValues>({
 
   return (
     <div className={`w-full flex flex-col items-start ${containerClassName}`}>
-      <div className={`w-full flex flex-row items-center gap-10 ${containerClassName}`}>
+      <div className={cn('form-field-row', containerClassName)}>
         {label && (
           <Label
             htmlFor={inputId}

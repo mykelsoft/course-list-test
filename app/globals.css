@@ -169,6 +169,12 @@
   }
 }
 
+@layer components {
+  .form-field-row {
+    @apply grid grid-cols-1 md:grid-cols-[240px_minmax(0,1fr)] items-center gap-1 md:gap-10 w-full;
+  }
+}
+
 /* shadcn - charts */
 @layer base {
   :root {
