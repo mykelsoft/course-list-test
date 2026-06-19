@@ -221,7 +221,7 @@ export default function CoursesPage() {
               <CustomButton
                 title='Add Unit'
                 onClick={() => setShowAddForm(true)}
-                leadingIcon={<Plus className='size-3.5' />}
+                leadingIcon={<Plus className='size-3.5 -mt-0.5' />}
                 app={APPS.TRAINING}
                 buttonClass='order-1 md:order-2'
               />

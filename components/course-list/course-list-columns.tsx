@@ -1,6 +1,7 @@
 // components/course-list/course-list-columns.tsx
 'use client';
 
+import { useState } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Pencil, Copy, Plus, List, Archive, Search } from 'lucide-react';
 import RowActionMenu from '@/components/custom-ui/custom-table/row-action-menu';
@@ -15,6 +16,50 @@ type Handlers = {
   handleShowJobRoles: (course: CourseWithDetails) => void;
   handleArchive: (course: CourseWithDetails) => void;
 };
+
+const COMPANY_DISPLAY_LIMIT = 7;
+
+function CompanyCell({ names }: { names: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const companies = names.split(', ').filter(Boolean);
+  const hasMore = companies.length > COMPANY_DISPLAY_LIMIT;
+  const displayed = expanded
+    ? companies.join(', ')
+    : companies.slice(0, COMPANY_DISPLAY_LIMIT).join(', ');
+
+  return (
+    <span
+      className='text-sm leading-normal flex flex-wrap'
+      title={names}
+    >
+      <span className={expanded ? undefined : 'md:line-clamp-1 line-clamp-2'}>{displayed}</span>
+      {hasMore && !expanded ? (
+        <>
+          ,{' '}
+          <button
+            type='button'
+            className='font-medium text-[#FFA600] hover:underline'
+            onClick={() => setExpanded(true)}
+          >
+            see more
+          </button>
+        </>
+      ) : null}
+      {hasMore && expanded ? (
+        <>
+          {' '}
+          <button
+            type='button'
+            className='font-medium text-[#FFA600] hover:underline'
+            onClick={() => setExpanded(false)}
+          >
+            see less
+          </button>
+        </>
+      ) : null}
+    </span>
+  );
+}
 
 export const getCourseListColumns = ({
   handleView,
@@ -78,30 +123,7 @@ export const getCourseListColumns = ({
           return <span className='text-[var(--gray-400)] italic text-sm'>None</span>;
         }
 
-        const companies = names.split(', ').filter(Boolean);
-        const displayLimit = 7;
-        const displayed = companies.slice(0, displayLimit).join(', ');
-        const hasMore = companies.length > displayLimit;
-
-        return (
-          <span
-            className='text-sm leading-normal'
-            title={names}
-          >
-            {displayed}
-            {hasMore ? (
-              <>
-                ,{' '}
-                <button
-                  type='button'
-                  className='font-medium text-[#FFA600] hover:underline'
-                >
-                  see more
-                </button>
-              </>
-            ) : null}
-          </span>
-        );
+        return <CompanyCell names={names} />;
       },
     },
     {
