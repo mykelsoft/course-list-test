@@ -152,7 +152,7 @@ export default function CoursesPage() {
               <div className='flex-1 min-w-0'>
                 <div
                   className={cn(
-                    'relative flex-1 rounded-md bg-[var(--gray-50)] border border-[var(--gray-300)] transition-shadow focus-within:ring-1 focus-within:ring-primary focus-within:shadow-[0_0_6px_var(--primary-shadow)]',
+                    'relative flex-1 rounded-md bg-[var(--gray-50)] transition-shadow focus-within:ring-1 focus-within:ring-primary focus-within:shadow-[0_0_6px_var(--primary-shadow)]',
                     Glowing(APPS.TRAINING).inputBox,
                   )}
                 >
@@ -232,9 +232,9 @@ export default function CoursesPage() {
               isLoading={isLoading}
               noResultsMessage='No units found.'
               skeletonRows={pagination.pageSize}
-              headerRowClassName='hover:bg-[var(--gray-200)]/80 bg-[var(--gray-200)] border-b border-[var(--gray-300)]'
+              headerRowClassName='hover:bg-[var(--gray-200)]/80 bg-[var(--gray-200)] border-b-0'
               headerCellClassName='text-[var(--gray-800)] font-semibold text-sm px-4 py-3'
-              bodyRowClassName='hover:bg-[var(--gray-50)] transition-colors'
+              bodyRowClassName='hover:bg-[var(--gray-50)] transition-colors border-b-0'
               bodyCellClassName='px-4 py-3 text-sm text-[var(--gray-600)]'
               tableClassName='custom-table'
               tableHeaderHeight='h-[45px]'

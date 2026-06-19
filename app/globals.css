@@ -296,12 +296,16 @@ html, body {
   border-color: #4c1d95;
 }
 
-.custom-table tbody tr:not(:last-child) {
-  border-color: var(--gray-200);
+.custom-table [data-slot="table-row"] {
+  border-bottom: none;
 }
 
-.custom-table tbody tr:last-child {
-  border-bottom: none;
+.custom-table thead tr > th {
+  box-shadow: inset 0 -1px 0 0 var(--gray-300);
+}
+
+.custom-table tbody tr:not(:last-child) > td {
+  box-shadow: inset 0 -1px 0 0 var(--gray-200);
 }
 
 .custom-table td:not(:last-child) {
