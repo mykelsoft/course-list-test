@@ -252,7 +252,7 @@ html, body {
   text-decoration: underline wavy red;
 }
 
-.custom-table thead tr > th:first-child {
+/* .custom-table thead tr > th:first-child {
   width: 68px
 }
 
@@ -274,7 +274,7 @@ html, body {
 
 .custom-table thead tr > th:nth-child(6) {
   width: 160px
-}
+} */
 
 .custom-table {
   border-color: var(--gray-300);
@@ -307,7 +307,7 @@ html, body {
 
 /* .custom-table button[data-slot="checkbox"][data-state="indeterminate"] */
 .custom-table button[data-slot="checkbox"][data-state="checked"] {
-  border-color: #4c1d95;
+  border-color: #9F6A06;
 }
 
 .custom-table [data-slot="table-row"] {

@@ -58,9 +58,7 @@ export default function ViewUnitPage() {
       <ViewUnitDetails
         course={course}
         onBack={() => router.push('/')}
-        onEdit={() => {
-          console.log('Edit unit clicked:', course.id);
-        }}
+        onEdit={() => router.push(`/units/add?id=${course.id}`)}
       />
     </div>
   );

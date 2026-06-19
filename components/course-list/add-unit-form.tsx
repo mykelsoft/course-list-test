@@ -1,10 +1,13 @@
 'use client';
 
+import CustomButton from '@/components/custom-ui/custom-button';
 import CustomContentHeader from '@/components/custom-ui/custom-content-header';
+import { BUTTON_VARIANTS } from '@/components/custom-ui/button-variants';
 import {
   MainUnitDetailsFields,
   SubUnitDetailsFields,
   UnitDetailsSection,
+  UnitJobRolesSection,
   createDefaultSubUnits,
   getSubUnitSectionTitle,
   type MainUnitDetailsValues,
@@ -82,6 +85,25 @@ export default function AddUnitForm({ onBack }: AddUnitFormProps) {
           />
         </UnitDetailsSection>
       ))}
+
+      <UnitJobRolesSection />
+
+      <div className='flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-2.5 pt-2'>
+        <CustomButton
+          title='Save'
+          app={APPS.TRAINING}
+          variant={BUTTON_VARIANTS.OUTLINE}
+          width='w-[65px]'
+          buttonClass='px-3.5 bg-transparent'
+          onClick={() => {}}
+        />
+        <CustomButton
+          title='Save and Close'
+          app={APPS.TRAINING}
+          width='w-[136px]'
+          onClick={() => {}}
+        />
+      </div>
     </div>
   );
 }

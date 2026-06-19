@@ -86,7 +86,7 @@ export default function CoursesPage() {
           router.push(`/units/${course.id}`);
         },
         handleEdit: (course) => {
-          console.log('Edit unit clicked:', course.id);
+          router.push(`/units/add?id=${course.id}`);
         },
         handleDuplicate: (course) => {
           dispatch({ type: ActionType.OPEN_DUPLICATE_DIALOG, payload: course });
@@ -238,7 +238,15 @@ export default function CoursesPage() {
               headerCellClassName='text-[var(--gray-800)] font-semibold text-sm px-4 py-3'
               bodyRowClassName='hover:bg-[var(--gray-50)] transition-colors border-b-0'
               bodyCellClassName='px-4 py-3 text-sm text-[var(--gray-600)]'
-              tableClassName='custom-table'
+              tableClassName={cn(
+                'custom-table',
+                '[&_thead_tr>th:first-child]:w-[68px]',
+                '[&_thead_tr>th:nth-child(2)]:w-[120px]',
+                '[&_thead_tr>th:nth-child(3)]:w-[440px]',
+                '[&_thead_tr>th:nth-child(4)]:w-[240px]',
+                '[&_thead_tr>th:nth-child(6)]:w-[160px]',
+                '[&_thead_tr>th:last-child]:w-[100px]',
+              )}
               tableHeaderHeight='h-[45px]'
               tableRowHeight='h-[60px]'
             />

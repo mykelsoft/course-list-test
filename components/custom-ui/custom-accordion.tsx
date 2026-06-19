@@ -25,7 +25,7 @@ const CONTENT_TRANSITION_MS = 300;
 const CustomAccordion = ({
   title,
   description,
-  descriptionColor = 'text-gray-600',
+  descriptionColor = 'text-[var(--gray-600)]',
   children,
   className = '',
   defaultExpanded = true,
@@ -69,7 +69,7 @@ const CustomAccordion = ({
   const renderDescription = () => {
     if (typeof description === 'string') {
       return (
-        <span className={`text-sm ${descriptionColor}`}>{description}</span>
+        <span className={`text-sm -mt-px ${descriptionColor}`}>{description}</span>
       );
     }
     return description;
@@ -95,7 +95,7 @@ const CustomAccordion = ({
         <div className='flex items-center gap-6'>
           {!description && renderTitle()}
           {description && (
-            <div className='flex flex-col gap-2'>
+            <div className='flex flex-col'>
               {renderTitle()}
               {renderDescription()}
             </div>
