@@ -39,8 +39,8 @@ export function LinkedJobRolesDialog({
       open={isOpen}
       onOpenChange={setIsOpen}
     >
-      <DialogContent className='bg-[var(--gray-50)] p-0 m-0 sm:max-w-[408px] gap-0 border-[var(--gray-300)] shadow-[0px_4px_8px_rgba(0,0,0,0.1)]'>
-        <DialogHeader className='border-b border-[var(--gray-200)] px-6 py-4 min-h-[78px] flex flex-row items-center justify-between gap-2'>
+      <DialogContent className='p-0 m-0 sm:max-w-[408px] gap-0 border-[var(--gray-300)] shadow-[0px_4px_8px_rgba(0,0,0,0.1)]'>
+        <DialogHeader className='px-6 py-4 min-h-[78px] flex flex-row items-center justify-between gap-2 shadow-[inset_0_-1px_0_0_var(--gray-200)]'>
           <DialogTitle className='text-base font-semibold leading-normal text-[var(--gray-800)]'>Linked Job Roles</DialogTitle>
           <DialogClose asChild>
             <Button
@@ -55,7 +55,7 @@ export function LinkedJobRolesDialog({
           </DialogClose>
         </DialogHeader>
 
-        <div className='p-6'>
+        <div className='bg-[var(--gray-50)] p-6'>
           <p className='text-sm leading-normal text-[var(--gray-500)] mb-4'>List of job roles this unit belongs to.</p>
 
           <div className='space-y-1'>
@@ -75,9 +75,9 @@ export function LinkedJobRolesDialog({
               jobRoles.map((role) => (
                 <div
                   key={role.id}
-                  className='flex items-center justify-between rounded border border-[var(--gray-200)] px-3 py-0.5 h-[37px]'
+                  className='group flex items-center justify-between rounded border border-[var(--gray-200)] px-3 py-0.5 h-[37px] hover:border-[#FFA600] hover:bg-[#FFA600]/10'
                 >
-                  <span className='text-sm leading-normal text-[var(--gray-700)]'>{role.name}</span>
+                  <span className='text-sm leading-normal text-[var(--gray-700)] group-hover:text-[#FFA600]'>{role.name}</span>
                   <Button
                     variant='ghost'
                     size='icon'

@@ -27,6 +27,7 @@ import { cn } from '@/lib/utils';
 import { CourseFiltersPopover } from '@/components/course-list/course-filters-popover';
 import AddCompanyForm from '@/components/course-list/add-company-form';
 import { getCourseListColumns } from '@/components/course-list/course-list-columns';
+import { AddToCompanyDialog } from '@/components/course-list/add-to-company-dialog';
 import { LinkedJobRolesDialog } from '@/components/course-list/linked-job-roles-dialog';
 
 export default function CoursesPage() {
@@ -62,9 +63,11 @@ export default function CoursesPage() {
     duplicateDialogOpen,
     archiveDialogOpen,
     bulkArchiveDialogOpen,
+    assignDialogOpen,
     showJobRolesDialogOpen,
     selectedCourse,
     isProcessing,
+    dialogError,
     filters,
     allCompanies,
     linkedJobRoles,
@@ -83,13 +86,11 @@ export default function CoursesPage() {
         handleDuplicate: (course) => {
           dispatch({ type: ActionType.OPEN_DUPLICATE_DIALOG, payload: course });
         },
-        handleAssign: (course) => {
-          console.log('Add to company or job role clicked:', course.id);
-        },
+        handleAssign: handlers.handleOpenAssignDialog,
         handleShowJobRoles: handlers.handleOpenShowJobRolesDialog,
         handleArchive: handlers.handleOpenArchiveDialog,
       }),
-    [dispatch, handlers.handleOpenArchiveDialog, handlers.handleOpenShowJobRolesDialog]
+    [dispatch, handlers.handleOpenArchiveDialog, handlers.handleOpenAssignDialog, handlers.handleOpenShowJobRolesDialog]
   );
 
   const getSearchableValue: FilterFn<CourseWithDetails> = (
@@ -320,6 +321,22 @@ export default function CoursesPage() {
         jobRoles={linkedJobRoles}
         isLoading={isLoadingJobRoles}
         onRemoveJobRole={handlers.handleRemoveJobRole}
+        app={APPS.TRAINING}
+      />
+
+      <AddToCompanyDialog
+        isOpen={assignDialogOpen}
+        setIsOpen={(open) => {
+          if (!open) {
+            dispatch({ type: ActionType.CLOSE_DIALOGS });
+          }
+        }}
+        companies={allCompanies}
+        onConfirm={({ companyIds, addToMasterJobRole }) =>
+          handlers.handleConfirmAssign(companyIds, addToMasterJobRole)
+        }
+        isLoading={isProcessing}
+        errorMessage={dialogError ?? undefined}
         app={APPS.TRAINING}
       />
     </>

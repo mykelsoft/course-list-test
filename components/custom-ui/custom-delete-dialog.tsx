@@ -64,7 +64,7 @@ const CustomDeleteDialog: React.FC<CustomDeleteDialogProps> = ({
       onOpenChange={setIsOpen}
     >
       <DialogContent className='p-0 m-0 sm:max-w-[560px] gap-0 border-[var(--gray-200)] shadow-[0px_4px_8px_rgba(0,0,0,0.1)]'>
-        <DialogHeader className='px-6 py-4 min-h-[78px] flex flex-row items-center justify-between gap-2'>
+        <DialogHeader className='px-6 py-4 min-h-[78px] flex flex-row items-center justify-between gap-2 shadow-[inset_0_-1px_0_0_var(--gray-200)]'>
           <div className='flex items-center gap-2.5'>
             {icon || <AlertTriangle className='size-[18px] text-[var(--primary)]' />}
             <DialogTitle className='text-base font-semibold leading-normal text-[var(--gray-800)]'>{title}</DialogTitle>
@@ -85,14 +85,14 @@ const CustomDeleteDialog: React.FC<CustomDeleteDialogProps> = ({
           {/* --- MODIFICATION END --- */}
         </DialogHeader>
 
-        <div className='bg-[var(--gray-50)] border-y border-[var(--gray-200)] p-6'>
+        <div className='bg-[var(--gray-50)] p-6'>
           <div className='space-y-4 text-sm'>
             <div className='font-medium leading-normal text-[var(--gray-700)]'>{message}</div>
             <div className='leading-normal text-[var(--gray-500)]'>{description}</div>
           </div>
         </div>
 
-        <DialogFooter className='grid grid-cols-2 p-6 gap-6'>
+        <DialogFooter className='grid grid-cols-2 gap-6 p-6 shadow-[inset_0_1px_0_0_var(--gray-200)]'>
           <CustomButton
             variant='outline'
             app={app}

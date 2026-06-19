@@ -592,6 +592,47 @@ export function useCoursesTable(initialCourses: CourseWithDetails[] = [], isPaid
       }
   };
 
+  const handleConfirmAssign = useCallback(
+    async (companyIds: number[], addToMasterJobRole: boolean) => {
+      if (!state.selectedCourse) return;
+
+      dispatch({ type: ActionType.ACTION_START });
+      try {
+        const companySeatMap: Record<string, number> = {};
+        companyIds.forEach((id) => {
+          const company = state.allCompanies.find((c) => c.id === id);
+          if (company) {
+            companySeatMap[company.name] = 1;
+          }
+        });
+
+        await courseService.assignToCompanies(
+          state.selectedCourse.id,
+          companySeatMap,
+        );
+
+        if (addToMasterJobRole) {
+          const jobRoleIds = state.allJobRoles.map((role) => role.id);
+          await courseService.assignToJobRoles(state.selectedCourse.id, jobRoleIds);
+        }
+
+        toast.success(
+          addToMasterJobRole
+            ? 'Assigned to companies and master job role.'
+            : 'Assigned to companies.',
+          DateToaster(),
+        );
+        dispatch({ type: ActionType.ACTION_SUCCESS });
+        fetchCourses();
+      } catch (error) {
+        const msg = error instanceof Error ? error.message : 'Assignment failed';
+        dispatch({ type: ActionType.ACTION_ERROR, payload: msg });
+        toast.error(msg, DateToaster());
+      }
+    },
+    [state.selectedCourse, state.allCompanies, state.allJobRoles, fetchCourses],
+  );
+
   const refreshData = fetchCourses;
 
   return {
@@ -613,6 +654,7 @@ export function useCoursesTable(initialCourses: CourseWithDetails[] = [], isPaid
       handleArchiveCourse, 
       handleAssignToCompanies,
       handleAssignToJobRoles,
+      handleConfirmAssign,
       handleRemoveJobRole,
       setSorting,
       setPagination,
