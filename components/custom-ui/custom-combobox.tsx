@@ -37,6 +37,7 @@ type CustomComboBoxProps = {
   // --- ADDED ID PROP ---
   id?: string;
   label: string;
+  labelSuffix?: string;
   items: CustomComboBoxItem[];
   selectedItemValue: string | number | null;
   validationError?: string;
@@ -57,6 +58,7 @@ const CustomComboBox: React.FC<CustomComboBoxProps> = ({
   app = APPS.PORTAL,
   id, // Destructure id
   label,
+  labelSuffix = '',
   items = [],
   selectedItemValue,
   validationError,
@@ -70,7 +72,7 @@ const CustomComboBox: React.FC<CustomComboBoxProps> = ({
   orientation = 'vertical',
   hasErrorMessage,
   widthRight = 'w-full',
-  widthLeft = 'w-full',
+  widthLeft = 'w-full'
 }) => {
   const [open, setOpen] = useState(false);
   const [internalValue, setInternalValue] = useState('');
@@ -92,12 +94,12 @@ const CustomComboBox: React.FC<CustomComboBoxProps> = ({
   const glowingJSX = Glowing(app).jsx;
   const glowingDropdownStyles = Glowing(app).dropdown;
 
+  const labelSuffixText = labelSuffix.trim().length > 0 ? ` (${labelSuffix})` : '';
+
   return (
     <div className='w-full flex flex-col items-start gap-1'>
       {orientation === 'horizontal' && (
-        <div
-          className={cn('form-field-row', containerClassName)}
-        >
+        <div className={cn('form-field-row', containerClassName)}>
           <style
             jsx
             global
@@ -110,13 +112,15 @@ const CustomComboBox: React.FC<CustomComboBoxProps> = ({
               // Associate label with input if id is provided
               htmlFor={id}
             >
-              <div className='flex flex-row items-center gap-2'>
-                {label}
+              <div className='flex flex-row items-center gap-3'>
+                <span>
+                  {label} {labelSuffixText ? <span className='text-sm text-[var(--gray-400)]'> {labelSuffixText}</span> : null}
+                </span>
                 {tooltip && (
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <InfoIcon className='w-4 h-4 text-[var(--primary)] shrink-0' />
+                        <InfoIcon className='size-5 text-[var(--primary)] shrink-0' />
                       </TooltipTrigger>
                       <TooltipContent
                         side='right'
@@ -144,6 +148,7 @@ const CustomComboBox: React.FC<CustomComboBoxProps> = ({
                   aria-expanded={open}
                   className={cn(
                     // `justify-between shadow-none min-w-0 overflow-hidden  ${widthRight}`,
+                    'border-[var(--gray-300)] placeholder:text-[var(--gray-400)]',
                     `justify-between shadow-none min-w-0 max-w-full overflow-hidden ${widthRight} ${Themes(app).combobox.trigger} ${glowingDropdownStyles}`,
                     buttonClassName,
                   )}

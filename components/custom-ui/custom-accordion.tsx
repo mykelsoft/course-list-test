@@ -2,7 +2,7 @@
 // File: ./components/custom-ui/custom-accordion.tsx
 //
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import type { ReactNode } from 'react';
 import { Separator } from '#components/ui/separator';
@@ -20,6 +20,8 @@ type CustomAccordionProps = {
   headerActions?: React.ReactNode;
 };
 
+const CONTENT_TRANSITION_MS = 300;
+
 const CustomAccordion = ({
   title,
   description,
@@ -33,6 +35,21 @@ const CustomAccordion = ({
   headerActions,
 }: CustomAccordionProps) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+  const [showSeparator, setShowSeparator] = useState(defaultExpanded);
+
+  useEffect(() => {
+    if (isExpanded) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setShowSeparator(true);
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setShowSeparator(false);
+    }, CONTENT_TRANSITION_MS);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [isExpanded]);
 
   const handleToggle = () => {
     const newExpandedState = !isExpanded;
@@ -44,11 +61,7 @@ const CustomAccordion = ({
 
   const renderTitle = () => {
     if (typeof title === 'string') {
-      return (
-        <h2 className="text-base leading-[36px] font-semibold text-[var(--gray-700)]">
-          {title}
-        </h2>
-      );
+      return <h2 className='text-base leading-8 font-semibold text-[var(--gray-700)]'>{title}</h2>;
     }
     return title;
   };
@@ -97,7 +110,7 @@ const CustomAccordion = ({
           </div>
         </div>
 
-        <div className='flex items-center gap-2 ml-4'>
+        <div className='flex items-center gap-2 md:gap-3'>
           {headerActions && (
             <div
               onClick={(e) => e.stopPropagation()}
@@ -107,17 +120,17 @@ const CustomAccordion = ({
               {headerActions}
             </div>
           )}
-          <div className='group p-1 rounded-sm'>
+          <div className='group p-1.5 rounded hover:bg-[#FFA600]/10'>
             {isExpanded ? (
-              <ChevronUp className='size-6 text-[var(--gray-700)] group-hover:text-primary' />
+              <ChevronUp className='size-[18px] md:size-6 text-[var(--gray-700)] group-hover:text-[#FFA600]' />
             ) : (
-              <ChevronDown className='size-6 text-[var(--gray-700)] group-hover:text-primary' />
+              <ChevronDown className='size-[18px] md:size-6 text-[var(--gray-700)] group-hover:text-[#FFA600]' />
             )}
           </div>
         </div>
       </div>
 
-      <Separator />
+      {showSeparator && <Separator />}
 
       <div
         className={`transition-all duration-300 ease-in-out overflow-hidden ${

@@ -1,9 +1,9 @@
 'use client';
 
 import CustomAccordion from '@/components/custom-ui/custom-accordion';
+import type { ReactNode } from 'react';
 import { Switch } from '@/components/ui/switch';
 import { Trash2 } from 'lucide-react';
-import type { ReactNode } from 'react';
 
 type UnitDetailsSectionProps = {
   title: string;
@@ -21,10 +21,10 @@ function SectionTrashButton({ onClick }: { onClick?: () => void }) {
     <button
       type='button'
       onClick={onClick}
-      className='rounded-sm p-1 text-[var(--gray-700)] hover:text-primary'
+      className='group p-1.5 rounded hover:bg-destructive/10'
       aria-label='Remove section'
     >
-      <Trash2 className='size-5' />
+      <Trash2 className='size-[18px] md:size-6 text-[var(--gray-700)] group-hover:text-destructive' />
     </button>
   );
 }
@@ -40,7 +40,7 @@ export default function UnitDetailsSection({
   defaultExpanded = true,
 }: UnitDetailsSectionProps) {
   const headerActions = (
-    <div className='flex items-center gap-2'>
+    <div className='flex items-center gap-2 md:gap-6'>
       {showToggle && (
         <Switch
           checked={enabled}

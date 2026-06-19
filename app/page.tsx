@@ -292,7 +292,7 @@ export default function CoursesPage() {
         isLoading={isProcessing}
         onDeleteTitle='Archive'
         app={APPS.TRAINING}
-        confirmButtonVariant='Archive'
+        confirmButtonVariant='default'
       />
 
       <CustomDeleteDialog

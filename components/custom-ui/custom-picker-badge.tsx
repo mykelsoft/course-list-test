@@ -39,6 +39,7 @@ export type PickerItem = {
 type CustomPickerBadgeProps = {
   app?: APPS;
   label: string;
+  labelSuffix?: string;
   tooltip: string;
   items: PickerItem[]; // Items to display in the dropdown (e.g., FetchedCountryInfo[] mapped to PickerItem[])
   selectedItems: PickerItem[]; // Array of selected PickerItem objects
@@ -52,6 +53,7 @@ type CustomPickerBadgeProps = {
 const CustomPickerBadge: React.FC<CustomPickerBadgeProps> = ({
   app = APPS.PORTAL,
   label,
+  labelSuffix = '',
   tooltip,
   items = [], // Default to empty array
   selectedItems = [], // Default to empty array
@@ -59,7 +61,7 @@ const CustomPickerBadge: React.FC<CustomPickerBadgeProps> = ({
   onSelectedItemsChange,
   placeholder = 'Select items...',
   disabled = false,
-  validationError,
+  validationError
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -88,17 +90,21 @@ const CustomPickerBadge: React.FC<CustomPickerBadgeProps> = ({
     // setOpen(false); // Keep popover open for multi-select
   };
 
+  const labelSuffixText = labelSuffix.trim().length > 0 ? ` (${labelSuffix})` : '';
+
   return (
     <div className='form-field-row'>
       {' '}
       {/* Changed items-center to items-start */}
-      <div className="w-[240px] flex flex-col items-start pt-2">
+      <div className="w-full flex flex-col items-start pt-2">
         {' '}
         {/* Adjusted for alignment */}
         {label && (
           <Label className="shrink-0 text-sm self-start text-[var(--gray-700)]">
-            <div className="flex flex-row items-center gap-2">
-              {label}
+            <div className="flex flex-row items-center gap-3">
+              <span>
+                {label} {labelSuffixText ? <span className='text-sm text-[var(--gray-400)]'> {labelSuffixText}</span> : null}
+              </span>
               {tooltip && (
                 <TooltipProvider>
                   <Tooltip>

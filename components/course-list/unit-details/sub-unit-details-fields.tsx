@@ -25,6 +25,7 @@ type SubUnitDetailsFieldsProps = {
 
 function UnitFileUploadField({
   label,
+  labelSuffix,
   tooltip,
   uploadLabel = 'Upload File',
   emptyText = 'No file uploaded yet',
@@ -32,6 +33,7 @@ function UnitFileUploadField({
   fileName,
 }: {
   label: string;
+  labelSuffix?: string;
   tooltip?: string;
   uploadLabel?: string;
   emptyText?: string;
@@ -39,7 +41,7 @@ function UnitFileUploadField({
   fileName?: string | null;
 }) {
   return (
-    <UnitFormFieldRow label={label} optional tooltip={tooltip} align='center'>
+    <UnitFormFieldRow label={label} labelSuffix={labelSuffix} tooltip={tooltip} align='center'>
       <div className='flex flex-row items-center gap-2'>
         <Button
           variant='outline'
@@ -79,7 +81,7 @@ export default function SubUnitDetailsFields({
     unitType === 'Scorm' ? 'No SCORM uploaded yet' : 'No file uploaded yet';
 
   return (
-    <div className='space-y-12'>
+    <div className='space-y-8 md:space-y-12'>
       <CustomInputHorizontal
         app={app}
         label='Unit Name'
@@ -105,7 +107,11 @@ export default function SubUnitDetailsFields({
         />
       )}
 
-      <UnitFormFieldRow label='Description' align='start' tooltip='Provide a description for this unit'>
+      <UnitFormFieldRow
+        label='Description'
+        align='start'
+        tooltip='Provide a description for this unit'
+      >
         <CustomTextArea
           app={app}
           name='subUnitDescription'
@@ -122,22 +128,18 @@ export default function SubUnitDetailsFields({
           label='Does License Have Expiry?'
           tooltip='Indicate whether this license expires after a set period'
         >
-          <div className='flex items-center gap-6'>
+          <div className='flex items-center gap-6 md:gap-10'>
             <CustomCheckbox
               name='licenseHasExpiryYes'
               label='Yes'
               checked={values.licenseHasExpiry === 'yes'}
-              onCheckedChange={(checked) =>
-                onChange({ licenseHasExpiry: checked ? 'yes' : null })
-              }
+              onCheckedChange={(checked) => onChange({ licenseHasExpiry: checked ? 'yes' : null })}
             />
             <CustomCheckbox
               name='licenseHasExpiryNo'
               label='No'
               checked={values.licenseHasExpiry === 'no'}
-              onCheckedChange={(checked) =>
-                onChange({ licenseHasExpiry: checked ? 'no' : null })
-              }
+              onCheckedChange={(checked) => onChange({ licenseHasExpiry: checked ? 'no' : null })}
             />
           </div>
         </UnitFormFieldRow>
@@ -145,11 +147,8 @@ export default function SubUnitDetailsFields({
 
       <UnitFileUploadField
         label={fileUploadLabel}
-        tooltip={
-          unitType === 'Scorm'
-            ? 'Upload the SCORM package for this unit'
-            : 'Upload any supporting files for this unit'
-        }
+        labelSuffix={unitType === 'Scorm' ? undefined : 'optional'}
+        tooltip={unitType === 'Scorm' ? 'Upload the SCORM package for this unit' : 'Upload any supporting files for this unit'}
         uploadLabel={fileUploadButtonLabel}
         emptyText={fileUploadEmptyText}
         fileName={values.uploadedFileName}

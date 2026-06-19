@@ -32,7 +32,7 @@ export default function MainUnitDetailsFields({
   app = APPS.TRAINING,
 }: MainUnitDetailsFieldsProps) {
   return (
-    <div className='space-y-12'>
+    <div className='space-y-8 md:space-y-12'>
       <CustomComboBox
         app={app}
         label='Unit Price'
@@ -66,7 +66,7 @@ export default function MainUnitDetailsFields({
 
       <UnitFormFieldRow
         label='Unit Summary'
-        optional
+        labelSuffix='optional'
         align='start'
         tooltip='Provide a brief summary of the unit'
       >
@@ -83,7 +83,8 @@ export default function MainUnitDetailsFields({
 
       <CustomInputHorizontal
         app={app}
-        label='Enrollment Validity (days)'
+        label='Enrollment Validity'
+        labelSuffix='days'
         name='enrollmentValidityDays'
         value={values.enrollmentValidityDays}
         onValueChange={(enrollmentValidityDays) => onChange({ enrollmentValidityDays })}
@@ -95,7 +96,8 @@ export default function MainUnitDetailsFields({
 
       <CustomInputHorizontal
         app={app}
-        label='Completion Validity (days)'
+        label='Completion Validity'
+        labelSuffix='days'
         name='completionValidityDays'
         value={values.completionValidityDays}
         onValueChange={(completionValidityDays) => onChange({ completionValidityDays })}
