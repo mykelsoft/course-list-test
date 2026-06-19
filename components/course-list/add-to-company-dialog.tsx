@@ -24,6 +24,9 @@ import { Label } from '@/components/ui/label';
 import Themes from '@/components/custom-ui/styling/Themes';
 import { cn } from '@/lib/utils';
 
+const filterCheckboxClassName =
+  'size-[20px] bg-[var(--gray-50)] border-[var(--gray-300)] data-[state=checked]:bg-[#6D28D9] data-[state=checked]:border-[#4C1D95]';
+
 type CompanyOption = { id: number; name: string };
 
 type AddToCompanyDialogProps = {
@@ -64,26 +67,25 @@ function CompanyMultiSelect({
       : `${selectedIds.length} selected`;
 
   return (
-    <Popover open={open} onOpenChange={setOpen} modal={false}>
+    <Popover
+      open={open}
+      onOpenChange={setOpen}
+      modal={false}
+    >
       <PopoverTrigger asChild>
         <button
           type='button'
-          className='flex h-[37px] w-full items-center justify-between rounded-md border border-[var(--gray-300)] bg-white px-3 py-2 text-sm text-[var(--gray-800)] outline-none transition-[color,box-shadow] focus-visible:ring-1 focus-visible:ring-primary'
+          className={cn(
+            'flex h-[37px] w-full items-center justify-between rounded-md border border-[var(--gray-300)] bg-white px-3 py-2 text-sm text-[var(--gray-800)] outline-none transition-[color,box-shadow] focus-visible:ring-1 focus-visible:ring-primary',
+          )}
         >
-          <span
-            className={cn(
-              'truncate',
-              selectedIds.length === 0 && 'text-[var(--gray-400)]',
-            )}
-          >
-            {displayText}
-          </span>
+          <span className={cn('truncate', selectedIds.length === 0 && 'text-[var(--gray-400)]')}>{displayText}</span>
           <ChevronDown className='size-4 shrink-0 text-muted-foreground' />
         </button>
       </PopoverTrigger>
       <PopoverContent
         align='start'
-        className='w-[var(--radix-popover-trigger-width)] p-2'
+        className='w-[var(--radix-popover-trigger-width)] p-2 rounded-lg border-[var(--gray-300)] shadow-[0px_4px_8px_rgba(0,0,0,0.1)]'
         onOpenAutoFocus={(event) => event.preventDefault()}
       >
         <div className='flex max-h-48 flex-col gap-1 overflow-y-auto'>
@@ -92,18 +94,17 @@ function CompanyMultiSelect({
             return (
               <label
                 key={option.id}
-                className='flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 hover:bg-accent'
+                className='h-[37px] group flex cursor-pointer items-center gap-2 border border-none rounded px-2 py-1.5 hover:bg-[var(--primary)]/10 hover:border-[var(--primary)] hover:text-[var(--primary)]'
               >
                 <Checkbox
                   checked={isChecked}
                   onCheckedChange={() => toggleCompany(option.id)}
+                  className={filterCheckboxClassName}
                 />
                 <span
                   className={cn(
-                    'text-sm',
-                    isChecked
-                      ? 'font-medium text-primary'
-                      : 'text-[var(--gray-700)]',
+                    'text-sm leading-normal',
+                    isChecked ? 'text-primary' : 'text-[var(--gray-700)] group-hover:text-primary',
                   )}
                 >
                   {option.name}
@@ -155,8 +156,8 @@ export function AddToCompanyDialog({
       open={isOpen}
       onOpenChange={setIsOpen}
     >
-      <DialogContent className='p-0 m-0 sm:max-w-[560px] gap-0 border-[var(--gray-200)] shadow-[0px_4px_8px_rgba(0,0,0,0.1)]'>
-        <DialogHeader className='px-6 py-4 min-h-[78px] flex flex-row items-center justify-between gap-2 shadow-[inset_0_-1px_0_0_var(--gray-200)]'>
+      <DialogContent className='p-0 m-0 max-w-[408px] sm:max-w-[560px] gap-0 border-[var(--gray-200)] shadow-[0px_4px_8px_rgba(0,0,0,0.1)]'>
+        <DialogHeader className='px-4 py-3 md:px-6 md:py-4 min-h-[62px] md:min-h-[78px] flex flex-row items-center justify-between gap-2 shadow-[inset_0_-1px_0_0_var(--gray-200)]'>
           <DialogTitle className='text-base font-semibold leading-normal text-[var(--gray-800)]'>Add to Company</DialogTitle>
           <DialogClose asChild>
             <Button
@@ -171,7 +172,7 @@ export function AddToCompanyDialog({
           </DialogClose>
         </DialogHeader>
 
-        <div className='bg-[var(--gray-50)] pt-6 pb-8 px-6'>
+        <div className='bg-[var(--gray-50)] md:pt-6 pb-6 md:pb-8 md:px-6 px-4 pt-4'>
           <div className='flex flex-col gap-8'>
             <div className='flex flex-col gap-1'>
               <Label className='text-sm font-medium leading-normal text-[var(--gray-700)]'>Select Company</Label>
@@ -196,7 +197,7 @@ export function AddToCompanyDialog({
           </div>
         </div>
 
-        <DialogFooter className='grid grid-cols-2 gap-6 p-6 shadow-[inset_0_1px_0_0_var(--gray-200)]'>
+        <DialogFooter className='grid grid-cols-2 gap-4 md:gap-6 p-4 md:p-6 shadow-[inset_0_1px_0_0_var(--gray-200)]'>
           <CustomButton
             variant='outline'
             app={app}

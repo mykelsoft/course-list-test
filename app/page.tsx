@@ -74,6 +74,11 @@ export default function CoursesPage() {
     isLoadingJobRoles,
   } = state;
 
+  const unitTypeOptions = useMemo(
+    () => [...new Set(courses.map((course) => course.unitType))].sort(),
+    [courses],
+  );
+
   const columns = useMemo(
     () =>
       getCourseListColumns({
@@ -148,7 +153,7 @@ export default function CoursesPage() {
               <CourseFiltersPopover
                 app={APPS.TRAINING}
                 filters={filters}
-                companyOptions={allCompanies}
+                unitTypeOptions={unitTypeOptions}
                 onApply={handlers.handleFilterChange}
               />
 

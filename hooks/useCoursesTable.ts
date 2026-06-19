@@ -10,7 +10,6 @@ import type {
   Updater,
 } from '@tanstack/react-table';
 import { toast } from 'sonner';
-import { isSameDay, subDays, isAfter } from 'date-fns';
 
 // Mock Service
 import { courseService } from '@/services/course-service';
@@ -24,21 +23,15 @@ import { DateToaster } from '@/components/ui/sonner';
 // --- Types ---
 
 export type CourseFilters = {
-  companies: string[];
-  hasCompany: boolean;
-  noCompany: boolean;
-  minUnits: number | '';
-  maxUnits: number | '';
-  lastModified: string;
+  unitTypes: string[];
+  minUnitPrice: number | '';
+  maxUnitPrice: number | '';
 };
 
 export const EMPTY_COURSE_FILTERS: CourseFilters = {
-  companies: [],
-  hasCompany: false,
-  noCompany: false,
-  minUnits: '',
-  maxUnits: '',
-  lastModified: 'All',
+  unitTypes: [],
+  minUnitPrice: '',
+  maxUnitPrice: '',
 };
 
 export type JobRoleBasic = { id: number; name: string };
@@ -357,58 +350,24 @@ export function useCoursesTable(initialCourses: CourseWithDetails[] = [], isPaid
           return false;
         }
       }
-      if (state.filters.companies.length > 0) {
-        const assigned = course.assignedCompanies;
-        if (assigned === 'None') {
-          return false;
-        }
-        const courseCompanies = assigned.split(', ');
-        const hasMatch = state.filters.companies.some((company) =>
-          courseCompanies.includes(company),
-        );
-        if (!hasMatch) {
+      if (state.filters.unitTypes.length > 0) {
+        if (!state.filters.unitTypes.includes(course.unitType)) {
           return false;
         }
       }
-      if (state.filters.hasCompany && !state.filters.noCompany) {
-        if (course.assignedCompanies === 'None') {
-          return false;
-        }
-      }
-      if (state.filters.noCompany && !state.filters.hasCompany) {
-        if (course.assignedCompanies !== 'None') {
-          return false;
-        }
-      }
-      if (state.filters.minUnits !== '' && course.totalUnits < state.filters.minUnits) {
+      const coursePrice =
+        course.is_paid && course.price !== null ? course.price : 0;
+      if (
+        state.filters.minUnitPrice !== '' &&
+        coursePrice < state.filters.minUnitPrice
+      ) {
         return false;
       }
-      if (state.filters.maxUnits !== '' && course.totalUnits > state.filters.maxUnits) {
+      if (
+        state.filters.maxUnitPrice !== '' &&
+        coursePrice > state.filters.maxUnitPrice
+      ) {
         return false;
-      }
-      if (state.filters.lastModified !== 'All' && course.updatedAt) {
-        const today = new Date();
-        const updated = new Date(course.updatedAt);
-        switch (state.filters.lastModified) {
-          case 'Today':
-            if (!isSameDay(today, updated)) return false;
-            break;
-          case 'Yesterday': {
-            const yesterday = subDays(today, 1);
-            if (!isSameDay(yesterday, updated)) return false;
-            break;
-          }
-          case 'Last 7 Days': {
-            const last7Days = subDays(today, 7);
-            if (!isAfter(updated, last7Days)) return false;
-            break;
-          }
-          case 'Last 30 Days': {
-            const last30Days = subDays(today, 30);
-            if (!isAfter(updated, last30Days)) return false;
-            break;
-          }
-        }
       }
       return true;
     });

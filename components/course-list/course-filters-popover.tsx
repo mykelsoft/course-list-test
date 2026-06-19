@@ -15,40 +15,26 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
   EMPTY_COURSE_FILTERS,
   type CourseFilters,
 } from '@/hooks/useCoursesTable';
 import { cn } from '@/lib/utils';
 import { APPS } from '@/types/ENUMS';
-
-const LAST_MODIFIED_OPTIONS = [
-  'All',
-  'Today',
-  'Yesterday',
-  'Last 7 Days',
-  'Last 30 Days',
-] as const;
+import { Separator } from '@/components/ui/separator';
 
 const filterCheckboxClassName =
-  'size-[20px] bg-[var(--gray-50)] border-[#8B5CF6] data-[state=checked]:bg-[#6D28D9] data-[state=checked]:border-[#4C1D95]';
+  'size-[20px] bg-[var(--gray-50)] border-[var(--gray-300)] data-[state=checked]:bg-[#6D28D9] data-[state=checked]:border-[#4C1D95]';
 
 type CourseFiltersPopoverProps = {
   app?: APPS;
   filters: CourseFilters;
-  companyOptions: { id: number; name: string }[];
+  unitTypeOptions: string[];
   onApply: (filters: CourseFilters) => void;
 };
 
 function FilterFieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <Label className='text-sm font-medium text-[var(--gray-700)]'>
+    <Label className='text-sm font-medium leading-normal text-[var(--gray-700)]'>
       {children}
     </Label>
   );
@@ -59,11 +45,13 @@ function FilterMultiSelect({
   options,
   selected,
   onChange,
+  triggerClassName,
 }: {
   placeholder: string;
   options: { value: string; label: string }[];
   selected: string[];
   onChange: (values: string[]) => void;
+  triggerClassName?: string;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -75,41 +63,69 @@ function FilterMultiSelect({
     );
   };
 
+  const allValues = options.map((option) => option.value);
+  const allSelected = options.length > 0 && selected.length === options.length;
+  const someSelected = selected.length > 0 && selected.length < options.length;
+
+  const toggleSelectAll = () => {
+    onChange(allSelected ? [] : allValues);
+  };
+
   const displayText =
     selected.length === 0
       ? placeholder
       : `${selected.length} selected`;
 
   return (
-    <Popover open={open} onOpenChange={setOpen} modal={false}>
+    <Popover
+      open={open}
+      onOpenChange={setOpen}
+      modal={false}
+    >
       <PopoverTrigger asChild>
         <button
           type='button'
-          className='flex h-[37px] w-full items-center justify-between rounded-md border border-[var(--gray-300)] bg-transparent px-3 py-2 text-sm text-[var(--gray-800)] outline-none transition-[color,box-shadow] focus-visible:ring-1 focus-visible:ring-primary'
+          className={cn(
+            'flex h-[37px] w-full items-center justify-between rounded-md border border-[var(--gray-300)] bg-white px-3 py-2 text-sm text-[var(--gray-800)] outline-none transition-[color,box-shadow] focus-visible:ring-1 focus-visible:ring-primary',
+            triggerClassName,
+          )}
         >
-          <span
-            className={cn(
-              'truncate',
-              selected.length === 0 && 'text-[var(--gray-400)]',
-            )}
-          >
-            {displayText}
-          </span>
+          <span className={cn('truncate', selected.length === 0 && 'text-[var(--gray-400)]')}>{displayText}</span>
           <ChevronDown className='size-4 shrink-0 text-muted-foreground' />
         </button>
       </PopoverTrigger>
       <PopoverContent
         align='start'
-        className='w-[var(--radix-popover-trigger-width)] p-2'
+        className='w-[var(--radix-popover-trigger-width)] p-2 rounded-lg border-[var(--gray-300)] shadow-[0px_4px_8px_rgba(0,0,0,0.1)]'
         onOpenAutoFocus={(event) => event.preventDefault()}
       >
-        <div className='flex max-h-48 flex-col gap-1 overflow-y-auto'>
+        <div className='flex flex-col gap-1 overflow-y-auto'>
+          {options.length > 0 ? (
+            <label className='h-[37px] group flex cursor-pointer items-center gap-2 border border-none rounded px-2 py-1.5 hover:bg-[var(--primary)]/10 hover:border-[var(--primary)] hover:text-[var(--primary)]'>
+              <Checkbox
+                checked={allSelected ? true : someSelected ? 'indeterminate' : false}
+                onCheckedChange={toggleSelectAll}
+                className={filterCheckboxClassName}
+              />
+              <span
+                className={cn(
+                  'text-sm leading-normal',
+                  allSelected ? 'text-primary' : 'text-[var(--gray-700)] group-hover:text-primary',
+                )}
+              >
+                Select All
+              </span>
+            </label>
+          ) : null}
+
+          <Separator />
+
           {options.map((option) => {
             const isChecked = selected.includes(option.value);
             return (
               <label
                 key={option.value}
-                className='flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 hover:bg-accent'
+                className='h-[37px] group flex cursor-pointer items-center gap-2 border border-none rounded px-2 py-1.5 hover:bg-[var(--primary)]/10 hover:border-[var(--primary)] hover:text-[var(--primary)]'
               >
                 <Checkbox
                   checked={isChecked}
@@ -118,10 +134,8 @@ function FilterMultiSelect({
                 />
                 <span
                   className={cn(
-                    'text-sm',
-                    isChecked
-                      ? 'font-medium text-primary'
-                      : 'text-[var(--gray-700)]',
+                    'text-sm leading-normal',
+                    isChecked ? 'text-primary' : 'text-[var(--gray-700)] group-hover:text-primary',
                   )}
                 >
                   {option.label}
@@ -142,7 +156,7 @@ function CourseFiltersPanel({
   onCancel,
   onApply,
   app,
-  companyOptions,
+  unitTypeOptions,
 }: {
   draft: CourseFilters;
   onDraftChange: (filters: CourseFilters) => void;
@@ -150,14 +164,14 @@ function CourseFiltersPanel({
   onCancel: () => void;
   onApply: () => void;
   app: APPS;
-  companyOptions: { id: number; name: string }[];
+  unitTypeOptions: string[];
 }) {
-  const companySelectOptions = companyOptions.map((company) => ({
-    value: company.name,
-    label: company.name,
+  const unitTypeSelectOptions = unitTypeOptions.map((unitType) => ({
+    value: unitType,
+    label: unitType,
   }));
 
-  const parseUnitsValue = (value: string): number | '' => {
+  const parsePriceValue = (value: string): number | '' => {
     if (value.trim() === '') {
       return '';
     }
@@ -165,139 +179,91 @@ function CourseFiltersPanel({
     return Number.isNaN(parsed) ? '' : parsed;
   };
 
+  const priceInputClassName =
+    'h-[37px] rounded-md border-[var(--gray-300)] bg-[var(--gray-50)] placeholder:text-[var(--gray-400)] px-3 py-2';
+
   return (
     <div className='flex flex-col p-4 gap-6'>
-      <div className='flex items-center justify-between gap-3 pb-4 border-b border-[var(--gray-200)]'>
-        <CustomButton
-          title='Reset All'
-          variant={BUTTON_VARIANTS.OUTLINE}
-          app={app}
-          onClick={onResetAll}
-          width='w-auto'
-          buttonClass='px-2 w-[92px] font-semibold'
-        />
-        <div className='flex items-center gap-2'>
+      <div>
+        <div className='flex items-center justify-between gap-3 pb-4'>
           <CustomButton
-            title='Cancel'
+            title='Reset All'
             variant={BUTTON_VARIANTS.OUTLINE}
             app={app}
-            onClick={onCancel}
+            onClick={onResetAll}
             width='w-auto'
-            buttonClass='w-[80px] px-2 font-semibold'
+            buttonClass='px-2 w-[92px] font-semibold'
           />
-          <CustomButton
-            title='Apply'
-            variant={BUTTON_VARIANTS.PRIMARY}
-            app={app}
-            onClick={onApply}
-            width='w-auto'
-            buttonClass='w-[100px] px-2 font-semibold'
-          />
+          <div className='flex items-center gap-2'>
+            <CustomButton
+              title='Cancel'
+              variant={BUTTON_VARIANTS.OUTLINE}
+              app={app}
+              onClick={onCancel}
+              width='w-auto'
+              buttonClass='w-[80px] px-2 font-semibold'
+            />
+            <CustomButton
+              title='Apply'
+              variant={BUTTON_VARIANTS.PRIMARY}
+              app={app}
+              onClick={onApply}
+              width='w-auto'
+              buttonClass='w-[100px] px-2 font-semibold'
+            />
+          </div>
         </div>
+
+        <Separator className='bg-[var(--gray-200)]' />
       </div>
-
+      
       <div className='flex flex-col gap-6'>
-        <div className='grid grid-cols-1 gap-6 sm:grid-cols-2'>
-          <div className='flex flex-col gap-1.5'>
-            <FilterFieldLabel>Company</FilterFieldLabel>
-            <FilterMultiSelect
-              placeholder='Select company'
-              options={companySelectOptions}
-              selected={draft.companies}
-              onChange={(companies) => onDraftChange({ ...draft, companies })}
-            />
-          </div>
-
-          <div className='flex flex-col gap-1.5'>
-            <FilterFieldLabel>Assigned to Company</FilterFieldLabel>
-            <div className='flex items-center gap-6 pt-1'>
-              <label className='flex cursor-pointer items-center gap-2'>
-                <Checkbox
-                  checked={draft.hasCompany}
-                  onCheckedChange={(checked) =>
-                    onDraftChange({
-                      ...draft,
-                      hasCompany: checked === true,
-                    })
-                  }
-                  className={filterCheckboxClassName}
-                />
-                <span className='text-sm leading-normal text-[var(--gray-700)]'>Yes</span>
-              </label>
-              <label className='flex cursor-pointer items-center gap-2'>
-                <Checkbox
-                  checked={draft.noCompany}
-                  onCheckedChange={(checked) =>
-                    onDraftChange({
-                      ...draft,
-                      noCompany: checked === true,
-                    })
-                  }
-                  className={filterCheckboxClassName}
-                />
-                <span className='text-sm leading-normal text-[var(--gray-700)]'>No</span>
-              </label>
-            </div>
-          </div>
-
-          <div className='flex flex-col gap-1.5'>
-            <FilterFieldLabel>Min Total Units</FilterFieldLabel>
-            <Input
-              type='number'
-              min={0}
-              placeholder='Any'
-              value={draft.minUnits === '' ? '' : String(draft.minUnits)}
-              onChange={(event) =>
-                onDraftChange({
-                  ...draft,
-                  minUnits: parseUnitsValue(event.target.value),
-                })
-              }
-              className='h-[37px] border-[var(--gray-300)] rounded-md'
-            />
-          </div>
-
-          <div className='flex flex-col gap-1.5'>
-            <FilterFieldLabel>Max Total Units</FilterFieldLabel>
-            <Input
-              type='number'
-              min={0}
-              placeholder='Any'
-              value={draft.maxUnits === '' ? '' : String(draft.maxUnits)}
-              onChange={(event) =>
-                onDraftChange({
-                  ...draft,
-                  maxUnits: parseUnitsValue(event.target.value),
-                })
-              }
-              className='h-[37px] border-[var(--gray-300)] rounded-md'
-            />
-          </div>
+        <div className='flex flex-col gap-1'>
+          <FilterFieldLabel>Unit Type</FilterFieldLabel>
+          <FilterMultiSelect
+            placeholder='Select unit type'
+            options={unitTypeSelectOptions}
+            selected={draft.unitTypes}
+            onChange={(unitTypes) => onDraftChange({ ...draft, unitTypes })}
+          />
         </div>
 
-        <div className='flex flex-col gap-1.5'>
-          <FilterFieldLabel>Last Modified</FilterFieldLabel>
-          <Select
-            value={draft.lastModified}
-            onValueChange={(lastModified) => onDraftChange({ ...draft, lastModified })}
-          >
-            <SelectTrigger className='h-[37px] border-[var(--gray-300)] rounded-md w-full'>
-              <SelectValue
-                placeholder='All'
-                className='text-sm leading-normal text-[var(--gray-400)]'
-              />
-            </SelectTrigger>
-            <SelectContent>
-              {LAST_MODIFIED_OPTIONS.map((option) => (
-                <SelectItem
-                  key={option}
-                  value={option}
-                >
-                  {option}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
+          <div className='flex flex-col gap-1'>
+            <FilterFieldLabel>Minimum Unit Price</FilterFieldLabel>
+            <Input
+              type='number'
+              min={0}
+              step='0.01'
+              placeholder='Enter Unit Price'
+              value={draft.minUnitPrice === '' ? '' : String(draft.minUnitPrice)}
+              onChange={(event) =>
+                onDraftChange({
+                  ...draft,
+                  minUnitPrice: parsePriceValue(event.target.value),
+                })
+              }
+              className={priceInputClassName}
+            />
+          </div>
+
+          <div className='flex flex-col gap-1'>
+            <FilterFieldLabel>Max Unit Price</FilterFieldLabel>
+            <Input
+              type='number'
+              min={0}
+              step='0.01'
+              placeholder='Enter Unit Price'
+              value={draft.maxUnitPrice === '' ? '' : String(draft.maxUnitPrice)}
+              onChange={(event) =>
+                onDraftChange({
+                  ...draft,
+                  maxUnitPrice: parsePriceValue(event.target.value),
+                })
+              }
+              className={priceInputClassName}
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -307,7 +273,7 @@ function CourseFiltersPanel({
 export function CourseFiltersPopover({
   app = APPS.TRAINING,
   filters,
-  companyOptions,
+  unitTypeOptions,
   onApply,
 }: CourseFiltersPopoverProps) {
   const [open, setOpen] = useState(false);
@@ -351,33 +317,33 @@ export function CourseFiltersPopover({
         onOpenChange={handleOpenChange}
         modal
       >
-      <PopoverTrigger asChild>
-        <CustomButton
-          title='Filters'
-          leadingIcon={<Filter size={18} />}
-          app={app}
-          variant={BUTTON_VARIANTS.OUTLINE}
-          buttonClass='font-semibold'
-          type='button'
-        />
-      </PopoverTrigger>
-      <PopoverContent
-        align='start'
-        sideOffset={4}
-        className='w-[min(100vw-2rem,408px)] p-0 shadow-[0px_4px_8px_rgba(0,0,0,0.1)]'
-        onOpenAutoFocus={(event) => event.preventDefault()}
-      >
-        <CourseFiltersPanel
-          draft={draft}
-          onDraftChange={setDraft}
-          onResetAll={handleResetAll}
-          onCancel={handleCancel}
-          onApply={handleApply}
-          app={app}
-          companyOptions={companyOptions}
-        />
-      </PopoverContent>
-    </Popover>
+        <PopoverTrigger asChild>
+          <CustomButton
+            title='Filters'
+            leadingIcon={<Filter size={18} />}
+            app={app}
+            variant={BUTTON_VARIANTS.OUTLINE}
+            buttonClass='font-semibold'
+            type='button'
+          />
+        </PopoverTrigger>
+        <PopoverContent
+          align='start'
+          sideOffset={4}
+          className='w-[min(100vw-2rem,408px)] p-0 rounded-lg border-[var(--gray-300)] shadow-[0px_4px_8px_rgba(0,0,0,0.1)]'
+          onOpenAutoFocus={(event) => event.preventDefault()}
+        >
+          <CourseFiltersPanel
+            draft={draft}
+            onDraftChange={setDraft}
+            onResetAll={handleResetAll}
+            onCancel={handleCancel}
+            onApply={handleApply}
+            app={app}
+            unitTypeOptions={unitTypeOptions}
+          />
+        </PopoverContent>
+      </Popover>
     </>
   );
 }

@@ -40,7 +40,7 @@ export function LinkedJobRolesDialog({
       onOpenChange={setIsOpen}
     >
       <DialogContent className='p-0 m-0 sm:max-w-[408px] gap-0 border-[var(--gray-300)] shadow-[0px_4px_8px_rgba(0,0,0,0.1)]'>
-        <DialogHeader className='px-6 py-4 min-h-[78px] flex flex-row items-center justify-between gap-2 shadow-[inset_0_-1px_0_0_var(--gray-200)]'>
+        <DialogHeader className='px-4 py-3 md:px-6 md:py-4 min-h-[62px] md:min-h-[78px] flex flex-row items-center justify-between gap-2 shadow-[inset_0_-1px_0_0_var(--gray-200)]'>
           <DialogTitle className='text-base font-semibold leading-normal text-[var(--gray-800)]'>Linked Job Roles</DialogTitle>
           <DialogClose asChild>
             <Button
@@ -55,7 +55,7 @@ export function LinkedJobRolesDialog({
           </DialogClose>
         </DialogHeader>
 
-        <div className='bg-[var(--gray-50)] p-6'>
+        <div className='bg-[var(--gray-50)] p-4 md:p-6'>
           <p className='text-sm leading-normal text-[var(--gray-500)] mb-4'>List of job roles this unit belongs to.</p>
 
           <div className='space-y-1'>
