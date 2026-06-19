@@ -63,7 +63,7 @@ const CustomAccordion = ({
   return (
     <div className={`bg-white rounded-lg border border-[var(--gray-200)] ${className}`}>
       <div
-        className='flex items-center justify-between p-6 cursor-pointer'
+        className='flex items-center justify-between p-4 md:p-6 cursor-pointer'
         onClick={handleToggle}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -112,7 +112,7 @@ const CustomAccordion = ({
           isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className='p-6 space-y-6'>{children}</div>
+        <div className='p-4 md:p-6 space-y-4 md:space-y-6'>{children}</div>
         {footerContent && (
           <>
             <Separator />

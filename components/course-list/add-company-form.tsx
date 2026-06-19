@@ -56,7 +56,7 @@ export default function AddCompanyForm({ onBack }: AddCompanyFormProps) {
   const [admins] = useState<CompanyAdmin[]>(DEFAULT_ADMINS);
 
   return (
-    <div className='space-y-10'>
+    <div className='space-y-8 md:space-y-10'>
       <CustomContentHeader
         title='Add Company'
         description='Create a company profile to manage business details, team, and services.'

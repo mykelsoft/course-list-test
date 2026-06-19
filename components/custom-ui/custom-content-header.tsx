@@ -45,7 +45,7 @@ const CustomContentHeader: React.FC<CustomContentHeaderProps> = ({
   }
   return (
     <div className='flex flex-col gap-2'>
-      <div className='flex flex-row gap-2 items-center justify-between'>
+      <div className='flex flex-col md:flex-row gap-6 md:gap-2 md:items-center md:justify-between'>
         <div className='flex flex-col gap-2 items-start justify-between'>
           <div className='flex gap-2 flex-col items-start'>
             {onBack && (
@@ -68,7 +68,7 @@ const CustomContentHeader: React.FC<CustomContentHeaderProps> = ({
           </div>
           <span className={`text-sm leading-normal ${descriptionColor}`}>{description}</span>
         </div>
-        <div className='flex flex-row gap-2 items-center justify-end'>{headerRight}</div>
+        <div className='md:flex flex-row gap-2 items-center justify-end'>{headerRight}</div>
       </div>
       {children}
     </div>

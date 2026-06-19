@@ -17,7 +17,7 @@ export default function ViewUnitDetails({ course, onBack, onEdit }: ViewUnitDeta
   const { summaryDescription, unitDescription, additionalFiles } = getUnitViewData(course);
 
   return (
-    <div className='space-y-10'>
+    <div className='space-y-8 md:space-y-10'>
       <CustomContentHeader
         title={course.name}
         description={summaryDescription}
@@ -26,17 +26,17 @@ export default function ViewUnitDetails({ course, onBack, onEdit }: ViewUnitDeta
         headerRight={
           <CustomButton
             title='Edit Unit'
-            leadingIcon={<Pencil className='size-3.5' />}
+            leadingIcon={<Pencil className='-mt-px size-3.5' />}
             app={APPS.TRAINING}
             width='w-auto'
-            buttonClass='px-4 w-[112px]'
+            buttonClass='md:px-4 w-full md:w-[112px]'
             onClick={onEdit}
           />
         }
       />
 
       <CustomAccordion title={`Unit 1 Details (${course.unitType})`}>
-        <div className='space-y-12'>
+        <div className='space-y-8 md:space-y-12'>
           <div className='space-y-4'>
             <p className='text-sm font-medium text-[var(--gray-700)]'>Description</p>
             <p className='text-sm leading-normal text-[var(--gray-600)]'>{unitDescription}</p>
