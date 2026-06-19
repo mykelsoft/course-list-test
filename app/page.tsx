@@ -178,8 +178,8 @@ export default function CoursesPage() {
             />
 
             {/* Middle Controls: Results Count & Bulk Actions */}
-            <div className='flex justify-between items-center mb-2 md:mb-4 py-0.5'>
-              <div className='flex items-center text-sm text-[var(--gray-700)]'>
+            <div className='flex flex-col md:flex-row md:justify-between md:items-center mb-2 md:mb-4 gap-4'>
+              <div className='flex items-center text-sm text-[var(--gray-700)] order-2 md:order-1 py-0.5'>
                 <div className='flex items-center gap-2.5'>
                   <span className='md:inline-block hidden text-[var(--gray-700)] text-sm leading-normal'>Show</span>
                   <Select
@@ -223,7 +223,7 @@ export default function CoursesPage() {
                 onClick={() => setShowAddForm(true)}
                 leadingIcon={<Plus className='size-3.5' />}
                 app={APPS.TRAINING}
-                width='w-[82px] sm:w-auto'
+                buttonClass='order-1 md:order-2'
               />
             </div>
 
@@ -234,8 +234,8 @@ export default function CoursesPage() {
               skeletonRows={pagination.pageSize}
               headerRowClassName='hover:bg-[var(--gray-200)]/80 bg-[var(--gray-200)] border-b border-[var(--gray-300)]'
               headerCellClassName='text-[var(--gray-800)] font-semibold text-sm px-4 py-3'
-              bodyRowClassName='hover:bg-gray-50 transition-colors'
-              bodyCellClassName='px-4 py-3 text-sm text-gray-600'
+              bodyRowClassName='hover:bg-[var(--gray-50)] transition-colors'
+              bodyCellClassName='px-4 py-3 text-sm text-[var(--gray-600)]'
               tableClassName='custom-table'
               tableHeaderHeight='h-[45px]'
               tableRowHeight='h-[60px]'
@@ -286,7 +286,7 @@ export default function CoursesPage() {
         isOpen={archiveDialogOpen}
         setIsOpen={() => dispatch({ type: ActionType.CLOSE_DIALOGS })}
         onDelete={handleArchiveCourse}
-        title='Archive Course?'
+        title='Archive Unit'
         message={`Are you sure you want to archive "${selectedCourse?.name}"?`}
         description='This course will be moved to the archive.'
         isLoading={isProcessing}

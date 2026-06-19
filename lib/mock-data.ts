@@ -2,7 +2,20 @@
 
 import type { CourseWithDetails } from '@/types/courses';
 
-const LONG_COMPANY_STRING = 'ISO Safety, ASHR Construction, Mond Corp., Safety Culture';
+const COMPANY_NAMES = [
+  'ISO Safety',
+  'ASHR Construction',
+  'Mond Corp.',
+  'Safety Culture',
+  'Acme Brick',
+  'BuildRight Partners',
+  'Coastal Mining Group',
+  'Delta Engineering',
+  'Evergreen Logistics',
+  'Frontier Manufacturing',
+];
+
+const LONG_COMPANY_STRING = COMPANY_NAMES.join(', ');
 
 const UNIT_TYPES = ['License', 'Scorm', 'Read & Acknowledge', 'Assignment'] as const;
 
@@ -20,7 +33,7 @@ const createUnit = (
   is_paid,
   price,
   totalUnits: (id % 8) + 1,
-  companyCount: 4,
+  companyCount: COMPANY_NAMES.length,
   assignedCompanies: LONG_COMPANY_STRING,
   updatedAt: new Date(updatedAt),
   description: `${name} mock unit for table testing.`,

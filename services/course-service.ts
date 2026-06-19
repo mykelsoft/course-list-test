@@ -1,7 +1,7 @@
 // services/course-service.ts
 
-import { MOCK_COURSES } from '@/lib/mock-data';
 import type { CourseWithDetails } from '@/types/courses';
+import { MOCK_COURSES } from '@/lib/mock-data';
 
 // Simulate network latency
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -12,6 +12,26 @@ let _courses = [...MOCK_COURSES];
 export const courseService = {
   async fetchCourses({ isPaid, archived = false }: { isPaid?: boolean; archived?: boolean } = {}): Promise<CourseWithDetails[]> {
     await delay(600);
+
+    const mockById = new Map(MOCK_COURSES.map((course) => [course.id, course]));
+
+    _courses = _courses.map((course) => {
+      const fresh = mockById.get(course.id);
+      if (!fresh) return course;
+
+      return {
+        ...course,
+        assignedCompanies: fresh.assignedCompanies,
+        companyCount: fresh.companyCount,
+      };
+    });
+
+    const existingIds = new Set(_courses.map((course) => course.id));
+    MOCK_COURSES.forEach((mockCourse) => {
+      if (!existingIds.has(mockCourse.id)) {
+        _courses.push({ ...mockCourse });
+      }
+    });
 
     return _courses.filter((c) => {
       if (isPaid !== undefined && c.is_paid !== isPaid) return false;

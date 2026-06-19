@@ -33,7 +33,7 @@ const RowActionMenu: React.FC<RowActionMenuProps> = ({
 }) => {
   return (
     <>
-      <div className='flex items-center justify-end gap-2 md:hidden'>
+      <div className='flex items-center justify-between gap-2 md:hidden'>
         {menuItems.map((item) => (
           <Button
             key={item.label}

@@ -37,7 +37,7 @@ function Glowing(app: APPS | null = null): string | GlowingThemeObject {
   // hover:bg-[var(--highlight)] hover:text-[var(--primary)]
   const portal: GlowingThemeObject = {
     inputBox: `
-      border border-gray-300 rounded-md
+      border border-[var(--gray-300)] rounded-md
       focus-within:border-primary 
       focus-within:shadow-[0_0_8px_#6D28D94D] 
       focus-within:ring-0 

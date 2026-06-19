@@ -181,9 +181,9 @@ export function CustomTable<TData>({
   );
 
   const mobileTableHeader = mobileHeaderGroup ? (
-    <div className='flex items-center bg-[var(--gray-200)] px-4 py-3 rounded border border-[var(--gray-200)]'>
+    <div className='flex items-center gap-2 bg-[var(--gray-200)] p-2 rounded shadow-[0_0_0_1px_var(--gray-200)]'>
       {mobileSelectionHeader && !mobileSelectionHeader.isPlaceholder ? (
-        <div className='mr-4 flex shrink-0 items-center **:data-[slot=checkbox]:size-5 **:data-[slot=checkbox]:rounded'>
+        <div className='flex shrink-0 items-center **:data-[slot=checkbox]:size-5 **:data-[slot=checkbox]:rounded'>
           {flexRender(mobileSelectionHeader.column.columnDef.header, mobileSelectionHeader.getContext())}
         </div>
       ) : null}
@@ -223,21 +223,23 @@ export function CustomTable<TData>({
         data-inactive={tooltipContent ? true : undefined}
         className={cn('overflow-hidden rounded border border-[var(--gray-200)] bg-white', getRowClassName?.(row))}
       >
-        <div className='flex items-center bg-[var(--gray-200)] px-4 py-2.5 h-[52px]'>
-          {selectionCell ? (
-            <div className='mr-4 flex shrink-0 items-center **:data-[slot=checkbox]:size-5 **:data-[slot=checkbox]:rounded'>
-              {flexRender(selectionCell.column.columnDef.cell, selectionCell.getContext())}
-            </div>
-          ) : null}
+        <div className='bg-[var(--gray-200)]'>
+          <div className='flex items-center p-2'>
+            {selectionCell ? (
+              <div className='flex shrink-0 items-center **:data-[slot=checkbox]:size-5 **:data-[slot=checkbox]:rounded'>
+                {flexRender(selectionCell.column.columnDef.cell, selectionCell.getContext())}
+              </div>
+            ) : null}
 
-          {primaryCell ? (
-            <div className='min-w-0 flex-1 text-sm font-semibold leading-normal text-[var(--gray-700)]'>
-              {flexRender(primaryCell.column.columnDef.cell, primaryCell.getContext())}
-            </div>
-          ) : null}
+            {primaryCell ? (
+              <div className='min-w-0 flex-1 text-sm font-semibold leading-normal text-[var(--gray-700)]'>
+                {flexRender(primaryCell.column.columnDef.cell, primaryCell.getContext())}
+              </div>
+            ) : null}
+          </div>
 
           {actionsCell ? (
-            <div className='ml-4 flex shrink-0 items-center justify-end text-[var(--gray-700)] [&_button]:size-7 [&_svg]:size-4'>
+            <div className='text-[var(--gray-700)] [&_button]:size-[30px] [&_svg]:size-[18px] p-2'>
               {flexRender(actionsCell.column.columnDef.cell, actionsCell.getContext())}
             </div>
           ) : null}
@@ -247,10 +249,10 @@ export function CustomTable<TData>({
           {detailCells.map((cell) => (
             <div
               key={cell.id}
-              className='grid grid-cols-[96px_minmax(0,1fr)] sm:grid-cols-[128px_minmax(0,1fr)] items-center bg-white px-4 py-2.5 min-h-[45px] gap-4'
+              className='grid grid-cols-[96px_minmax(0,1fr)] sm:grid-cols-[144px_minmax(0,1fr)] md:grid-cols-[160px_minmax(0,1fr)] items-center bg-white px-4 py-2.5 min-h-[45px] gap-2'
             >
               <div className='text-sm leading-normal text-[var(--gray-500)]'>{getReadableColumnLabel(row, cell.column.id)}</div>
-              <div className='min-w-0 text-sm font-normal leading-normal text-[var(--gray-600)] truncate'>
+              <div className='min-w-0 text-sm font-normal leading-normal text-[var(--gray-600)] md:line-clamp-1 line-clamp-3'>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </div>
             </div>
@@ -310,7 +312,7 @@ export function CustomTable<TData>({
                   {Array.from({ length: mobileDetailRowCount }).map((__, cellIndex) => (
                     <div
                       key={`mobile-skeleton-cell-${rowIndex}-${cellIndex}`}
-                      className='grid grid-cols-[96px_minmax(0,1fr)] sm:grid-cols-[128px_minmax(0,1fr)] items-center bg-white px-4 py-2.5 min-h-[45px] gap-4'
+                      className='grid grid-cols-[96px_minmax(0,1fr)] sm:grid-cols-[128px_minmax(0,1fr)] items-center bg-white px-4 py-2.5 min-h-[45px] gap-2'
                     >
                       <Skeleton
                         className={cn(
