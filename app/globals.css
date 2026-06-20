@@ -47,18 +47,31 @@
   --sidebar-ring: hsl(217.2 91.2% 59.8%); /* duplicate of --ring */
   --content-background: #f9fafb; /* duplicate of --background */
   --table-background-primary: #e5e7eb;
-  --table-background-secondary: #6d28d906;
   --table-border: #d1d5db; /* different from --border */
   --text-primary: #374151;
   --input-placeholder: #6b7280;
 
-  --primary: #6d28d9; /* Primary action color used in buttons and links */
+  --training-primary: #FFA600;
+  --training-background-secondary: #CF980006;
+  --training-primary-shadow: #9F6A06;
+
+  --table-background-secondary: var( --training-background-secondary);
+
+  --primary: var(--training-primary); /* Primary action color used in buttons and links */
+  --secondary: #FFA6001A;
+  --highlight: #FFA6001A; /* Secondary action color for alternative buttons or elements */
+  --third: #FFA6004d;
+  --primary-hover: #FFA600d0;
+  --primary-active: #FFA600a5;
+  --primary-shadow: var(--training-primary-shadow);
+
+  /* --primary: #6d28d9;
   --secondary: #6d28d91a;
-  --highlight: #6d28d91a; /* Secondary action color for alternative buttons or elements */
+  --highlight: #6d28d91a;
   --third: #6d28d94d;
   --primary-hover: #6c28d9d0;
   --primary-active: #6c28d9a5;
-  --primary-shadow: #a855f7;
+  --primary-shadow: #a855f7; */
 
   --policiesAndProcedures-primary: #6da017;
   --policiesAndProcedures-highlight: #6da0171a; /* secondary */
@@ -302,12 +315,12 @@ html, body {
 
 .custom-table tr td .course-row-checkbox:hover button[data-slot="checkbox"][data-state="unchecked"] {
   background-color: #fff;
-  border-color: var(--primary);
+  border-color: var(--training-primary);
 }
 
 /* .custom-table button[data-slot="checkbox"][data-state="indeterminate"] */
 .custom-table button[data-slot="checkbox"][data-state="checked"] {
-  border-color: #9F6A06;
+  border-color: var(--training-primary-shadow);
 }
 
 .custom-table [data-slot="table-row"] {
@@ -346,20 +359,28 @@ html, body {
   background-color: var(--secondary);
 }
 
-.custom-table tbody tr:hover td {
-  color: #6d28d9;
+.custom-table tbody tr:hover .course-row-checkbox button[data-slot="checkbox"][data-state="unchecked"] {
+  border-color: #FFA60080;
 }
 
 .custom-table tbody tr:hover td {
-  border-color: #6d28d9;
+  color: var(--training-primary);
+}
+
+.custom-table tbody tr:hover td {
+  border-color: #FFA60080;
 }
 
 .custom-table tbody td button[data-slot="dropdown-menu-trigger"]:hover {
   background-color: var(--highlight);
-  color: #6d28d9;
+  color: var(--training-primary);
 }
 
 .custom-table tbody td button[data-slot="dropdown-menu-trigger"][data-state="open"]:not(:hover) {
   background-color: var(--third);
-  color: #6d28d9;
+  color: var(--training-primary);
+}
+
+.custom-table tbody td button[data-slot="dropdown-menu-trigger"][data-state="open"]:not(:hover) svg {
+  color: var(--training-primary-shadow);
 }

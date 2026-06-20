@@ -65,7 +65,7 @@ export default function UnitJobRolesSection() {
       {
         id: 'select',
         header: ({ table }) => (
-          <div className='course-row-checkbox flex items-center justify-center p-2 hover:bg-[var(--third)] rounded'>
+          <div className='course-row-checkbox flex items-center justify-center p-2 hover:bg-[#F686131A] rounded'>
             <Checkbox
               checked={
                 table.getIsAllPageRowsSelected() ||
@@ -78,7 +78,7 @@ export default function UnitJobRolesSection() {
           </div>
         ),
         cell: ({ row }) => (
-          <div className='course-row-checkbox flex items-center justify-center p-2 hover:bg-[var(--third)] rounded'>
+          <div className='course-row-checkbox flex items-center justify-center p-2 hover:bg-[#F686131A] rounded'>
             <Checkbox
               checked={row.getIsSelected()}
               onCheckedChange={(value) => row.toggleSelected(!!value)}
