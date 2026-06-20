@@ -60,15 +60,15 @@ const RowActionMenu: React.FC<RowActionMenuProps> = ({
             <Button
               variant='ghost'
               size='icon'
-              className={`size-[30px] ${Glowing(app).icon}`}
+              className={`group size-[30px] rounded text-[var(--gray-700)] hover:text-primary hover:bg-primary/20! ${Glowing(app).icon}`}
               disabled={isLoading}
             >
-              {isLoading ? <Spinner size={16} /> : <Ellipsis className={`size-[18px] ${Glowing(app).icon}`} />}
+              {isLoading ? <Spinner size={16} /> : <Ellipsis className={`group-hover:text-primary size-[18px] ${Glowing(app).icon}`} />}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align='end'
-            className={`space-y-1 border-[var(--gray-200)] rounded! shadow-[0px_4px_8px_rgba(0,0,0,0.1)] ${Themes(app).dropdownMenu.content}`}
+            className={`space-y-1! border-[var(--gray-200)] rounded! shadow-[0px_4px_8px_rgba(0,0,0,0.1)] ${Themes(app).dropdownMenu.content}`}
           >
             {menuItems.map((item) => (
               <DropdownMenuItem

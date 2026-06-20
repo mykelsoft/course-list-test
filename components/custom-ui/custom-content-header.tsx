@@ -60,8 +60,8 @@ const CustomContentHeader: React.FC<CustomContentHeaderProps> = ({
                 )}
                 aria-label='Go back'
               >
-                <ArrowLeft className='-mt-px size-[18px] text-[#6D28D9]' />
-                <span className='text-sm text-[#6D28D9] font-semibold leading-normal'>Back</span>
+                <ArrowLeft className='-mt-px size-[18px] text-[var(--training-primary)]' />
+                <span className='text-sm text-[var(--training-primary)] font-semibold leading-normal'>Back</span>   
               </button>
             )}
             <span className='text-lg leading-none font-semibold text-[var(--gray-800)]'>{title}</span>

@@ -31,7 +31,7 @@ const Themes = (app: APPS) => {
 
     const dropdownMenu = {
       content: `!m-0 !p-0 rounded-sm`,
-      item: `!m-0 h-[37px] px-[16px] py-[8px] gap-[8px] rounded-none flex flex-row items-center cursor-pointer overflow-hidden focus:bg-[var(--highlight)] focus:text-[var(--primary)] data-[highlighted=true]:bg-[var(--highlight)] data-[highlighted=true]:text-[var(--primary)] hover:bg-[var(--highlight)] hover:text-[var(--primary)]`,
+      item: `h-[37px] px-4 py-2 gap-2 rounded-none flex flex-row items-center cursor-pointer overflow-hidden focus:bg-[var(--highlight)] focus:text-[var(--primary)] data-[highlighted=true]:bg-[var(--highlight)] data-[highlighted=true]:text-[var(--primary)] hover:bg-[var(--highlight)] hover:text-[var(--primary)]`,
       itemSelected: `bg-[var(--highlight)] text-[var(--primary)]`,
     };
 

@@ -23,7 +23,7 @@ import { APPS } from '@/types/ENUMS';
 import { Separator } from '@/components/ui/separator';
 
 const filterCheckboxClassName =
-  'size-[20px] bg-[var(--gray-50)] border-[var(--gray-300)] data-[state=checked]:bg-[#6D28D9] data-[state=checked]:border-[#4C1D95]';
+  'size-[20px] bg-[var(--gray-50)] border-[var(--gray-300)] data-[state=checked]:bg-[var(--training-primary)] data-[state=checked]:border-[var(--training-primary-shadow)]';
 
 type CourseFiltersPopoverProps = {
   app?: APPS;
