@@ -54,14 +54,13 @@ type GenericTableProps<TData> = {
   tableRowHeight?: string; // Optional table row height
   getRowClassName?: (row: Row<TData>) => string | undefined; // Optional function to get conditional row className
   // Tooltip can be a simple string or structured title/body
-  getRowTooltip?: (
-    row: Row<TData>
-  ) => string | { title: string; body?: string } | undefined; // Optional function to get tooltip content for a row
+  getRowTooltip?: (row: Row<TData>) => string | { title: string; body?: string } | undefined; // Optional function to get tooltip content for a row
   // Tooltip customization
   tooltipSide?: 'top' | 'right' | 'bottom' | 'left';
   tooltipClassName?: string; // Customize background, text, borders, etc.
   tooltipTitleClassName?: string;
   tooltipBodyClassName?: string;
+  isInlineAction?: boolean;
 };
 
 const getReadableColumnLabel = <TData,>(row: Row<TData>, columnId: string) => {
@@ -149,6 +148,7 @@ export function CustomTable<TData>({
   tooltipClassName = 'bg-[var(--popover)] text-[var(--popover-foreground)] border border-[var(--table-border)] shadow-md',
   tooltipTitleClassName = 'text-xs font-semibold',
   tooltipBodyClassName = 'text-xs text-[var(--text-secondary,#6B7280)]',
+  isInlineAction = false,
 }: GenericTableProps<TData>) {
   const rows = table.getRowModel().rows;
   const mobileHeaderGroup = table.getHeaderGroups()[0];
@@ -234,13 +234,18 @@ export function CustomTable<TData>({
             ) : null}
 
             {primaryCell ? (
-              <div className='min-w-0 flex-1 text-sm font-semibold leading-normal text-[var(--gray-700)]'>
-                {flexRender(primaryCell.column.columnDef.cell, primaryCell.getContext())}
+              <div className={cn('min-w-0 flex-1 text-sm font-semibold leading-normal text-[var(--gray-700)]', isInlineAction ? 'flex items-center justify-between' : '')}>
+                <span>{flexRender(primaryCell.column.columnDef.cell, primaryCell.getContext())}</span>
+                {isInlineAction && actionsCell ? (
+                  <div className='text-[var(--gray-700)] [&_button]:size-[30px] [&_svg]:size-[18px] p-2'>
+                    {flexRender(actionsCell.column.columnDef.cell, actionsCell.getContext())}
+                  </div>
+                ) : null}
               </div>
             ) : null}
           </div>
 
-          {actionsCell ? (
+          {!isInlineAction && actionsCell ? (
             <div className='text-[var(--gray-700)] [&_button]:size-[30px] [&_svg]:size-[18px] p-2'>
               {flexRender(actionsCell.column.columnDef.cell, actionsCell.getContext())}
             </div>

@@ -1,4 +1,4 @@
-// app/page.tsx
+// app/(training)/page.tsx
 'use client';
 
 import { ActionType, useCoursesTable } from '@/hooks/useCoursesTable';
@@ -21,18 +21,16 @@ import CustomDeleteDialog from '@/components/custom-ui/custom-delete-dialog';
 import { CustomTable } from '@/components/custom-ui/custom-table/custom-table';
 import PageInfoBanner from '@/components/PageInfoBanner';
 import { TablePagination } from '@/components/custom-ui/custom-table/table-pagination';
-import { cn } from '@/lib/utils';
-// Assuming you migrate columns to a local component folder
+import { getCustomTableLayoutClass } from '@/components/course-list/custom-table-layouts';
 import { getCourseListColumns } from '@/components/course-list/course-list-columns';
 import { AddToCompanyDialog } from '@/components/course-list/add-to-company-dialog';
 import { LinkedJobRolesDialog } from '@/components/course-list/linked-job-roles-dialog';
-import { TrainingSectionHeader } from '@/components/course-list/training-section-header';
-import { PortalSidebar } from '@/components/portal/portal-sidebar';
+import { useTrainingHeader } from '@/components/training/training-layout-context';
+import { ACTIVE_UNIT_LIST_BREADCRUMBS, ACTIVE_UNIT_LIST_TABS } from '@/components/training/training-nav-config';
 
 export default function CoursesPage() {
   const router = useRouter();
 
-  // We pass an empty array initially; the hook will fetch mock data on mount
   const {
     state,
     dispatch,
@@ -48,7 +46,7 @@ export default function CoursesPage() {
     setColumnFilters,
     selectedCount,
     handlers,
-  } = useCoursesTable([]); 
+  } = useCoursesTable([]);
 
   const {
     courses,
@@ -77,6 +75,21 @@ export default function CoursesPage() {
     () => [...new Set(courses.map((course) => course.unitType))].sort(),
     [courses],
   );
+
+  const headerConfig = useMemo(
+    () => ({
+      breadcrumbs: ACTIVE_UNIT_LIST_BREADCRUMBS,
+      tabs: ACTIVE_UNIT_LIST_TABS,
+      filters,
+      unitTypeOptions,
+      onFilterApply: handlers.handleFilterChange,
+      globalFilter,
+      onGlobalFilterChange: setGlobalFilter,
+    }),
+    [filters, unitTypeOptions, handlers.handleFilterChange, globalFilter, setGlobalFilter],
+  );
+
+  useTrainingHeader(headerConfig);
 
   const columns = useMemo(
     () =>
@@ -140,134 +153,85 @@ export default function CoursesPage() {
 
   return (
     <>
-      <div className='min-h-screen'>
-        <div className='flex min-h-screen w-full'>
-          <PortalSidebar activeApp={APPS.TRAINING} />
-          <main className='flex-1 min-w-0 ml-[var(--portal-sidebar-width)]'>
-            <TrainingSectionHeader
-              breadcrumbs={[
-                { label: 'Training', href: '#' },
-                { label: 'Unit List', href: '/' },
-                { label: 'Archived Units', href: '#' },
-              ]}
-              tabs={[
-                {
-                  label: 'Job Role List',
-                  href: '#',
-                  dropdownItems: [
-                    { label: 'Active Job Roles', href: '#' },
-                    { label: 'Archived Job Roles', href: '#' },
-                  ],
-                },
-                {
-                  label: 'Unit List',
-                  href: '/',
-                  isActive: true,
-                  dropdownItems: [
-                    { label: 'Active Units', href: '/', isActive: true },
-                    { label: 'Archived Units', href: '#' },
-                  ],
-                },
-              ]}
-              filters={filters}
-              unitTypeOptions={unitTypeOptions}
-              onFilterApply={handlers.handleFilterChange}
-              globalFilter={globalFilter}
-              onGlobalFilterChange={setGlobalFilter}
-            />
+      <div className='px-4 py-7 md:pb-10 md:px-10 md:pt-10'>
+        <PageInfoBanner
+          title='Active Units List'
+          subtitle='List of active units available on the platform.'
+        />
 
-            <div className='px-4 py-7 md:pb-10 md:px-10 md:pt-10'>
-              <PageInfoBanner
-                title='Active Units List'
-                subtitle='List of active units available on the platform.'
-              />
-
-              {/* Middle Controls: Results Count & Bulk Actions */}
-              <div className='flex flex-col md:flex-row md:justify-between md:items-center mb-2 md:mb-4 gap-4'>
-                <div className='flex items-center text-sm text-[var(--gray-700)] order-2 md:order-1 py-0.5'>
-                  <div className='flex items-center gap-2.5'>
-                    <span className='md:inline-block hidden text-[var(--gray-700)] text-sm leading-normal'>Show</span>
-                    <Select
-                      value={String(pagination.pageSize)}
-                      onValueChange={(val) => table.setPageSize(Number(val))}
+        <div className='flex flex-col md:flex-row md:justify-between md:items-center mb-2 md:mb-4 gap-4'>
+          <div className='flex items-center text-sm text-[var(--gray-700)] order-2 md:order-1 py-0.5'>
+            <div className='flex items-center gap-2.5'>
+              <span className='md:inline-block hidden text-[var(--gray-700)] text-sm leading-normal'>Show</span>
+              <Select
+                value={String(pagination.pageSize)}
+                onValueChange={(val) => table.setPageSize(Number(val))}
+              >
+                <SelectTrigger className='h-[37px]! w-[54px] font-medium text-[var(--gray-700)] bg-white p-2 gap-0 rounded border-[var(--gray-300)]'>
+                  <SelectValue placeholder={pagination.pageSize} />
+                </SelectTrigger>
+                <SelectContent className='w-20'>
+                  {[10, 20, 30, 50].map((size) => (
+                    <SelectItem
+                      key={size}
+                      value={String(size)}
                     >
-                      <SelectTrigger className='h-[37px]! w-[54px] font-medium text-[var(--gray-700)] bg-white p-2 gap-0 rounded border-[var(--gray-300)]'>
-                        <SelectValue placeholder={pagination.pageSize} />
-                      </SelectTrigger>
-                      <SelectContent className='w-20'>
-                        {[10, 20, 30, 50].map((size) => (
-                          <SelectItem
-                            key={size}
-                            value={String(size)}
-                          >
-                            {size}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <span className='md:inline-block hidden text-[var(--gray-700)] text-sm leading-normal'>
-                      of {table.getFilteredRowModel().rows.length} result{table.getFilteredRowModel().rows.length > 1 ? 's' : ''}
-                    </span>
-                  </div>
-
-                  <div className='h-[37px] w-px bg-[var(--gray-300)] md:ml-6 mr-2 ml-3' />
-
-                  <CustomButton
-                    title='Archive'
-                    onClick={handleBulkArchive}
-                    disabled={!hasSelectedRows}
-                    leadingIcon={<Archive className='mr-1 size-[18px]' />}
-                    app={APPS.TRAINING}
-                    variant='ghost'
-                    buttonClass='px-3 text-sm rounded text-[var(--gray-700)] font-normal'
-                  />
-                </div>
-
-                <CustomButton
-                  title='Add Unit'
-                  onClick={() => router.push('/units/add')}
-                  leadingIcon={<Plus className='size-3.5 -mt-0.5' />}
-                  app={APPS.TRAINING}
-                  buttonClass='order-1 md:order-2'
-                />
-              </div>
-
-              <CustomTable
-                table={table}
-                isLoading={isLoading}
-                noResultsMessage='No units found.'
-                skeletonRows={pagination.pageSize}
-                headerRowClassName='hover:bg-[var(--gray-200)]/80 bg-[var(--gray-200)] border-b-0'
-                headerCellClassName='text-[var(--gray-800)] font-semibold text-sm px-4 py-3'
-                bodyRowClassName='hover:bg-[var(--gray-50)] transition-colors border-b-0'
-                bodyCellClassName='px-4 py-3 text-sm text-[var(--gray-600)]'
-                tableClassName={cn(
-                  'custom-table',
-                  '[&_thead_tr>th:first-child]:w-[68px]',
-                  '[&_thead_tr>th:nth-child(2)]:w-[120px]',
-                  '[&_thead_tr>th:nth-child(3)]:w-[440px]',
-                  '[&_thead_tr>th:nth-child(4)]:w-[240px]',
-                  '[&_thead_tr>th:nth-child(6)]:w-[160px]',
-                  '[&_thead_tr>th:last-child]:w-[100px]',
-                )}
-                tableHeaderHeight='h-[45px]'
-                tableRowHeight='h-[60px]'
-              />
-
-              {table.getPageCount() > 1 && (
-                <div className='pt-4 sm:py-[22px]'>
-                  <TablePagination
-                    table={table}
-                    app={APPS.TRAINING}
-                  />
-                </div>
-              )}
+                      {size}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <span className='md:inline-block hidden text-[var(--gray-700)] text-sm leading-normal'>
+                of {table.getFilteredRowModel().rows.length} result{table.getFilteredRowModel().rows.length > 1 ? 's' : ''}
+              </span>
             </div>
-          </main>
+
+            <div className='h-[37px] w-px bg-[var(--gray-300)] md:ml-6 mr-2 ml-3' />
+
+            <CustomButton
+              title='Archive'
+              onClick={handleBulkArchive}
+              disabled={!hasSelectedRows}
+              leadingIcon={<Archive className='mr-1 size-[18px]' />}
+              app={APPS.TRAINING}
+              variant='ghost'
+              buttonClass='px-3 text-sm rounded text-[var(--gray-700)] font-normal'
+            />
+          </div>
+
+          <CustomButton
+            title='Add Unit'
+            onClick={() => router.push('/units/add')}
+            leadingIcon={<Plus className='size-3.5 -mt-0.5' />}
+            app={APPS.TRAINING}
+            buttonClass='order-1 md:order-2'
+          />
         </div>
+
+        <CustomTable
+          table={table}
+          isLoading={isLoading}
+          noResultsMessage='No units found.'
+          skeletonRows={pagination.pageSize}
+          headerRowClassName='hover:bg-[var(--gray-200)]/80 bg-[var(--gray-200)] border-b-0'
+          headerCellClassName='text-[var(--gray-800)] font-semibold text-sm px-4 py-3'
+          bodyRowClassName='hover:bg-[var(--gray-50)] transition-colors border-b-0'
+          bodyCellClassName='px-4 py-3 text-sm text-[var(--gray-600)]'
+          tableHeaderHeight='h-[45px]'
+          tableRowHeight='h-[60px]'
+          tableClassName={getCustomTableLayoutClass('activeUnits')}
+        />
+
+        {table.getPageCount() > 1 && (
+          <div className='pt-4 sm:py-[22px]'>
+            <TablePagination
+              table={table}
+              app={APPS.TRAINING}
+            />
+          </div>
+        )}
       </div>
 
-      {/* Dialogs */}
       <CustomDeleteDialog
         isOpen={deleteDialogOpen}
         setIsOpen={() => dispatch({ type: ActionType.CLOSE_DELETE_DIALOG })}

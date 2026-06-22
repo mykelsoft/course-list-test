@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 
-@plugin "tailwindcss-animate";
+@plugin 'tailwindcss-animate';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -405,4 +405,76 @@ html, body {
 
 .custom-table tbody td button[data-slot="dropdown-menu-trigger"][data-state="open"]:not(:hover) svg {
   color: var(--training-primary-shadow);
+}
+
+/* active units table */
+.active-units-table thead tr > th:first-child {
+  width: 68px;
+}
+
+.active-units-table thead tr > th:nth-child(2) {
+  width: 120px;
+}
+
+.active-units-table thead tr > th:nth-child(3) {
+  width: 440px;
+}
+
+.active-units-table thead tr > th:nth-child(4) {
+  width: 240px;
+}
+
+.active-units-table thead tr > th:nth-child(6) {
+  width: 160px;
+}
+
+.active-units-table thead tr > th:last-child {
+  width: 100px;
+}
+
+/* archived units table */
+.archived-units-table thead tr > th:first-child {
+  width: 68px;
+}
+
+.archived-units-table thead tr > th:nth-child(2) {
+  width: 120px;
+}
+
+.archived-units-table thead tr > th:last-child {
+  width: 100px;
+}
+
+/* master job roles table */
+.master-job-roles-table thead tr > th:first-child {
+  width: 68px;
+}
+
+.master-job-roles-table thead tr > th:nth-child(2) {
+  width: 520px;
+}
+
+.master-job-roles-table thead tr > th:nth-child(4) {
+  width: 160px;
+}
+
+.master-job-roles-table thead tr > th:last-child {
+  width: 100px;
+}
+
+/* archived job roles table */
+.archived-job-roles-table thead tr > th:first-child {
+  width: 68px;
+}
+
+.archived-job-roles-table thead tr > th:last-child {
+  width: 100px;
+}
+
+.unit-job-roles-table thead tr > th:first-child {
+  width: 68px;
+}
+
+.unit-job-roles-table thead tr > th:last-child {
+  width: 100px;
 }

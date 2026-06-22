@@ -7,8 +7,8 @@ import {
   type ColumnDef,
   type RowSelectionState,
 } from '@tanstack/react-table';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { Plus, Trash2 } from 'lucide-react';
+import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 
 import { APPS } from '@/types/courses';
 import { BUTTON_VARIANTS } from '@/components/custom-ui/button-variants';
@@ -18,7 +18,7 @@ import CustomButton from '@/components/custom-ui/custom-button';
 import { CustomTable } from '@/components/custom-ui/custom-table/custom-table';
 import RowActionMenu from '@/components/custom-ui/custom-table/row-action-menu';
 import UnitFormFieldRow from './unit-form-field-row';
-import { cn } from '@/lib/utils';
+import { getCustomTableLayoutClass } from '@/components/course-list/custom-table-layouts';
 
 type JobRoleRow = {
   id: number;
@@ -45,12 +45,28 @@ function createInitialRowSelection(roleIds: number[]): RowSelectionState {
   }, {});
 }
 
-export default function UnitJobRolesSection() {
-  const [jobRoles, setJobRoles] = useState<JobRoleRow[]>(DEFAULT_JOB_ROLES);
+const DEFAULT_ROW_SELECTION = createInitialRowSelection(DEFAULT_SELECTED_JOB_ROLE_IDS);
 
-  const handleRemoveRole = useCallback((roleId: number) => {
-    setJobRoles((current) => current.filter((role) => role.id !== roleId));
-  }, []);
+function useIsClient() {
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+}
+
+type UnitJobRolesTableProps = {
+  jobRoles: JobRoleRow[];
+  onRemoveRole: (roleId: number) => void;
+  onRemoveSelectedRoles: (roleIds: number[]) => void;
+};
+
+function UnitJobRolesTable({
+  jobRoles,
+  onRemoveRole,
+  onRemoveSelectedRoles,
+}: UnitJobRolesTableProps) {
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>(DEFAULT_ROW_SELECTION);
 
   const columns = useMemo<ColumnDef<JobRoleRow>[]>(
     () => [
@@ -98,7 +114,7 @@ export default function UnitJobRolesSection() {
               {
                 label: 'Remove Job Role',
                 icon: <Trash2 className='size-4' />,
-                onClick: () => handleRemoveRole(row.original.id),
+                onClick: () => onRemoveRole(row.original.id),
               },
             ]}
           />
@@ -108,16 +124,15 @@ export default function UnitJobRolesSection() {
         size: 100,
       },
     ],
-    [handleRemoveRole],
+    [onRemoveRole],
   );
 
   // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table manages its own memoization
   const table = useReactTable({
     data: jobRoles,
     columns,
-    initialState: {
-      rowSelection: createInitialRowSelection(DEFAULT_SELECTED_JOB_ROLE_IDS),
-    },
+    state: { rowSelection },
+    onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     enableRowSelection: true,
@@ -127,13 +142,60 @@ export default function UnitJobRolesSection() {
   const hasSelectedRoles = table.getSelectedRowModel().rows.length > 0;
 
   const handleRemoveSelectedRoles = () => {
-    const selectedIds = new Set(
-      table.getSelectedRowModel().rows.map((row) => row.original.id),
-    );
-
-    setJobRoles((current) => current.filter((role) => !selectedIds.has(role.id)));
-    table.resetRowSelection();
+    const selectedIds = table.getSelectedRowModel().rows.map((row) => row.original.id);
+    onRemoveSelectedRoles(selectedIds);
+    setRowSelection({});
   };
+
+  return (
+    <>
+      <div className='flex flex-wrap items-center justify-between gap-3 md:gap-4'>
+        <CustomButton
+          title='Remove from Job Role'
+          leadingIcon={<Trash2 className='size-4 mr-1' />}
+          app={APPS.TRAINING}
+          variant={BUTTON_VARIANTS.GHOST}
+          width='w-auto'
+          buttonClass='font-normal rounded'
+          disabled={!hasSelectedRoles}
+          onClick={handleRemoveSelectedRoles}
+        />
+        <CustomButton
+          title='Add Job Role'
+          leadingIcon={<Plus className='size-3.5' />}
+          app={APPS.TRAINING}
+          onClick={() => {}}
+        />
+      </div>
+
+      <CustomTable
+        table={table}
+        isLoading={false}
+        noResultsMessage='No job roles found.'
+        headerRowClassName='hover:bg-[var(--gray-200)]/80 bg-[var(--gray-200)] border-b-0'
+        headerCellClassName='text-[var(--gray-800)] font-semibold text-sm px-4 py-3'
+        bodyRowClassName='hover:bg-[var(--gray-50)] transition-colors border-b-0'
+        bodyCellClassName='px-4 py-3 text-sm text-[var(--gray-600)]'
+        tableClassName={getCustomTableLayoutClass('unitJobRoles')}
+        tableHeaderHeight='h-[45px]'
+        tableRowHeight='h-[60px]'
+      />
+    </>
+  );
+}
+
+export default function UnitJobRolesSection() {
+  const [jobRoles, setJobRoles] = useState<JobRoleRow[]>(DEFAULT_JOB_ROLES);
+  const isTableReady = useIsClient();
+
+  const handleRemoveRole = useCallback((roleId: number) => {
+    setJobRoles((current) => current.filter((role) => role.id !== roleId));
+  }, []);
+
+  const handleRemoveSelectedRoles = useCallback((roleIds: number[]) => {
+    const selectedIds = new Set(roleIds);
+    setJobRoles((current) => current.filter((role) => !selectedIds.has(role.id)));
+  }, []);
 
   return (
     <CustomAccordion
@@ -147,41 +209,15 @@ export default function UnitJobRolesSection() {
         tooltip='Select the job roles this unit belongs to'
       >
         <div className='flex min-w-0 flex-1 flex-col gap-4'>
-          <div className='flex flex-wrap items-center justify-between gap-3 md:gap-4'>
-            <CustomButton
-              title='Remove from Job Role'
-              leadingIcon={<Trash2 className='size-4 mr-1' />}
-              app={APPS.TRAINING}
-              variant={BUTTON_VARIANTS.GHOST}
-              width='w-auto'
-              buttonClass='font-normal rounded'
-              disabled={!hasSelectedRoles}
-              onClick={handleRemoveSelectedRoles}
+          {isTableReady ? (
+            <UnitJobRolesTable
+              jobRoles={jobRoles}
+              onRemoveRole={handleRemoveRole}
+              onRemoveSelectedRoles={handleRemoveSelectedRoles}
             />
-            <CustomButton
-              title='Add Job Role'
-              leadingIcon={<Plus className='size-3.5' />}
-              app={APPS.TRAINING}
-              onClick={() => {}}
-            />
-          </div>
-
-          <CustomTable
-            table={table}
-            isLoading={false}
-            noResultsMessage='No job roles found.'
-            headerRowClassName='hover:bg-[var(--gray-200)]/80 bg-[var(--gray-200)] border-b-0'
-            headerCellClassName='text-[var(--gray-800)] font-semibold text-sm px-4 py-3'
-            bodyRowClassName='hover:bg-[var(--gray-50)] transition-colors border-b-0'
-            bodyCellClassName='px-4 py-3 text-sm text-[var(--gray-600)]'
-            tableClassName={cn(
-              'custom-table',
-              '[&_thead_tr>th:first-child]:w-[68px]',
-              '[&_thead_tr>th:last-child]:w-[100px]',
-            )}
-            tableHeaderHeight='h-[45px]'
-            tableRowHeight='h-[60px]'
-          />
+          ) : (
+            <div className='min-h-[360px] rounded-lg border border-[var(--gray-200)] bg-[var(--gray-50)]' />
+          )}
         </div>
       </UnitFormFieldRow>
     </CustomAccordion>

@@ -148,7 +148,7 @@ export function PortalSidebar({ activeApp = APPS.TRAINING }: PortalSidebarProps)
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <div className='fixed top-0 left-0 bottom-0 shrink-0'>
+    <div className='fixed top-0 left-0 bottom-0 shrink-0 md:block hidden'>
       <div
         className={cn(
           'relative flex min-h-screen flex-col border-r border-[var(--gray-200)] bg-[var(--sidebar)] transition-[width] duration-200 ease-linear',
