@@ -1,8 +1,8 @@
-// app/page.tsx
+// app/(training)/page.tsx
 'use client';
 
 import { ActionType, useCoursesTable } from '@/hooks/useCoursesTable';
-import { Archive, InfoIcon, Plus, SearchIcon } from 'lucide-react';
+import { Archive, InfoIcon, Plus } from 'lucide-react';
 import React, { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -19,22 +19,18 @@ import { APPS, type CourseWithDetails } from '@/types/courses';
 import CustomButton from '@/components/custom-ui/custom-button';
 import CustomDeleteDialog from '@/components/custom-ui/custom-delete-dialog';
 import { CustomTable } from '@/components/custom-ui/custom-table/custom-table';
-import { Glowing } from '@/components/custom-ui/styling/glowing';
-import { Input } from '@/components/ui/input';
 import PageInfoBanner from '@/components/PageInfoBanner';
 import { TablePagination } from '@/components/custom-ui/custom-table/table-pagination';
-import { cn } from '@/lib/utils';
-// Assuming you migrate columns to a local component folder
-import { CourseFiltersPopover } from '@/components/course-list/course-filters-popover';
+import { getCustomTableLayoutClass } from '@/components/course-list/custom-table-layouts';
 import { getCourseListColumns } from '@/components/course-list/course-list-columns';
 import { AddToCompanyDialog } from '@/components/course-list/add-to-company-dialog';
 import { LinkedJobRolesDialog } from '@/components/course-list/linked-job-roles-dialog';
-import { TrainingSectionHeader } from '@/components/course-list/training-section-header';
+import { useTrainingHeader } from '@/components/training/training-layout-context';
+import { ACTIVE_UNIT_LIST_BREADCRUMBS, ACTIVE_UNIT_LIST_TABS } from '@/components/training/training-nav-config';
 
 export default function CoursesPage() {
   const router = useRouter();
 
-  // We pass an empty array initially; the hook will fetch mock data on mount
   const {
     state,
     dispatch,
@@ -50,7 +46,7 @@ export default function CoursesPage() {
     setColumnFilters,
     selectedCount,
     handlers,
-  } = useCoursesTable([]); 
+  } = useCoursesTable([]);
 
   const {
     courses,
@@ -79,6 +75,21 @@ export default function CoursesPage() {
     () => [...new Set(courses.map((course) => course.unitType))].sort(),
     [courses],
   );
+
+  const headerConfig = useMemo(
+    () => ({
+      breadcrumbs: ACTIVE_UNIT_LIST_BREADCRUMBS,
+      tabs: ACTIVE_UNIT_LIST_TABS,
+      filters,
+      unitTypeOptions,
+      onFilterApply: handlers.handleFilterChange,
+      globalFilter,
+      onGlobalFilterChange: setGlobalFilter,
+    }),
+    [filters, unitTypeOptions, handlers.handleFilterChange, globalFilter, setGlobalFilter],
+  );
+
+  useTrainingHeader(headerConfig);
 
   const columns = useMemo(
     () =>
@@ -142,56 +153,12 @@ export default function CoursesPage() {
 
   return (
     <>
-      <TrainingSectionHeader
-        breadcrumbs={[
-          { label: 'Training', href: '#' },
-          { label: 'Unit List', href: '/' },
-          { label: 'Archived Units', href: '#' },
-        ]}
-        tabs={[
-          { label: 'Job Role List', href: '#' },
-          { label: 'Unit List', href: '/', isActive: true },
-        ]}
-      />
-      {/* Top Controls: Search & Add */}
-      <div className='bg-white py-4 md:px-6 px-4 shadow-[inset_0_-1px_0_0_var(--gray-200)]'>
-        <div className='flex items-center md:gap-4 gap-2'>
-          <CourseFiltersPopover
-            app={APPS.TRAINING}
-            filters={filters}
-            unitTypeOptions={unitTypeOptions}
-            onApply={handlers.handleFilterChange}
-          />
-
-          <div className='flex-1 min-w-0'>
-            <div
-              className={cn(
-                'relative flex-1 rounded-md bg-[var(--gray-50)] transition-shadow focus-within:ring-1 focus-within:ring-primary focus-within:shadow-[0_0_6px_var(--primary-shadow)]',
-                Glowing(APPS.TRAINING).inputBox,
-              )}
-            >
-              <div className='absolute left-3 top-1/2 -translate-y-1/2 text-[var(--gray-700)]'>
-                <SearchIcon size={16} />
-              </div>
-              <Input
-                type='search'
-                placeholder='Search Unit'
-                value={globalFilter}
-                onChange={(event) => setGlobalFilter(event.target.value)}
-                className='placeholder:text-[var(--gray-400)] focus:placeholder:text-transparent transition-colors duration-200 text-sm border-none h-[37px] pl-9 shadow-none ring-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0'
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className='px-4 py-7 md:p-10'>
+      <div className='px-4 py-7 md:pb-10 md:px-10 md:pt-10'>
         <PageInfoBanner
           title='Active Units List'
           subtitle='List of active units available on the platform.'
         />
 
-        {/* Middle Controls: Results Count & Bulk Actions */}
         <div className='flex flex-col md:flex-row md:justify-between md:items-center mb-2 md:mb-4 gap-4'>
           <div className='flex items-center text-sm text-[var(--gray-700)] order-2 md:order-1 py-0.5'>
             <div className='flex items-center gap-2.5'>
@@ -250,17 +217,9 @@ export default function CoursesPage() {
           headerCellClassName='text-[var(--gray-800)] font-semibold text-sm px-4 py-3'
           bodyRowClassName='hover:bg-[var(--gray-50)] transition-colors border-b-0'
           bodyCellClassName='px-4 py-3 text-sm text-[var(--gray-600)]'
-          tableClassName={cn(
-            'custom-table',
-            '[&_thead_tr>th:first-child]:w-[68px]',
-            '[&_thead_tr>th:nth-child(2)]:w-[120px]',
-            '[&_thead_tr>th:nth-child(3)]:w-[440px]',
-            '[&_thead_tr>th:nth-child(4)]:w-[240px]',
-            '[&_thead_tr>th:nth-child(6)]:w-[160px]',
-            '[&_thead_tr>th:last-child]:w-[100px]',
-          )}
           tableHeaderHeight='h-[45px]'
           tableRowHeight='h-[60px]'
+          tableClassName={getCustomTableLayoutClass('activeUnits')}
         />
 
         {table.getPageCount() > 1 && (
@@ -273,7 +232,6 @@ export default function CoursesPage() {
         )}
       </div>
 
-      {/* Dialogs */}
       <CustomDeleteDialog
         isOpen={deleteDialogOpen}
         setIsOpen={() => dispatch({ type: ActionType.CLOSE_DELETE_DIALOG })}

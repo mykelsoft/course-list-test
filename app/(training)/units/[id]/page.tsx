@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
 import type { CourseWithDetails } from '@/types/courses';
 import ViewUnitDetails from '@/components/course-list/view-unit-details';
 import ViewUnitDetailsSkeleton from '@/components/course-list/view-unit-details-skeleton';
 import { courseService } from '@/services/course-service';
+import { useTrainingHeader } from '@/components/training/training-layout-context';
+import { ACTIVE_UNIT_LIST_TABS, UNIT_DETAILS_BREADCRUMBS, withTrainingSearchFilter } from '@/components/training/training-nav-config';
 
 export default function ViewUnitPage() {
   const params = useParams();
@@ -36,6 +38,25 @@ export default function ViewUnitPage() {
       isMounted = false;
     };
   }, [params.id]);
+
+  const courseName = course?.name;
+
+  const headerConfig = useMemo(
+    () =>
+      withTrainingSearchFilter({
+        breadcrumbs: courseName
+          ? [
+              { label: 'Training', href: '#' },
+              { label: 'Unit List', href: '/' },
+              { label: courseName },
+            ]
+          : UNIT_DETAILS_BREADCRUMBS,
+        tabs: ACTIVE_UNIT_LIST_TABS,
+      }),
+    [courseName],
+  );
+
+  useTrainingHeader(headerConfig);
 
   if (isLoading) {
     return (
