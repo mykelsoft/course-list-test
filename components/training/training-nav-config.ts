@@ -1,5 +1,5 @@
-import type { TrainingHeaderConfig } from '@/components/training/training-layout-context';
 import { EMPTY_COURSE_FILTERS } from '@/hooks/useCoursesTable';
+import type { TrainingHeaderConfig } from '@/components/training/training-layout-context';
 
 type UnitListTabState = 'active' | 'archived';
 type JobRoleListTabState = 'active' | 'archived';
