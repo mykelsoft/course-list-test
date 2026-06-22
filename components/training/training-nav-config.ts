@@ -46,7 +46,7 @@ export const ADD_JOB_ROLE_BREADCRUMBS: TrainingHeaderConfig['breadcrumbs'] = [
   { label: 'Add Job Role' },
 ];
 
-const TRAINING_ROUTES_WITHOUT_SECTION_NAV = new Set(['/units/add', '/job-roles']);
+const TRAINING_ROUTES_WITHOUT_SECTION_NAV = new Set(['/units/add', '/job-roles/add']);
 
 export function shouldShowTrainingSectionNav(pathname: string): boolean {
   return !TRAINING_ROUTES_WITHOUT_SECTION_NAV.has(pathname);

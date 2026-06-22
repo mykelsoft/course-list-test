@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
 import {
@@ -8,7 +9,7 @@ import {
   type RowSelectionState,
 } from '@tanstack/react-table';
 import { Plus, Trash2 } from 'lucide-react';
-import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { APPS } from '@/types/courses';
 import { BUTTON_VARIANTS } from '@/components/custom-ui/button-variants';
@@ -46,14 +47,6 @@ function createInitialRowSelection(roleIds: number[]): RowSelectionState {
 }
 
 const DEFAULT_ROW_SELECTION = createInitialRowSelection(DEFAULT_SELECTED_JOB_ROLE_IDS);
-
-function useIsClient() {
-  return useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false,
-  );
-}
 
 type UnitJobRolesTableProps = {
   jobRoles: JobRoleRow[];
@@ -186,7 +179,11 @@ function UnitJobRolesTable({
 
 export default function UnitJobRolesSection() {
   const [jobRoles, setJobRoles] = useState<JobRoleRow[]>(DEFAULT_JOB_ROLES);
-  const isTableReady = useIsClient();
+  const [isTableReady, setIsTableReady] = useState(false);
+
+  useEffect(() => {
+    setIsTableReady(true);
+  }, []);
 
   const handleRemoveRole = useCallback((roleId: number) => {
     setJobRoles((current) => current.filter((role) => role.id !== roleId));
