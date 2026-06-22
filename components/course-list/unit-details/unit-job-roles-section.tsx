@@ -47,17 +47,9 @@ function createInitialRowSelection(roleIds: number[]): RowSelectionState {
 
 export default function UnitJobRolesSection() {
   const [jobRoles, setJobRoles] = useState<JobRoleRow[]>(DEFAULT_JOB_ROLES);
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>(() =>
-    createInitialRowSelection(DEFAULT_SELECTED_JOB_ROLE_IDS),
-  );
 
   const handleRemoveRole = useCallback((roleId: number) => {
     setJobRoles((current) => current.filter((role) => role.id !== roleId));
-    setRowSelection((current) => {
-      const next = { ...current };
-      delete next[String(roleId)];
-      return next;
-    });
   }, []);
 
   const columns = useMemo<ColumnDef<JobRoleRow>[]>(
@@ -119,11 +111,13 @@ export default function UnitJobRolesSection() {
     [handleRemoveRole],
   );
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table manages its own memoization
   const table = useReactTable({
     data: jobRoles,
     columns,
-    state: { rowSelection },
-    onRowSelectionChange: setRowSelection,
+    initialState: {
+      rowSelection: createInitialRowSelection(DEFAULT_SELECTED_JOB_ROLE_IDS),
+    },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     enableRowSelection: true,

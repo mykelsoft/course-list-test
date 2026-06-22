@@ -38,7 +38,7 @@ function Glowing(app: APPS | null = null): string | GlowingThemeObject {
   const portal: GlowingThemeObject = {
     inputBox: `
       shadow-[inset_0_0_0_1px_var(--gray-300)] rounded-md
-      focus-within:shadow-[inset_0_0_0_1px_var(--primary),0_0_8px_#6D28D94D] 
+      focus-within:shadow-[inset_0_0_0_1px_var(--primary),0_0_8px_[var(--main-third)]]
       focus-within:ring-0 
       focus-within:ring-transparent 
       placeholder:opacity-100 
@@ -62,13 +62,13 @@ function Glowing(app: APPS | null = null): string | GlowingThemeObject {
 
     checkboxOld: `h-5 w-5 cursor-pointer
       focus-visible:border-primary 
-      focus-visible:shadow-[0_0_8px_#6D28D94D] 
+      focus-visible:shadow-[0_0_8px_[var(--main-third)]] 
       focus-visible:ring-0 
       focus-visible:ring-transparent 
       focus:ring-0 
       focus:ring-transparent 
       hover:border-primary 
-      hover:shadow-[0_0_8px_#6D28D94D] 
+      hover:shadow-[0_0_8px_[var(--main-third)]] 
       hover:ring-0 
       hover:ring-transparent 
       focus:ring-0 
@@ -145,7 +145,7 @@ function Glowing(app: APPS | null = null): string | GlowingThemeObject {
     // --- END FIX ---
 
     checkbox: `focus-visible:border-policiesAndProcedures-primary 
-      focus-visible:shadow-[0_0_8px_#6D28D94D] 
+      focus-visible:shadow-[0_0_8px_[var(--main-third)]] 
       focus-visible:ring-0 
       focus-visible:ring-transparent 
       focus:ring-0 
